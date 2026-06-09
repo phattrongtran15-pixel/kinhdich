@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=4">
+<title>Kinh Dịch · Hành Trình Tu Luyện 64 Quẻ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0d10; --bg2:#11141a; --ink-panel:#141821; --panel2:#191e29; --line:#2a3140;
+  --txt:#ece6d8; --sub:#9b9486; --faint:#6f6a5e;
+  --gold:#c9a14a; --gold2:#e3c073; --jade:#6fae87; --crimson:#b4543f; --azure:#5d86b3; --violet:#8e7bb0;
+  --serif:'Noto Serif',Georgia,serif; --han:'Noto Serif SC','Noto Serif',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--txt); font-family:var(--serif); font-size:14px; line-height:1.55;
+  background-image:
+    radial-gradient(1100px 700px at 78% -12%,rgba(201,161,74,.07),transparent),
+    radial-gradient(900px 700px at -8% 112%,rgba(93,134,179,.06),transparent);
+  background-attachment:fixed; overflow-x:hidden;
+}
+.han{font-family:var(--han)}
+/* ---------- TOP BAR ---------- */
+.top{padding:14px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  background:rgba(11,13,16,.74);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40}
+.brand{display:flex;align-items:baseline;gap:11px}
+.brand .seal{font-family:var(--han);font-size:26px;color:var(--gold2);text-shadow:0 0 14px rgba(201,161,74,.35)}
+.brand h1{font-family:var(--han);font-weight:700;font-size:18px;letter-spacing:.5px}
+.brand small{display:block;font-size:9.5px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-top:2px;font-family:var(--serif)}
+.sp{flex:1}
+.btn{font-family:var(--serif);font-size:11.5px;background:var(--panel2);border:1px solid var(--line);color:var(--sub);
+  padding:8px 14px;border-radius:8px;cursor:pointer;letter-spacing:.4px}
+.btn:hover{border-color:var(--gold);color:var(--txt)}
+.btn.on{border-color:var(--gold);color:var(--gold2)}
+/* ---------- LAYOUT ---------- */
+.app{display:grid;grid-template-columns:286px 1fr;gap:18px;max-width:1320px;margin:0 auto;padding:20px 24px 40px}
+@media(max-width:900px){.app{grid-template-columns:1fr;padding:14px}}
+/* ---------- CHARACTER / PROGRESS PANEL ---------- */
+.scroll{background:linear-gradient(180deg,var(--ink-panel),var(--panel2));border:1px solid var(--line);
+  border-radius:14px;padding:20px 18px;position:relative;align-self:start}
+.scroll::before{content:"";position:absolute;inset:6px;border:1px solid rgba(201,161,74,.16);border-radius:10px;pointer-events:none}
+.taiji{width:84px;height:84px;margin:0 auto 10px;display:block;animation:spin 48s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scroll h2{font-family:var(--han);font-size:18px;font-weight:700;text-align:center;letter-spacing:1px}
+.scroll .role{font-size:11px;color:var(--sub);text-align:center;margin:1px 0 14px}
+.realm-box{text-align:center;border:1px solid rgba(201,161,74,.3);border-radius:10px;padding:9px;margin-bottom:14px;
+  background:radial-gradient(circle at 50% 0%,rgba(201,161,74,.1),transparent)}
+.realm-box .lbl{font-size:9.5px;letter-spacing:2px;color:var(--gold);text-transform:uppercase}
+.realm-box .nm{font-family:var(--han);font-size:18px;font-weight:700;color:var(--gold2);margin-top:2px}
+.xprow{font-size:10px;color:var(--sub);display:flex;justify-content:space-between;margin:0 0 5px}
+.xpbar{height:10px;background:#1c2129;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.xpbar>i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--crimson));transition:.5s}
+.stats{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.stat{display:flex;align-items:center;gap:9px}
+.stat .h{font-family:var(--han);font-size:20px;width:24px;text-align:center}
+.stat .meta{flex:1}
+.stat .meta .l{display:flex;justify-content:space-between;font-size:10.5px;color:var(--sub);margin-bottom:3px}
+.stat .meta .l b{font-family:var(--serif);color:var(--txt);font-size:12px}
+.stat .tr{height:7px;background:#1c2129;border-radius:5px;overflow:hidden}
+.stat .tr>i{display:block;height:100%;transition:.5s}
+.s-than .h{color:var(--azure)} .s-than .tr>i{background:linear-gradient(90deg,var(--azure),#7fa8d4)}
+.s-the  .h{color:var(--jade)}  .s-the  .tr>i{background:linear-gradient(90deg,var(--jade),#9bd0ad)}
+.s-khi  .h{color:var(--gold)}  .s-khi  .tr>i{background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.legend{margin-top:16px;border-top:1px solid var(--line);padding-top:13px;font-size:10.5px;color:var(--sub);line-height:2}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;border:1px solid rgba(255,255,255,.15)}
+.cunglist{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.cunglist .ci{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;color:var(--sub)}
+.cunglist .ci b{font-family:var(--serif);color:var(--txt)}
+/* meditate button in panel */
+.medbtn{margin-top:14px;width:100%;background:linear-gradient(180deg,#15202a,#10171f);border:1px solid rgba(93,134,179,.4);
+  color:var(--azure);padding:11px;border-radius:10px;cursor:pointer;font-family:var(--han);font-size:13px;letter-spacing:1px;
+  display:flex;align-items:center;justify-content:center;gap:8px}
+.medbtn:hover{border-color:var(--azure);color:#9ec1e6;box-shadow:0 0 18px rgba(93,134,179,.2)}
+.medbtn .bi{font-size:16px}
+/* ---------- WORLD / CANH (DI CANH) ---------- */
+.world{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  min-height:560px;background:#0a0d12}
+@media(max-width:900px){.world{min-height:500px}}
+/* sky / element backdrop layers (ink-wash) */
+.canh-bg{position:absolute;inset:0;transition:opacity 1.1s ease;opacity:0;pointer-events:none}
+.canh-bg.active{opacity:1}
+.canh-bg svg{width:100%;height:100%;display:block}
+/* drifting clouds/mist (parallax) */
+.mist{position:absolute;inset:-10% -20%;pointer-events:none;z-index:2;opacity:.5;
+  background:radial-gradient(closest-side at 20% 30%,rgba(236,230,216,.10),transparent 60%),
+             radial-gradient(closest-side at 70% 60%,rgba(236,230,216,.08),transparent 60%),
+             radial-gradient(closest-side at 45% 80%,rgba(236,230,216,.06),transparent 60%);
+  animation:drift 70s linear infinite}
+.mist.m2{opacity:.34;animation:drift2 110s linear infinite;
+  background:radial-gradient(closest-side at 60% 25%,rgba(236,230,216,.07),transparent 60%),
+             radial-gradient(closest-side at 30% 70%,rgba(236,230,216,.06),transparent 60%)}
+@keyframes drift{from{transform:translateX(-4%)}to{transform:translateX(4%)}}
+@keyframes drift2{from{transform:translateX(5%)}to{transform:translateX(-5%)}}
+/* faint big taiji ghost rotating in scene */
+.ghost-taiji{position:absolute;right:3%;top:6%;width:120px;height:120px;opacity:.10;z-index:2;
+  animation:spin 90s linear infinite;pointer-events:none}
+@media(max-width:900px){.ghost-taiji{width:80px;opacity:.08}}
+/* particle canvas (linh khi) */
+#linhqi{position:absolute;inset:0;z-index:3;pointer-events:none}
+/* scene foreground content */
+.canh-fg{position:relative;z-index:5;height:100%;padding:14px 18px 18px;display:flex;flex-direction:column}
+.canh-hd{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.canh-hd .ttl{flex:1;min-width:180px}
+.canh-hd .ttl h3{font-family:var(--han);font-size:21px;font-weight:700;line-height:1.1;
+  text-shadow:0 2px 14px rgba(0,0,0,.6)}
+.canh-hd .ttl .el{font-size:11px;color:var(--sub);letter-spacing:1px;margin-top:3px}
+.canh-hd .ttl .el b{color:var(--gold2)}
+.canh-prog{font-size:10.5px;color:var(--sub);text-align:right;white-space:nowrap}
+.canh-prog b{font-family:var(--han);color:var(--gold2);font-size:15px}
+/* winding path: 8 que stones */
+.pathwrap{position:relative;flex:1;min-height:380px;margin-top:6px}
+.pathsvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.pathsvg .ptrack{fill:none;stroke:rgba(236,230,216,.16);stroke-width:2.4;stroke-dasharray:2 7;stroke-linecap:round}
+.pathsvg .plit{fill:none;stroke:rgba(111,174,135,.45);stroke-width:2.6;stroke-linecap:round}
+.stone{position:absolute;transform:translate(-50%,-50%);z-index:4;cursor:pointer;width:78px;text-align:center;
+  transition:transform .18s}
+.stone:hover{transform:translate(-50%,-50%) scale(1.06)}
+.stone .disc{width:58px;height:58px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  position:relative;border:2px solid var(--line);background:radial-gradient(circle at 50% 35%,#1b212c,#10141b);
+  box-shadow:0 6px 16px rgba(0,0,0,.45)}
+.stone .disc .gx{font-family:var(--han);font-size:26px;line-height:1;color:var(--txt)}
+.stone .disc .qn{position:absolute;top:-7px;right:-4px;font-size:9px;background:#0d1016;border:1px solid var(--line);
+  color:var(--sub);border-radius:10px;padding:0 5px;font-family:var(--serif)}
+.stone .nm{font-family:var(--han);font-size:11px;margin-top:5px;color:var(--txt);
+  text-shadow:0 1px 6px rgba(0,0,0,.8);line-height:1.15}
+.stone.done .disc{border-color:var(--jade);background:radial-gradient(circle at 50% 35%,#16301f,#0d1c14);
+  box-shadow:0 0 16px rgba(111,174,135,.35)}
+.stone.done .disc .gx{color:#bfe6cd}
+.stone.next .disc{border-color:var(--azure);animation:stonepulse 2s ease-in-out infinite}
+.stone.next .disc .gx{color:#bcd6f2}
+.stone.lock{cursor:not-allowed}
+.stone.lock .disc{border-style:dashed;border-color:#39414f;opacity:.55}
+.stone.lock .disc .gx{color:#5b6472}
+.stone.lock .nm{color:#6f6a5e;opacity:.8}
+.stone.lock .disc::after{content:"🔒";position:absolute;font-size:13px;opacity:.8}
+.stone.lock .disc .gx{opacity:.25}
+@keyframes stonepulse{0%,100%{box-shadow:0 0 6px rgba(93,134,179,.4)}50%{box-shadow:0 0 20px rgba(93,134,179,.85)}}
+/* compass / la-ban realm switcher */
+.compass{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;padding-top:12px;border-top:1px solid rgba(236,230,216,.1);z-index:6}
+.cbtn{font-family:var(--han);font-size:12px;background:rgba(13,16,22,.66);border:1px solid var(--line);color:var(--sub);
+  padding:6px 11px;border-radius:8px;cursor:pointer;backdrop-filter:blur(3px);display:flex;align-items:center;gap:5px;
+  transition:.18s}
+.cbtn .ce{font-size:9px;opacity:.8}
+.cbtn:hover{border-color:var(--gold);color:var(--txt)}
+.cbtn.on{border-color:var(--gold2);color:var(--gold2);background:rgba(201,161,74,.12);
+  box-shadow:0 0 12px rgba(201,161,74,.2)}
+.cbtn.cdone{color:var(--jade);border-color:rgba(111,174,135,.4)}
+.cbtn.cdone.on{color:#bfe6cd;border-color:var(--jade)}
+.cbtn .cdot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.6}
+/* arrows to move realm */
+.canh-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:7;width:38px;height:60px;border:none;cursor:pointer;
+  background:rgba(13,16,22,.5);color:var(--gold2);font-size:22px;backdrop-filter:blur(3px);border:1px solid var(--line)}
+.canh-nav:hover{background:rgba(13,16,22,.8);border-color:var(--gold)}
+.canh-nav.prev{left:0;border-radius:0 10px 10px 0}
+.canh-nav.next{right:0;border-radius:10px 0 0 10px}
+/* scene transition veil (sương tan) */
+.veil{position:absolute;inset:0;z-index:8;background:radial-gradient(circle at 50% 50%,transparent,rgba(8,10,14,.92));
+  opacity:0;pointer-events:none;transition:opacity .5s}
+.veil.on{opacity:1}
+/* ---------- LIST MODE ---------- */
+.listmode{display:none;padding:6px 2px 2px}
+.listmode.show{display:block}
+.lc{margin-bottom:14px;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.lc>.hd{display:flex;align-items:center;gap:9px;padding:9px 13px;background:#181d27;border-bottom:1px solid var(--line)}
+.lc>.hd .badge{font-family:var(--han);font-size:13px;font-weight:700;padding:2px 9px;border-radius:6px}
+.lc>.hd h4{font-family:var(--han);font-size:14px;font-weight:600}
+.lc>.hd .cnt{margin-left:auto;font-size:10.5px;color:var(--sub)}
+.lrow{display:grid;grid-template-columns:34px 26px 1fr auto;gap:9px;align-items:center;padding:8px 13px;border-top:1px solid #1b2028;cursor:pointer}
+.lrow:hover{background:#161b24}
+.lrow .hex{font-family:var(--han);font-size:20px}
+.lrow .qn{font-size:11px;color:var(--faint);text-align:center}
+.lrow .nm{font-family:var(--han);font-size:14px}
+.lrow .nm small{font-family:var(--serif);color:var(--sub);font-size:10.5px;display:block}
+.lrow .st{font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid var(--line);white-space:nowrap}
+.lrow.locked{opacity:.5;cursor:not-allowed}
+.lrow .st.done{color:var(--jade);border-color:rgba(111,174,135,.4)}
+.lrow .st.next{color:var(--azure);border-color:rgba(93,134,179,.5)}
+.lrow .st.lock{color:var(--faint)}
+/* ---------- MODAL ---------- */
+.ov{position:fixed;inset:0;background:rgba(5,6,9,.8);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:60;padding:18px}
+.ov.show{display:flex}
+.modal{background:linear-gradient(180deg,var(--ink-panel),var(--panel2));border:1px solid var(--line);border-radius:16px;
+  max-width:580px;width:100%;max-height:92vh;overflow-y:auto;padding:24px 26px;position:relative}
+.modal::before{content:"";position:absolute;inset:7px;border:1px solid rgba(201,161,74,.13);border-radius:11px;pointer-events:none}
+.modal .x{position:absolute;right:16px;top:13px;cursor:pointer;color:var(--sub);font-size:22px;background:none;border:none;z-index:2}
+.modal .x:hover{color:var(--txt)}
+.qtag{font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase}
+/* lesson head */
+.lhead{display:flex;gap:16px;align-items:center;margin:6px 0 14px}
+.hexbox{flex-shrink:0;width:78px;display:flex;flex-direction:column-reverse;gap:5px;align-items:center;
+  border:1px solid rgba(201,161,74,.25);border-radius:10px;padding:11px 10px;background:radial-gradient(circle at 50% 100%,rgba(201,161,74,.08),transparent)}
+.yao{height:9px;width:56px;display:flex;justify-content:space-between}
+.yao i{display:block;height:100%;background:var(--gold2);border-radius:2px}
+.yao.yang i{width:100%}
+.yao.yin i{width:46%}
+.ltitle h2{font-family:var(--han);font-size:25px;font-weight:700;line-height:1.1}
+.ltitle .big-han{font-family:var(--han);font-size:34px;color:var(--gold2);line-height:1;margin-bottom:4px}
+.ltitle .tris{font-size:12px;color:var(--sub);margin-top:6px}
+.ltitle .tris .sym{font-family:var(--han);font-size:17px;color:var(--txt);margin-right:3px}
+.ltitle .glyph{font-family:var(--han);font-size:20px;color:var(--gold);margin-left:6px}
+.sec{font-size:13px;line-height:1.65;margin:9px 0;color:#dad4c6}
+.sec b{color:var(--gold2);font-weight:600}
+.keys{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.keys .k{background:#0f1219;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:8px 12px;font-size:12.5px}
+.meta-row{font-size:11.5px;color:var(--sub);background:#0f1219;border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:10px 0}
+.meta-row b{color:var(--txt)}
+.divider{text-align:center;font-size:11px;color:var(--gold);letter-spacing:3px;margin:16px 0 12px;text-transform:uppercase}
+.divider span{display:inline-block;border-top:1px solid var(--line);padding-top:9px;width:100%}
+/* battle */
+.trial{margin-top:6px}
+.trial-bar{display:flex;align-items:center;gap:10px;background:rgba(180,84,63,.08);border:1px solid rgba(180,84,63,.3);
+  border-radius:10px;padding:9px 13px;margin-bottom:12px}
+.trial-bar .em{font-size:24px}
+.trial-bar .nm{font-family:var(--han);font-size:13px;font-weight:600}
+.trial-bar .hp{margin-top:4px;height:7px;width:150px;background:#2a1116;border-radius:5px;overflow:hidden}
+.trial-bar .hp>i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--crimson),var(--gold));transition:.4s}
+.qstep{font-size:11px;color:var(--sub);margin-bottom:8px}
+.qq{font-size:13.5px;margin-bottom:11px}
+.qq b{color:var(--gold2)}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;background:#0f1219;border:1px solid var(--line);color:var(--txt);padding:11px 14px;border-radius:9px;
+  cursor:pointer;font-size:12.5px;font-family:var(--serif);line-height:1.4}
+.opt:hover{border-color:var(--azure)}
+.opt.ok{border-color:var(--jade);background:rgba(111,174,135,.13)}
+.opt.no{border-color:var(--crimson);background:rgba(180,84,63,.12);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* victory */
+.victory{text-align:center;padding:6px 0}
+.victory .seal{font-family:var(--han);font-size:40px;color:var(--gold2);text-shadow:0 0 18px rgba(201,161,74,.4)}
+.victory h3{font-family:var(--han);font-size:21px;margin:8px 0 4px}
+.victory .vp{font-size:12px;color:var(--sub)}
+.reward{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.rw{font-size:11.5px;background:rgba(201,161,74,.12);border:1px solid rgba(201,161,74,.35);color:var(--gold2);
+  padding:5px 12px;border-radius:20px;font-weight:600}
+.cta{margin-top:14px;width:100%;background:linear-gradient(90deg,var(--gold),var(--crimson));color:#1a1206;border:none;
+  padding:12px;border-radius:10px;font-weight:700;font-family:var(--han);font-size:15px;cursor:pointer;letter-spacing:1px}
+.cta:hover{filter:brightness(1.07)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1a1206;
+  padding:11px 22px;border-radius:9px;font-weight:600;font-size:12.5px;opacity:0;transition:.3s;pointer-events:none;z-index:90;font-family:var(--han)}
+#toast.show{opacity:1}
+.note{font-size:10.5px;color:var(--faint);text-align:center;margin:18px 0 0;line-height:1.6;max-width:1320px;margin-left:auto;margin-right:auto;padding:0 24px}
+/* ---------- MEDITATION OVERLAY (THIEN / HOI THO) ---------- */
+.med-ov{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;flex-direction:column;
+  background:radial-gradient(circle at 50% 42%,#0e1822,#06090d 75%)}
+.med-ov.show{display:flex}
+.med-ov .medclose{position:absolute;top:18px;right:22px;background:none;border:none;color:var(--sub);font-size:24px;cursor:pointer}
+.med-ov .medclose:hover{color:var(--txt)}
+.med-stars{position:absolute;inset:0;pointer-events:none;opacity:.5}
+.breath-wrap{position:relative;width:300px;height:300px;display:flex;align-items:center;justify-content:center}
+@media(max-width:480px){.breath-wrap{width:240px;height:240px}}
+.breath-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(201,161,74,.25)}
+.breath-ring.r2{inset:26px;border-color:rgba(93,134,179,.2)}
+.breath-orb{width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle at 42% 38%,rgba(227,192,115,.9),rgba(201,161,74,.35) 55%,rgba(93,134,179,.12) 100%);
+  box-shadow:0 0 50px rgba(201,161,74,.4),inset 0 0 30px rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform 4s cubic-bezier(.45,.05,.55,.95),box-shadow 4s ease;will-change:transform}
+.breath-orb .han{font-size:30px;color:#1a1206;opacity:.55;text-shadow:0 0 6px rgba(255,255,255,.4)}
+.breath-orb.inhale{transform:scale(1.55);box-shadow:0 0 80px rgba(227,192,115,.65),inset 0 0 36px rgba(255,255,255,.28)}
+.breath-orb.exhale{transform:scale(.85);box-shadow:0 0 34px rgba(93,134,179,.45),inset 0 0 22px rgba(255,255,255,.12)}
+.breath-orb.hold{transform:scale(1.55)}
+.med-phase{font-family:var(--han);font-size:24px;color:var(--gold2);margin-top:30px;letter-spacing:2px;
+  text-shadow:0 0 16px rgba(201,161,74,.4);min-height:34px}
+.med-sub{font-size:13px;color:var(--sub);margin-top:8px;min-height:20px;font-style:italic}
+.med-meta{margin-top:22px;display:flex;gap:18px;font-size:12px;color:var(--sub)}
+.med-meta b{font-family:var(--han);color:var(--gold2);font-size:16px}
+.med-tip{position:absolute;bottom:26px;left:0;right:0;text-align:center;font-size:11px;color:var(--faint);padding:0 24px}
+.med-start{margin-top:24px;background:linear-gradient(180deg,#1a2733,#0f1820);border:1px solid rgba(93,134,179,.45);
+  color:#bcd6f2;padding:11px 26px;border-radius:24px;cursor:pointer;font-family:var(--han);font-size:14px;letter-spacing:2px}
+.med-start:hover{border-color:var(--azure);box-shadow:0 0 22px rgba(93,134,179,.3)}
+/* ---------- BREAKTHROUGH (DOT PHA CANH GIOI) ---------- */
+.bt-ov{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;
+  background:radial-gradient(circle at 50% 50%,rgba(201,161,74,.16),rgba(5,6,9,.96) 70%)}
+.bt-ov.show{display:flex;animation:btflash 1s ease}
+@keyframes btflash{0%{background:rgba(255,250,235,.9)}30%{background:radial-gradient(circle at 50% 50%,rgba(201,161,74,.4),rgba(5,6,9,.9) 70%)}100%{background:radial-gradient(circle at 50% 50%,rgba(201,161,74,.16),rgba(5,6,9,.96) 70%)}}
+.bt-core{position:relative;width:220px;height:220px;display:flex;align-items:center;justify-content:center}
+.bt-core .ring{position:absolute;border:2px solid var(--gold2);border-radius:50%;inset:50%;
+  animation:btring 1.6s ease-out infinite}
+.bt-core .ring.r2{animation-delay:.5s;border-color:var(--azure)}
+.bt-core .ring.r3{animation-delay:1s;border-color:var(--crimson)}
+@keyframes btring{0%{inset:48%;opacity:.9}100%{inset:-6%;opacity:0}}
+.bt-core .seal{font-family:var(--han);font-size:70px;color:var(--gold2);z-index:2;
+  text-shadow:0 0 40px rgba(227,192,115,.8);animation:btpop .9s cubic-bezier(.2,1.4,.4,1)}
+@keyframes btpop{0%{transform:scale(.2);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.bt-label{font-size:12px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;margin-top:30px;animation:btfade 1.2s ease}
+.bt-realm{font-family:var(--han);font-size:34px;font-weight:700;color:var(--gold2);margin-top:6px;
+  text-shadow:0 0 24px rgba(201,161,74,.5);animation:btfade 1.2s ease .15s both}
+.bt-sub{font-size:12px;color:var(--sub);margin-top:14px;font-style:italic;animation:btfade 1.2s ease .3s both;
+  max-width:340px;text-align:center;padding:0 20px}
+@keyframes btfade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.bt-close{margin-top:26px;background:linear-gradient(90deg,var(--gold),var(--crimson));color:#1a1206;border:none;
+  padding:11px 30px;border-radius:24px;cursor:pointer;font-family:var(--han);font-size:14px;font-weight:700;letter-spacing:2px;
+  animation:btfade 1.2s ease .5s both}
+.bt-close:hover{filter:brightness(1.08)}
+#btspark{position:absolute;inset:0;z-index:1;pointer-events:none}
+/* ---------- reduced motion: tat animation nang (media query + class thu cong) ---------- */
+@media(prefers-reduced-motion:reduce){
+  .taiji,.ghost-taiji,.mist,.mist.m2,.stone.next .disc,.breath-orb,.bt-ov.show,.bt-core .ring,.bt-core .seal,
+  .bt-label,.bt-realm,.bt-sub,.bt-close,.canh-bg{animation:none!important;transition:none!important}
+  .breath-orb{transition:transform 1.2s linear,box-shadow 1.2s linear!important}
+  .canh-bg{transition:opacity .25s linear!important}
+}
+html.reduced-motion .taiji,html.reduced-motion .ghost-taiji,html.reduced-motion .mist,
+html.reduced-motion .mist.m2,html.reduced-motion .stone.next .disc,html.reduced-motion .breath-orb,
+html.reduced-motion .bt-ov.show,html.reduced-motion .bt-core .ring,html.reduced-motion .bt-core .seal,
+html.reduced-motion .bt-label,html.reduced-motion .bt-realm,html.reduced-motion .bt-sub,
+html.reduced-motion .bt-close,html.reduced-motion .canh-bg{animation:none!important;transition:none!important}
+html.reduced-motion .breath-orb{transition:transform 1.2s linear,box-shadow 1.2s linear!important}
+html.reduced-motion .canh-bg{transition:opacity .25s linear!important}
+</style></head>
+<body>
+<div class="top">
+  <div class="brand">
+    <span class="seal han">易</span>
+    <div><h1 class="han">Kinh Dịch · Hành Trình Tu Luyện</h1>
+    <small>Đạo Trường Huyền Học · Đi Cảnh · Tu Luyện</small></div>
+  </div>
+  <div class="sp"></div>
+  <button class="btn" id="rmBtn" onclick="toggleReducedMotion()" title="Tắt/bật hiệu ứng động">✦ Hiệu ứng</button>
+  <button class="btn" id="modeBtn" onclick="toggleMode()">☷ Chế độ danh sách</button>
+  <button class="btn" onclick="resetGame()">↺ Khởi đầu lại</button>
+</div>
+
+<div class="app">
+  <!-- PROGRESS SCROLL -->
+  <aside class="scroll">
+    <svg class="taiji" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="48" fill="#0d1016" stroke="#c9a14a" stroke-width="1.5"/>
+      <path d="M50 2 a24 24 0 0 0 0 48 a24 24 0 0 1 0 48 a48 48 0 0 1 0 -96 Z" fill="#ece6d8"/>
+      <circle cx="50" cy="26" r="7" fill="#0d1016"/>
+      <circle cx="50" cy="74" r="7" fill="#ece6d8"/>
+    </svg>
+    <h2 class="han">Đạo hữu Ron</h2>
+    <div class="role">Người tầm Đạo · Học trò Kinh Dịch</div>
+    <div class="realm-box">
+      <div class="lbl">Cảnh giới</div>
+      <div class="nm han" id="realm">Phàm Nhân</div>
+    </div>
+    <div class="xprow"><span id="xplbl">Đạo hạnh 0</span><span id="xpnext">→ đột phá</span></div>
+    <div class="xpbar"><i id="xpfill"></i></div>
+    <button class="medbtn" onclick="openMeditate()"><span class="bi han">禪</span> Tọa thiền · Điều tức</button>
+    <div class="stats">
+      <div class="stat s-than"><div class="h han">神</div><div class="meta"><div class="l"><span>Thần · Tri kiến</span><b id="v-than">0</b></div><div class="tr"><i id="b-than"></i></div></div></div>
+      <div class="stat s-the"><div class="h han">體</div><div class="meta"><div class="l"><span>Thể · Quái tượng</span><b id="v-the">0</b></div><div class="tr"><i id="b-the"></i></div></div></div>
+      <div class="stat s-khi"><div class="h han">氣</div><div class="meta"><div class="l"><span>Khí · Định lực</span><b id="v-khi">0</b></div><div class="tr"><i id="b-khi"></i></div></div></div>
+    </div>
+    <div class="legend">
+      <span class="dot" style="background:var(--azure)"></span>Linh ngộ được (mở) &nbsp;
+      <span class="dot" style="background:var(--jade)"></span>Đã ấn chứng<br>
+      <span class="dot" style="background:#333c4b"></span>Chưa khai mở &nbsp;
+      <span class="dot" style="background:var(--gold)"></span>Cảnh hiện tại
+    </div>
+    <div class="cunglist" id="cunglist"></div>
+  </aside>
+
+  <!-- DI CANH — WORLD -->
+  <main>
+    <div class="world" id="world">
+      <div class="canh-bg" id="canhbg"></div>
+      <div class="mist"></div>
+      <div class="mist m2"></div>
+      <svg class="ghost-taiji" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="48" fill="none" stroke="#c9a14a" stroke-width="1"/>
+        <path d="M50 2 a24 24 0 0 0 0 48 a24 24 0 0 1 0 48 a48 48 0 0 1 0 -96 Z" fill="#ece6d8" opacity=".5"/>
+        <circle cx="50" cy="26" r="6" fill="#0d1016"/><circle cx="50" cy="74" r="6" fill="#ece6d8"/>
+      </svg>
+      <canvas id="linhqi"></canvas>
+      <div class="veil" id="veil"></div>
+      <button class="canh-nav prev" onclick="prevCanh()" aria-label="Cảnh trước">‹</button>
+      <button class="canh-nav next" onclick="nextCanh()" aria-label="Cảnh sau">›</button>
+      <div class="canh-fg">
+        <div class="canh-hd">
+          <div class="ttl">
+            <h3 class="han" id="canhTitle">Cảnh</h3>
+            <div class="el" id="canhEl"></div>
+          </div>
+          <div class="canh-prog" id="canhProg"></div>
+        </div>
+        <div class="pathwrap" id="pathwrap">
+          <svg class="pathsvg" id="pathsvg" viewBox="0 0 1000 600" preserveAspectRatio="none">
+            <path class="ptrack" id="ptrack" d=""/>
+            <path class="plit" id="plit" d=""/>
+          </svg>
+          <!-- stones injected -->
+        </div>
+        <div class="compass" id="compass"></div>
+      </div>
+    </div>
+    <div class="listmode" id="listmode"></div>
+  </main>
+</div>
+<div class="note">Tu luyện nghiêm cẩn · Ý nghĩa quẻ bám nguồn <i>Bạch Thư Chu Dịch</i> (bản lụa Mã Vương Đôi). Phân cung Bát Quái &amp; Ngũ Hành là khung huyền học để học — đối chiếu thêm khi dùng việc hệ trọng.</div>
+
+<!-- LESSON / BATTLE MODAL -->
+<div class="ov" id="ov"><div class="modal" id="modal"></div></div>
+<div id="toast"></div>
+
+<!-- MEDITATION OVERLAY -->
+<div class="med-ov" id="medOv">
+  <canvas class="med-stars" id="medStars"></canvas>
+  <button class="medclose" onclick="closeMeditate()">✕</button>
+  <div class="breath-wrap">
+    <div class="breath-ring"></div><div class="breath-ring r2"></div>
+    <div class="breath-orb" id="breathOrb"><span class="han">氣</span></div>
+  </div>
+  <div class="med-phase han" id="medPhase">Tọa thiền</div>
+  <div class="med-sub" id="medSub">Ngồi thẳng, buông vai, theo dõi hơi thở</div>
+  <div class="med-meta">
+    <div>Nhịp thở: <b id="medCycles">0</b></div>
+    <div>Đạo hạnh tích: <b id="medGain">0</b></div>
+  </div>
+  <button class="med-start" id="medStartBtn" onclick="toggleBreath()">Bắt đầu điều tức</button>
+  <div class="med-tip">Mỗi vòng thở trọn vẹn tích thêm Đạo hạnh · ngồi càng lâu, định lực càng sâu</div>
+</div>
+
+<!-- BREAKTHROUGH OVERLAY -->
+<div class="bt-ov" id="btOv">
+  <canvas id="btspark"></canvas>
+  <div class="bt-core">
+    <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
+    <div class="seal han" id="btSeal">丹</div>
+  </div>
+  <div class="bt-label">Đột phá cảnh giới</div>
+  <div class="bt-realm han" id="btRealm">Luyện Khí</div>
+  <div class="bt-sub" id="btSub"></div>
+  <button class="bt-close" onclick="closeBreakthrough()">Lĩnh ngộ →</button>
+</div>
+
+<script>
+/* ======================================================================
+   DATA — 64 quẻ, copy NGUYÊN VĂN từ Kinh_Dich_64_Que_HOC.html (mảng QUE)
+   ====================================================================== */
+const QUE=[{"n": 1, "name": "Kiền (Càn)", "han": "乾", "up": "Càn", "lo": "Càn", "upSym": "☰", "loSym": "☰", "upNat": "Trời", "loNat": "Trời", "upEl": "Kim", "loEl": "Kim", "palace": "Càn", "palaceEl": "Kim", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Kim ngộ Kim: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Thuần dương, sức sáng tạo nguyên thủy của Trời. Hội đủ 4 đức Nguyên–Hanh–Lợi–Trinh: khởi tạo, hanh thông, lợi ích, bền vững.", "key": "Tự cường bất tức • Bậc lãnh đạo sáng tạo • Cương kiện, chính trực", "lines": [1, 1, 1, 1, 1, 1], "tong": [1, "Kiền (Càn)"], "thac": [2, "Khôn"]}, {"n": 2, "name": "Khôn", "han": "坤", "up": "Khôn", "lo": "Khôn", "upSym": "☷", "loSym": "☷", "upNat": "Đất", "loNat": "Đất", "upEl": "Thổ", "loEl": "Thổ", "palace": "Khôn", "palaceEl": "Thổ", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Thổ ngộ Thổ: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Thuần âm, đại biểu Đất. Nhu thuận, dung chứa, nuôi dưỡng vạn vật. Lợi khi đi theo phò tá, đi đầu thì lạc lối; về Tây Nam được bạn.", "key": "Hậu đức tải vật • Nhu thuận, phò tá • Bao dung nuôi dưỡng", "lines": [0, 0, 0, 0, 0, 0], "tong": [2, "Khôn"], "thac": [1, "Kiền (Càn)"]}, {"n": 3, "name": "Truân", "han": "屯", "up": "Khảm", "lo": "Chấn", "upSym": "☵", "loSym": "☳", "upNat": "Nước", "loNat": "Sấm", "upEl": "Thủy", "loEl": "Mộc", "palace": "Khảm", "palaceEl": "Thủy", "sess": "2 thế", "rel": "Ngoại sinh Nội", "relDesc": "Thủy(ngoại) sinh Mộc(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Khởi đầu gian nan như mầm cỏ xuyên đất. Quẻ tốt nếu kiên nhẫn bền chí; nên tạo nhiều người phò trợ, chớ theo mục tiêu xa vời.", "key": "Vạn sự khởi đầu nan • Kiên trì + tìm trợ thủ • Chớ vội tiến xa", "lines": [1, 0, 0, 0, 1, 0], "tong": [4, "Mông"], "thac": [50, "Đỉnh"]}, {"n": 4, "name": "Mông", "han": "蒙", "up": "Cấn", "lo": "Khảm", "upSym": "☶", "loSym": "☵", "upNat": "Núi", "loNat": "Nước", "upEl": "Thổ", "loEl": "Thủy", "palace": "Ly", "palaceEl": "Hỏa", "sess": "4 thế", "rel": "Ngoại khắc Nội", "relDesc": "Thổ(ngoại) khắc Thủy(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Non trẻ, mông muội, thiếu kinh nghiệm. Không phải thầy cầu trò mà trò thành tâm cầu thầy; bói lần đầu thì ứng, hỏi nhây thì thôi.", "key": "Khai tâm trừ mông muội • Trò thành tâm cầu thầy • Giáo dục vỡ lòng", "lines": [0, 1, 0, 0, 0, 1], "tong": [3, "Truân"], "thac": [49, "Cách"]}, {"n": 5, "name": "Nhu", "han": "需", "up": "Khảm", "lo": "Càn", "upSym": "☵", "loSym": "☰", "upNat": "Nước", "loNat": "Trời", "upEl": "Thủy", "loEl": "Kim", "palace": "Khôn", "palaceEl": "Thổ", "sess": "Du hồn", "rel": "Nội sinh Ngoại", "relDesc": "Kim(nội) sinh Thủy(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Chờ đợi & nuôi dưỡng. Giữ lòng thành tín mà đợi thời thì hanh thông rực rỡ; kiên trì gặp may, có lợi khi vượt hiểm lớn.", "key": "Chờ thời, dưỡng sức • Giữ lòng tin • Không nóng vội", "lines": [1, 1, 1, 0, 1, 0], "tong": [6, "Tụng"], "thac": [35, "Tấn"]}, {"n": 6, "name": "Tụng", "han": "訟", "up": "Càn", "lo": "Khảm", "upSym": "☰", "loSym": "☵", "upNat": "Trời", "loNat": "Nước", "upEl": "Kim", "loEl": "Thủy", "palace": "Ly", "palaceEl": "Hỏa", "sess": "Du hồn", "rel": "Ngoại sinh Nội", "relDesc": "Kim(ngoại) sinh Thủy(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Tranh tụng, mâu thuẫn (Trời lên >< Nước xuống). Có lòng thành nhưng bị ngăn; dừng ở mức trung thì hên, kiện đến cùng thì họa; nên nhờ đại nhân phân xử.", "key": "Tránh tranh chấp • Dừng ở mức trung • Nhờ người công minh phân xử", "lines": [0, 1, 0, 1, 1, 1], "tong": [5, "Nhu"], "thac": [36, "Minh Di"]}, {"n": 7, "name": "Sư", "han": "師", "up": "Khôn", "lo": "Khảm", "upSym": "☷", "loSym": "☵", "upNat": "Đất", "loNat": "Nước", "upEl": "Thổ", "loEl": "Thủy", "palace": "Khảm", "palaceEl": "Thủy", "sess": "Quy hồn", "rel": "Ngoại khắc Nội", "relDesc": "Thổ(ngoại) khắc Thủy(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Quân đội, dụng binh. Luôn kiên nhẫn chính nghĩa; có chủ tướng giỏi thì gặp may, nhờ vậy không hại.", "key": "Dụng binh có kỷ luật • Cần tướng giỏi • Chính nghĩa, thận trọng", "lines": [0, 1, 0, 0, 0, 0], "tong": [8, "Tỷ (Tỵ)"], "thac": [13, "Đồng Nhân"]}, {"n": 8, "name": "Tỷ (Tỵ)", "han": "比", "up": "Khảm", "lo": "Khôn", "upSym": "☵", "loSym": "☷", "upNat": "Nước", "loNat": "Đất", "upEl": "Thủy", "loEl": "Thổ", "palace": "Khôn", "palaceEl": "Thổ", "sess": "Quy hồn", "rel": "Nội khắc Ngoại", "relDesc": "Thổ(nội) khắc Thủy(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Thân phụ, liên kết hỗ trợ mật thiết. Quẻ tốt; giữ chính đạo bền lâu, không lỗi; ai đến sớm phò thì lợi, đến trễ thì nguy.", "key": "Đoàn kết, liên minh • Chọn minh chủ • Đến sớm thì lợi", "lines": [0, 0, 0, 0, 1, 0], "tong": [7, "Sư"], "thac": [14, "Đại Hữu"]}, {"n": 9, "name": "Tiểu Súc", "han": "小畜", "up": "Tốn", "lo": "Càn", "upSym": "☴", "loSym": "☰", "upNat": "Gió", "loNat": "Trời", "upEl": "Mộc", "loEl": "Kim", "palace": "Tốn", "palaceEl": "Mộc", "sess": "1 thế", "rel": "Nội khắc Ngoại", "relDesc": "Kim(nội) khắc Mộc(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Nuôi chứa nhỏ — sức thuần hóa còn yếu. Mây đen dày mà chưa mưa (từ Tây giao thổi lại): tích tiểu, chờ thời, chưa thể làm lớn.", "key": "Tích tiểu thành đại • Sức còn yếu, chờ • Mây chưa thành mưa", "lines": [1, 1, 1, 0, 1, 1], "tong": [10, "Lý"], "thac": [16, "Dự"]}, {"n": 10, "name": "Lý", "han": "履", "up": "Càn", "lo": "Đoài", "upSym": "☰", "loSym": "☱", "upNat": "Trời", "loNat": "Đầm", "upEl": "Kim", "loEl": "Kim", "palace": "Cấn", "palaceEl": "Thổ", "sess": "5 thế", "rel": "Tỷ hòa", "relDesc": "Kim ngộ Kim: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Dẫm lên đuôi cọp mà cọp không cắn: hành xử thận trọng, đúng lễ trong tình thế nguy thì mọi sự hanh thông.", "key": "Đi sau đuôi cọp • Thận trọng, đúng lễ • Nhu thắng cương", "lines": [1, 1, 0, 1, 1, 1], "tong": [9, "Tiểu Súc"], "thac": [15, "Khiêm"]}, {"n": 11, "name": "Thái", "han": "泰", "up": "Khôn", "lo": "Càn", "upSym": "☷", "loSym": "☰", "upNat": "Đất", "loNat": "Trời", "upEl": "Thổ", "loEl": "Kim", "palace": "Khôn", "palaceEl": "Thổ", "sess": "3 thế", "rel": "Ngoại sinh Nội", "relDesc": "Thổ(ngoại) sinh Kim(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Thông thái, hanh thông, bình yên. Cái nhỏ (âm) ra ngoài, cái lớn (dương) vào trong — âm dương giao hòa, may mắn.", "key": "Hanh thông, giao hòa • Thời thịnh — phải giữ gìn • Trên dưới thông nhau", "lines": [1, 1, 1, 0, 0, 0], "tong": [12, "Bĩ"], "thac": [12, "Bĩ"]}, {"n": 12, "name": "Bĩ", "han": "否", "up": "Càn", "lo": "Khôn", "upSym": "☰", "loSym": "☷", "upNat": "Trời", "loNat": "Đất", "upEl": "Kim", "loEl": "Thổ", "palace": "Càn", "palaceEl": "Kim", "sess": "3 thế", "rel": "Nội sinh Ngoại", "relDesc": "Thổ(nội) sinh Kim(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Bế tắc, bất giao, hoàn toàn bất lợi. Dương lớn ra ngoài, âm nhỏ vào trong. Quân tử nên kiên trì giữ chính, ẩn mình chờ thời.", "key": "Bế tắc, bất giao • Quân tử ẩn mình • Giữ chính chờ thời", "lines": [0, 0, 0, 1, 1, 1], "tong": [11, "Thái"], "thac": [11, "Thái"]}, {"n": 13, "name": "Đồng Nhân", "han": "同人", "up": "Càn", "lo": "Ly", "upSym": "☰", "loSym": "☲", "upNat": "Trời", "loNat": "Lửa", "upEl": "Kim", "loEl": "Hỏa", "palace": "Ly", "palaceEl": "Hỏa", "sess": "Quy hồn", "rel": "Nội khắc Ngoại", "relDesc": "Hỏa(nội) khắc Kim(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Hòa đồng với mọi người nơi cánh đồng (bao dung, công khai) thì hanh thông, vượt mọi sông lớn; lợi cho đức kiên trì trung chính.", "key": "Đồng lòng hợp quần • Bao dung, công khai • Vượt mọi trở ngại", "lines": [1, 0, 1, 1, 1, 1], "tong": [14, "Đại Hữu"], "thac": [7, "Sư"]}, {"n": 14, "name": "Đại Hữu", "han": "大有", "up": "Ly", "lo": "Càn", "upSym": "☲", "loSym": "☰", "upNat": "Lửa", "loNat": "Trời", "upEl": "Hỏa", "loEl": "Kim", "palace": "Càn", "palaceEl": "Kim", "sess": "Quy hồn", "rel": "Ngoại khắc Nội", "relDesc": "Hỏa(ngoại) khắc Kim(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Sở hữu được điều lớn lao nên cực kỳ hanh thông (đại thịnh, sáng rực).", "key": "Sở hữu lớn • Sáng rực, thịnh vượng • Khiêm để giữ phúc", "lines": [1, 1, 1, 1, 0, 1], "tong": [13, "Đồng Nhân"], "thac": [8, "Tỷ (Tỵ)"]}, {"n": 15, "name": "Khiêm", "han": "謙", "up": "Khôn", "lo": "Cấn", "upSym": "☷", "loSym": "☶", "upNat": "Đất", "loNat": "Núi", "upEl": "Thổ", "loEl": "Thổ", "palace": "Đoài", "palaceEl": "Kim", "sess": "5 thế", "rel": "Tỷ hòa", "relDesc": "Thổ ngộ Thổ: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Khiêm tốn: cư xử khiêm nhường thì mọi sự hanh thông; quân tử giữ được đức khiêm tới cuối đời (quẻ duy nhất 6 hào đều lành).", "key": "Khiêm tốn là gốc • Càng cao càng nhún • 6 hào đều cát (duy nhất)", "lines": [0, 0, 1, 0, 0, 0], "tong": [16, "Dự"], "thac": [10, "Lý"]}, {"n": 16, "name": "Dự", "han": "豫", "up": "Chấn", "lo": "Khôn", "upSym": "☳", "loSym": "☷", "upNat": "Sấm", "loNat": "Đất", "upEl": "Mộc", "loEl": "Thổ", "palace": "Chấn", "palaceEl": "Mộc", "sess": "1 thế", "rel": "Ngoại khắc Nội", "relDesc": "Mộc(ngoại) khắc Thổ(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Vui vẻ, an lạc, thuận thời mà động. Nên phong hầu kiến quốc, có thể xuất binh; cốt ở phòng bị trước.", "key": "Vui vẻ, thuận thời • Động phải hợp thời • Phòng bị trước", "lines": [0, 0, 0, 1, 0, 0], "tong": [15, "Khiêm"], "thac": [9, "Tiểu Súc"]}, {"n": 17, "name": "Tùy", "han": "隨", "up": "Đoài", "lo": "Chấn", "upSym": "☱", "loSym": "☳", "upNat": "Đầm/Hồ", "loNat": "Sấm", "upEl": "Kim", "loEl": "Mộc", "palace": "Chấn", "palaceEl": "Mộc", "sess": "Quy hồn", "rel": "Ngoại khắc Nội", "relDesc": "Kim(ngoại) khắc Mộc(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Tùy thời, tùy thuận theo cái đúng. Bói được quẻ này thì đại cát đại lợi, không gặp tai họa.", "key": "Tùy thời, tùy biến • Theo cái đúng • Đại cát đại lợi", "lines": [1, 0, 0, 1, 1, 0], "tong": [18, "Cổ"], "thac": [18, "Cổ"]}, {"n": 18, "name": "Cổ", "han": "蠱", "up": "Cấn", "lo": "Tốn", "upSym": "☶", "loSym": "☴", "upNat": "Núi", "loNat": "Gió", "upEl": "Thổ", "loEl": "Mộc", "palace": "Tốn", "palaceEl": "Mộc", "sess": "Quy hồn", "rel": "Nội khắc Ngoại", "relDesc": "Mộc(nội) khắc Thổ(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Chấn chỉnh đổ nát, chấm dứt rối loạn (cổ = ruỗng nát). Làm được thì rất lợi như vượt khó lớn; nghĩ kỹ trước khi làm và duyệt lại sau.", "key": "Chấn chỉnh đổ nát • Sửa sai, cải tổ • Nghĩ kỹ trước–sau", "lines": [0, 1, 1, 0, 0, 1], "tong": [17, "Tùy"], "thac": [17, "Tùy"]}, {"n": 19, "name": "Lâm", "han": "臨", "up": "Khôn", "lo": "Đoài", "upSym": "☷", "loSym": "☱", "upNat": "Đất", "loNat": "Đầm", "upEl": "Thổ", "loEl": "Kim", "palace": "Khôn", "palaceEl": "Thổ", "sess": "2 thế", "rel": "Ngoại sinh Nội", "relDesc": "Thổ(ngoại) sinh Kim(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Tiến tới giám lâm: đại cát đại lợi, nên kiên trì; nhưng đến tháng tám (dương suy dần) phải cẩn thận kẻo gặp hung.", "key": "Tiến tới giám lâm • Đại cát nhưng có hạn • Đề phòng suy (tháng 8)", "lines": [1, 1, 0, 0, 0, 0], "tong": [20, "Quán"], "thac": [33, "Độn"]}, {"n": 20, "name": "Quán", "han": "觀", "up": "Tốn", "lo": "Khôn", "upSym": "☴", "loSym": "☷", "upNat": "Gió", "loNat": "Đất", "upEl": "Mộc", "loEl": "Thổ", "palace": "Càn", "palaceEl": "Kim", "sess": "4 thế", "rel": "Ngoại khắc Nội", "relDesc": "Mộc(ngoại) khắc Thổ(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Quan sát & chiêm ngưỡng (làm gương cho dân). Khi cúng tế mà thiếu lễ vật, thiếu thành kính thì bị thần linh trừng phạt.", "key": "Quan sát, làm gương • Thành kính • Trên chính thì dưới theo", "lines": [0, 0, 0, 0, 1, 1], "tong": [19, "Lâm"], "thac": [34, "Đại Tráng"]}, {"n": 21, "name": "Phệ Hạp", "han": "噬嗑", "up": "Ly", "lo": "Chấn", "upSym": "☲", "loSym": "☳", "upNat": "Lửa", "loNat": "Sấm", "upEl": "Hỏa", "loEl": "Mộc", "palace": "Tốn", "palaceEl": "Mộc", "sess": "5 thế", "rel": "Nội sinh Ngoại", "relDesc": "Mộc(nội) sinh Hỏa(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Cắn vỡ vật cản (dùng hình phạt minh bạch để trừ gian). Bói được quẻ này rất tốt, kiện tụng sẽ thắng.", "key": "Cắn vỡ trở ngại • Hình phạt minh bạch • Trừ kẻ gian", "lines": [1, 0, 0, 1, 0, 1], "tong": [22, "Bí"], "thac": [48, "Tỉnh"]}, {"n": 22, "name": "Bí", "han": "賁", "up": "Cấn", "lo": "Ly", "upSym": "☶", "loSym": "☲", "upNat": "Núi", "loNat": "Lửa", "upEl": "Thổ", "loEl": "Hỏa", "palace": "Cấn", "palaceEl": "Thổ", "sess": "1 thế", "rel": "Nội sinh Ngoại", "relDesc": "Hỏa(nội) sinh Thổ(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Trang sức, làm đẹp, văn vẻ. Hanh thông; những việc nhỏ thì tô điểm thêm cho rực rỡ — lợi ở việc nhỏ.", "key": "Trang sức, văn vẻ • Đẹp vừa phải • Lợi việc nhỏ", "lines": [1, 0, 1, 0, 0, 1], "tong": [21, "Phệ Hạp"], "thac": [47, "Khốn"]}, {"n": 23, "name": "Bác", "han": "剝", "up": "Cấn", "lo": "Khôn", "upSym": "☶", "loSym": "☷", "upNat": "Núi", "loNat": "Đất", "upEl": "Thổ", "loEl": "Thổ", "palace": "Càn", "palaceEl": "Kim", "sess": "5 thế", "rel": "Tỷ hòa", "relDesc": "Thổ ngộ Thổ: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Bóc lột, suy tàn (âm lấn dương). Thời loạn ly, không nên ra tay việc gì, tất cả đều bất lợi — nên án binh.", "key": "Suy tàn, âm lấn dương • Án binh chờ thời • Không hành sự", "lines": [0, 0, 0, 0, 0, 1], "tong": [24, "Phục"], "thac": [43, "Quải"]}, {"n": 24, "name": "Phục", "han": "復", "up": "Khôn", "lo": "Chấn", "upSym": "☷", "loSym": "☳", "upNat": "Đất", "loNat": "Sấm", "upEl": "Thổ", "loEl": "Mộc", "palace": "Khôn", "palaceEl": "Thổ", "sess": "1 thế", "rel": "Nội khắc Ngoại", "relDesc": "Mộc(nội) khắc Thổ(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Phục hồi, trở lại (một dương sinh dưới). Xuất hành hay ở nhà đều tốt, có điềm phát tài; nguyên lý tuần hoàn, hết chu kỳ quay về, làm gì cũng thành.", "key": "Trở lại, hồi sinh • Một dương sinh dưới • Tuần hoàn, phát tài", "lines": [1, 0, 0, 0, 0, 0], "tong": [23, "Bác"], "thac": [44, "Cấu"]}, {"n": 25, "name": "Vô Vọng", "han": "無妄", "up": "Càn", "lo": "Chấn", "upSym": "☰", "loSym": "☳", "upNat": "Trời", "loNat": "Sấm", "upEl": "Kim", "loEl": "Mộc", "palace": "Tốn", "palaceEl": "Mộc", "sess": "4 thế", "rel": "Ngoại khắc Nội", "relDesc": "Kim(ngoại) khắc Mộc(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Chân thật, không vọng động. Hết sức hanh thông nếu giữ trung chính; lệch khỏi chính đạo là có họa, làm gì cũng bất lợi.", "key": "Chân thật, không vọng • Thuận tự nhiên • Lệch chính là họa", "lines": [1, 0, 0, 1, 1, 1], "tong": [26, "Đại Súc"], "thac": [46, "Thăng"]}, {"n": 26, "name": "Đại Súc", "han": "大畜", "up": "Cấn", "lo": "Càn", "upSym": "☶", "loSym": "☰", "upNat": "Núi", "loNat": "Trời", "upEl": "Thổ", "loEl": "Kim", "palace": "Cấn", "palaceEl": "Thổ", "sess": "2 thế", "rel": "Ngoại sinh Nội", "relDesc": "Thổ(ngoại) sinh Kim(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Súc tích lớn (nuôi dưỡng tài đức, tích lũy lớn). Giữ trung chính thì lợi; nên ra gánh việc lớn (vượt sông lớn) sẽ gặp may.", "key": "Súc tích lớn • Nuôi dưỡng tài đức • Dấn thân việc lớn", "lines": [1, 1, 1, 0, 0, 1], "tong": [25, "Vô Vọng"], "thac": [45, "Tụy"]}, {"n": 27, "name": "Di", "han": "頤", "up": "Cấn", "lo": "Chấn", "upSym": "☶", "loSym": "☳", "upNat": "Núi", "loNat": "Sấm", "upEl": "Thổ", "loEl": "Mộc", "palace": "Tốn", "palaceEl": "Mộc", "sess": "Du hồn", "rel": "Nội khắc Ngoại", "relDesc": "Mộc(nội) khắc Thổ(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Nuôi dưỡng (di = hàm/má). Quẻ tốt; quan sát đạo dinh dưỡng, tự lực kiếm cái ăn, giữ mồm giữ miệng.", "key": "Nuôi dưỡng đúng cách • Giữ mồm, tiết chế • Tự lực kiếm ăn", "lines": [1, 0, 0, 0, 0, 1], "tong": [27, "Di"], "thac": [28, "Đại Quá"]}, {"n": 28, "name": "Đại Quá", "han": "大過", "up": "Đoài", "lo": "Tốn", "upSym": "☱", "loSym": "☴", "upNat": "Đầm/Hồ", "loNat": "Gió", "upEl": "Kim", "loEl": "Mộc", "palace": "Chấn", "palaceEl": "Mộc", "sess": "Du hồn", "rel": "Ngoại khắc Nội", "relDesc": "Kim(ngoại) khắc Mộc(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Quá tải, vượt thường độ — cột nhà bị cong do gánh nặng. Nên mau rời khỏi 'nhà', ra ngoài thì hanh thông.", "key": "Quá tải, cột cong • Vượt thường độ • Mau thoát hiểm", "lines": [0, 1, 1, 1, 1, 0], "tong": [28, "Đại Quá"], "thac": [27, "Di"]}, {"n": 29, "name": "Khảm", "han": "坎", "up": "Khảm", "lo": "Khảm", "upSym": "☵", "loSym": "☵", "upNat": "Nước", "loNat": "Nước", "upEl": "Thủy", "loEl": "Thủy", "palace": "Khảm", "palaceEl": "Thủy", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Thủy ngộ Thủy: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Hiểm chồng hiểm (vực thẳm xoáy nước). Cần lòng thành tín; trông cậy vào tâm kiên định thì hanh thông, làm gì cũng được giúp.", "key": "Hiểm chồng hiểm • Giữ lòng thành • Tâm vững vượt nguy", "lines": [0, 1, 0, 0, 1, 0], "tong": [29, "Khảm"], "thac": [30, "Ly"]}, {"n": 30, "name": "Ly", "han": "離", "up": "Ly", "lo": "Ly", "upSym": "☲", "loSym": "☲", "upNat": "Lửa", "loNat": "Lửa", "upEl": "Hỏa", "loEl": "Hỏa", "palace": "Ly", "palaceEl": "Hỏa", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Hỏa ngộ Hỏa: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Sáng & bám víu (lửa). Đi bói việc cúng tế thì rất lợi; nên nuôi bò cái làm vật tế thì gặp may.", "key": "Sáng, nương bám • Theo chính đạo • Nuôi đức mềm", "lines": [1, 0, 1, 1, 0, 1], "tong": [30, "Ly"], "thac": [29, "Khảm"]}, {"n": 31, "name": "Hàm", "han": "咸", "up": "Đoài", "lo": "Cấn", "upSym": "☱", "loSym": "☶", "upNat": "Đầm/Hồ", "loNat": "Núi", "upEl": "Kim", "loEl": "Thổ", "palace": "Đoài", "palaceEl": "Kim", "sess": "3 thế", "rel": "Nội sinh Ngoại", "relDesc": "Thổ(nội) sinh Kim(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Cảm ứng, giao cảm (nam nữ tương hợp). Làm lễ nên bói trước; gả con gái là tốt; lấy hư tâm mà cảm.", "key": "Cảm ứng, giao cảm • Nam nữ tương hợp • Hư tâm mà cảm", "lines": [0, 0, 1, 1, 1, 0], "tong": [32, "Hằng"], "thac": [41, "Tổn"]}, {"n": 32, "name": "Hằng", "han": "恒", "up": "Chấn", "lo": "Tốn", "upSym": "☳", "loSym": "☴", "upNat": "Sấm", "loNat": "Gió", "upEl": "Mộc", "loEl": "Mộc", "palace": "Chấn", "palaceEl": "Mộc", "sess": "3 thế", "rel": "Tỷ hòa", "relDesc": "Mộc ngộ Mộc: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Bền lâu, kiên định (đạo thường hằng). Mọi sự hanh thông, không vấn đề; kiên trì thì lợi, ra gánh việc thì thành.", "key": "Bền lâu, kiên định • Giữ đạo thường hằng • Sự nghiệp dài lâu", "lines": [0, 1, 1, 1, 0, 0], "tong": [31, "Hàm"], "thac": [42, "Ích"]}, {"n": 33, "name": "Độn", "han": "遯", "up": "Càn", "lo": "Cấn", "upSym": "☰", "loSym": "☶", "upNat": "Trời", "loNat": "Núi", "upEl": "Kim", "loEl": "Thổ", "palace": "Càn", "palaceEl": "Kim", "sess": "2 thế", "rel": "Nội sinh Ngoại", "relDesc": "Thổ(nội) sinh Kim(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Lui ẩn đúng lúc để bảo toàn lực lượng thì mới thành về sau; cố chấp chỉ lợi cho tiểu nhân — đại nhân phải biết tùy nghi.", "key": "Lui ẩn đúng lúc • Bảo toàn lực lượng • Tránh tiểu nhân", "lines": [0, 0, 1, 1, 1, 1], "tong": [34, "Đại Tráng"], "thac": [19, "Lâm"]}, {"n": 34, "name": "Đại Tráng", "han": "大壯", "up": "Chấn", "lo": "Càn", "upSym": "☳", "loSym": "☰", "upNat": "Sấm", "loNat": "Trời", "upEl": "Mộc", "loEl": "Kim", "palace": "Khôn", "palaceEl": "Thổ", "sess": "4 thế", "rel": "Nội khắc Ngoại", "relDesc": "Kim(nội) khắc Mộc(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Cường thịnh sung mãn. Cứ tiếp tục kiên trì là tốt nhất; mạnh nhưng phải hợp lễ, chớ ỷ sức càn.", "key": "Cường thịnh • Mạnh phải hợp lễ • Chớ ỷ sức càn", "lines": [1, 1, 1, 1, 0, 0], "tong": [33, "Độn"], "thac": [20, "Quán"]}, {"n": 35, "name": "Tấn", "han": "晉", "up": "Ly", "lo": "Khôn", "upSym": "☲", "loSym": "☷", "upNat": "Lửa", "loNat": "Đất", "upEl": "Hỏa", "loEl": "Thổ", "palace": "Càn", "palaceEl": "Kim", "sess": "Du hồn", "rel": "Ngoại sinh Nội", "relDesc": "Hỏa(ngoại) sinh Thổ(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Tiến lên, thăng tiến như mặt trời mọc (Khang hầu được ban ngựa). Sáng tỏ, được trọng dụng.", "key": "Tiến lên, thăng tiến • Như mặt trời mọc • Được trọng dụng", "lines": [0, 0, 0, 1, 0, 1], "tong": [36, "Minh Di"], "thac": [5, "Nhu"]}, {"n": 36, "name": "Minh Di", "han": "明夷", "up": "Khôn", "lo": "Ly", "upSym": "☷", "loSym": "☲", "upNat": "Đất", "loNat": "Lửa", "upEl": "Thổ", "loEl": "Hỏa", "palace": "Khảm", "palaceEl": "Thủy", "sess": "Du hồn", "rel": "Nội sinh Ngoại", "relDesc": "Hỏa(nội) sinh Thổ(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Ánh sáng bị thương, bị che khuất. Gặp việc khó nên gieo quẻ hỏi sẽ có lợi; giấu tài, giữ chính trực trong nghịch cảnh.", "key": "Ánh sáng bị thương • Giấu tài tự bảo vệ • Chính trực trong nghịch cảnh", "lines": [1, 0, 1, 0, 0, 0], "tong": [35, "Tấn"], "thac": [6, "Tụng"]}, {"n": 37, "name": "Gia Nhân", "han": "家人", "up": "Tốn", "lo": "Ly", "upSym": "☴", "loSym": "☲", "upNat": "Gió", "loNat": "Lửa", "upEl": "Mộc", "loEl": "Hỏa", "palace": "Tốn", "palaceEl": "Mộc", "sess": "2 thế", "rel": "Ngoại sinh Nội", "relDesc": "Mộc(ngoại) sinh Hỏa(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Gia đình, thị tộc (tề gia). Nên bói hỏi về việc đàn bà thì có lợi; mỗi người đúng vị, nữ chính vị bên trong.", "key": "Tề gia, gia đạo • Mỗi người đúng vị • Nữ chính vị trong", "lines": [1, 0, 1, 0, 1, 1], "tong": [38, "Khuê"], "thac": [40, "Giải"]}, {"n": 38, "name": "Khuê", "han": "睽", "up": "Ly", "lo": "Đoài", "upSym": "☲", "loSym": "☱", "upNat": "Lửa", "loNat": "Đầm", "upEl": "Hỏa", "loEl": "Kim", "palace": "Cấn", "palaceEl": "Thổ", "sess": "4 thế", "rel": "Ngoại khắc Nội", "relDesc": "Hỏa(ngoại) khắc Kim(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Đối lập, ly cách (biện chứng đối kháng). Khi hai bên tranh chấp như vậy chỉ có thể thành tựu việc nhỏ; dị mà cầu đồng.", "key": "Đối lập, ly cách • Dị mà cầu đồng • Chỉ nên việc nhỏ", "lines": [1, 1, 0, 1, 0, 1], "tong": [37, "Gia Nhân"], "thac": [39, "Kiển"]}, {"n": 39, "name": "Kiển", "han": "蹇", "up": "Khảm", "lo": "Cấn", "upSym": "☵", "loSym": "☶", "upNat": "Nước", "loNat": "Núi", "upEl": "Thủy", "loEl": "Thổ", "palace": "Đoài", "palaceEl": "Kim", "sess": "4 thế", "rel": "Nội khắc Ngoại", "relDesc": "Thổ(nội) khắc Thủy(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Đi lại khó khăn, gập ghềnh. Về Tây Nam (bình nguyên) thì lợi, Đông Bắc (núi non) thì bất lợi; gặp đại nhân & giữ trinh chính thì tốt.", "key": "Đi lại gập ghềnh • Gặp khó nên dừng • Tìm đại nhân, hướng TN", "lines": [0, 0, 1, 0, 1, 0], "tong": [40, "Giải"], "thac": [38, "Khuê"]}, {"n": 40, "name": "Giải", "han": "解", "up": "Chấn", "lo": "Khảm", "upSym": "☳", "loSym": "☵", "upNat": "Sấm", "loNat": "Nước", "upEl": "Mộc", "loEl": "Thủy", "palace": "Chấn", "palaceEl": "Mộc", "sess": "2 thế", "rel": "Nội sinh Ngoại", "relDesc": "Thủy(nội) sinh Mộc(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Giải tỏa, cởi nút (hết nạn). Về Tây Nam có lợi; không việc gì thì quay về chốn cũ cũng tốt; có việc thì xuất hành sớm gặp may.", "key": "Giải tỏa, cởi nút • Hết nạn thì xả • Hành động sớm thì hên", "lines": [0, 1, 0, 1, 0, 0], "tong": [39, "Kiển"], "thac": [37, "Gia Nhân"]}, {"n": 41, "name": "Tổn", "han": "損", "up": "Cấn", "lo": "Đoài", "upSym": "☶", "loSym": "☱", "upNat": "Núi", "loNat": "Đầm", "upEl": "Thổ", "loEl": "Kim", "palace": "Cấn", "palaceEl": "Thổ", "sess": "3 thế", "rel": "Ngoại sinh Nội", "relDesc": "Thổ(ngoại) sinh Kim(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Bớt (tổn dưới ích trên). Bắt được nhiều tù về làm nô thì đại cát; cúng tế chỉ cần hai bát lúa cũng đủ — cốt ở lòng thành, giảm tham.", "key": "Bớt dưới ích trên • Tổn để rồi ích • Giảm tham, chân thành", "lines": [1, 1, 0, 0, 0, 1], "tong": [42, "Ích"], "thac": [31, "Hàm"]}, {"n": 42, "name": "Ích", "han": "益", "up": "Tốn", "lo": "Chấn", "upSym": "☴", "loSym": "☳", "upNat": "Gió", "loNat": "Sấm", "upEl": "Mộc", "loEl": "Mộc", "palace": "Tốn", "palaceEl": "Mộc", "sess": "3 thế", "rel": "Tỷ hòa", "relDesc": "Mộc ngộ Mộc: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Tăng ích (bớt trên ích dưới). Làm việc gì cũng lợi, vượt cả sông lớn, đem lại kết quả tốt đẹp.", "key": "Bớt trên ích dưới • Làm gì cũng lợi • Vượt sông lớn thành công", "lines": [1, 0, 0, 0, 1, 1], "tong": [41, "Tổn"], "thac": [32, "Hằng"]}, {"n": 43, "name": "Quải", "han": "夬", "up": "Đoài", "lo": "Càn", "upSym": "☱", "loSym": "☰", "upNat": "Đầm/Hồ", "loNat": "Trời", "upEl": "Kim", "loEl": "Kim", "palace": "Khôn", "palaceEl": "Thổ", "sess": "5 thế", "rel": "Tỷ hòa", "relDesc": "Kim ngộ Kim: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Quyết đoán trừ tà (công khai nêu tại triều). Ban quân lệnh nghiêm, dứt khoát tiến đánh, không dung túng kẻ xấu.", "key": "Quyết đoán trừ tà • Công khai chính danh • Dứt khoát loại tiểu nhân", "lines": [1, 1, 1, 1, 1, 0], "tong": [44, "Cấu"], "thac": [23, "Bác"]}, {"n": 44, "name": "Cấu", "han": "姤", "up": "Càn", "lo": "Tốn", "upSym": "☰", "loSym": "☴", "upNat": "Trời", "loNat": "Gió", "upEl": "Kim", "loEl": "Mộc", "palace": "Càn", "palaceEl": "Kim", "sess": "1 thế", "rel": "Ngoại khắc Nội", "relDesc": "Kim(ngoại) khắc Mộc(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Gặp gỡ bất ngờ (một âm chớm sinh dưới năm dương). 'Cô dâu đã bị chó cắn có thương tích' — nay rước dâu thì không tốt; đề phòng mầm họa/cám dỗ.", "key": "Gặp gỡ bất ngờ • Một âm chớm sinh • Đề phòng cám dỗ/mầm họa", "lines": [0, 1, 1, 1, 1, 1], "tong": [43, "Quải"], "thac": [24, "Phục"]}, {"n": 45, "name": "Tụy", "han": "萃", "up": "Đoài", "lo": "Khôn", "upSym": "☱", "loSym": "☷", "upNat": "Đầm/Hồ", "loNat": "Đất", "upEl": "Kim", "loEl": "Thổ", "palace": "Đoài", "palaceEl": "Kim", "sess": "2 thế", "rel": "Nội sinh Ngoại", "relDesc": "Thổ(nội) sinh Kim(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Tụ hội, quy tụ. Vua đến thái miếu, dịp tốt cho bá quan yết kiến; gieo quẻ rất lợi, dùng lễ lớn thì làm gì cũng thành.", "key": "Tụ hội, quy tụ • Vua tới miếu • Lễ trọng thì thành", "lines": [0, 0, 0, 1, 1, 0], "tong": [46, "Thăng"], "thac": [26, "Đại Súc"]}, {"n": 46, "name": "Thăng", "han": "升", "up": "Khôn", "lo": "Tốn", "upSym": "☷", "loSym": "☴", "upNat": "Đất", "loNat": "Gió", "upEl": "Thổ", "loEl": "Mộc", "palace": "Chấn", "palaceEl": "Mộc", "sess": "4 thế", "rel": "Nội khắc Ngoại", "relDesc": "Mộc(nội) khắc Thổ(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Thăng tiến dần (như cây mọc lên). Chiêu binh cần cử hành lễ tế long trọng, nên gặp đại nhân; viễn chinh phương Nam sẽ thành.", "key": "Thăng tiến dần • Như cây mọc lên • Gặp đại nhân, tiến Nam", "lines": [0, 1, 1, 0, 0, 0], "tong": [45, "Tụy"], "thac": [25, "Vô Vọng"]}, {"n": 47, "name": "Khốn", "han": "困", "up": "Đoài", "lo": "Khảm", "upSym": "☱", "loSym": "☵", "upNat": "Đầm/Hồ", "loNat": "Nước", "upEl": "Kim", "loEl": "Thủy", "palace": "Đoài", "palaceEl": "Kim", "sess": "1 thế", "rel": "Ngoại sinh Nội", "relDesc": "Kim(ngoại) sinh Thủy(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Khốn cùng, bế tắc. Thân trong cảnh khốn, cúng tế gieo quẻ; quẻ báo mai sau thành đại nhân, không họa — nhưng nói ra ai tin; giữ chí, chờ vận.", "key": "Khốn cùng, bế tắc • Giữ chí kiên định • Nói ít làm nhiều, chờ vận", "lines": [0, 1, 0, 1, 1, 0], "tong": [48, "Tỉnh"], "thac": [22, "Bí"]}, {"n": 48, "name": "Tỉnh", "han": "井", "up": "Khảm", "lo": "Tốn", "upSym": "☵", "loSym": "☴", "upNat": "Nước", "loNat": "Gió", "upEl": "Thủy", "loEl": "Mộc", "palace": "Chấn", "palaceEl": "Mộc", "sess": "5 thế", "rel": "Ngoại sinh Nội", "relDesc": "Thủy(ngoại) sinh Mộc(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Giếng nước nuôi dân (nguồn bất biến). Chỉ nên sửa thành, chớ động giếng; giếng khô hay gàu bể thì xui — chớ bỏ cái gốc.", "key": "Giếng nuôi dân • Nguồn bất biến • Sửa người chớ bỏ gốc", "lines": [0, 1, 1, 0, 1, 0], "tong": [47, "Khốn"], "thac": [21, "Phệ Hạp"]}, {"n": 49, "name": "Cách", "han": "革", "up": "Đoài", "lo": "Ly", "upSym": "☱", "loSym": "☲", "upNat": "Đầm/Hồ", "loNat": "Lửa", "upEl": "Kim", "loEl": "Hỏa", "palace": "Khảm", "palaceEl": "Thủy", "sess": "4 thế", "rel": "Nội khắc Ngoại", "relDesc": "Hỏa(nội) khắc Kim(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Cách mạng, đổi mới (cải cách). Ngày cúng tế lớn dùng lễ trọng; nên bói hỏi ý thần để tránh hối hận — đúng thời mới cải.", "key": "Cách mạng, đổi mới • Thuận thiên ứng nhân • Đúng thời mới cải", "lines": [1, 0, 1, 1, 1, 0], "tong": [50, "Đỉnh"], "thac": [4, "Mông"]}, {"n": 50, "name": "Đỉnh", "han": "鼎", "up": "Ly", "lo": "Tốn", "upSym": "☲", "loSym": "☴", "upNat": "Lửa", "loNat": "Gió", "upEl": "Hỏa", "loEl": "Mộc", "palace": "Ly", "palaceEl": "Hỏa", "sess": "2 thế", "rel": "Nội sinh Ngoại", "relDesc": "Mộc(nội) sinh Hỏa(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Đỉnh (vạc nấu — nuôi hiền, đổi mới). Bói được quẻ này rất tốt, nên làm lễ tạ thần linh; an định, dưỡng người tài.", "key": "Vạc nấu, đổi mới • An định, dưỡng hiền • Quẻ rất tốt, tạ ơn", "lines": [0, 1, 1, 1, 0, 1], "tong": [49, "Cách"], "thac": [3, "Truân"]}, {"n": 51, "name": "Chấn", "han": "震", "up": "Chấn", "lo": "Chấn", "upSym": "☳", "loSym": "☳", "upNat": "Sấm", "loNat": "Sấm", "upEl": "Mộc", "loEl": "Mộc", "palace": "Chấn", "palaceEl": "Mộc", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Mộc ngộ Mộc: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Sấm động chấn kinh. Lúc tế, sấm vang trăm dặm mà người vẫn bình tĩnh cười nói, không làm rơi rượu lễ — kinh mà không loạn, biết tự xét.", "key": "Sấm động, chấn kinh • Kinh mà không loạn • Tỉnh giác, tự xét", "lines": [1, 0, 0, 1, 0, 0], "tong": [52, "Cấn"], "thac": [57, "Tốn"]}, {"n": 52, "name": "Cấn", "han": "艮", "up": "Cấn", "lo": "Cấn", "upSym": "☶", "loSym": "☶", "upNat": "Núi", "loNat": "Núi", "upEl": "Thổ", "loEl": "Thổ", "palace": "Cấn", "palaceEl": "Thổ", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Thổ ngộ Thổ: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Dừng đúng lúc (cấn = ngưng, núi). Trả quan về ẩn, người tìm không thấy; bói được quẻ này không tai họa — tĩnh tại, an định.", "key": "Dừng đúng lúc • Tĩnh tại, an định • Biết ngừng là biết đạo", "lines": [0, 0, 1, 0, 0, 1], "tong": [51, "Chấn"], "thac": [58, "Đoài"]}, {"n": 53, "name": "Tiệm", "han": "漸", "up": "Tốn", "lo": "Cấn", "upSym": "☴", "loSym": "☶", "upNat": "Gió", "loNat": "Núi", "upEl": "Mộc", "loEl": "Thổ", "palace": "Cấn", "palaceEl": "Thổ", "sess": "Quy hồn", "rel": "Ngoại khắc Nội", "relDesc": "Mộc(ngoại) khắc Thổ(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Tiến tuần tự (tiệm = dần dần, như chim đậu dần). Con gái vu quy là tốt lành; đây là lúc thích hợp gieo quẻ — vững từng bước.", "key": "Tiến tuần tự • Vững từng bước • Hôn sự tốt lành", "lines": [0, 0, 1, 0, 1, 1], "tong": [54, "Quy Muội"], "thac": [54, "Quy Muội"]}, {"n": 54, "name": "Quy Muội", "han": "歸妹", "up": "Chấn", "lo": "Đoài", "upSym": "☳", "loSym": "☱", "upNat": "Sấm", "loNat": "Đầm", "upEl": "Mộc", "loEl": "Kim", "palace": "Đoài", "palaceEl": "Kim", "sess": "Quy hồn", "rel": "Nội khắc Ngoại", "relDesc": "Kim(nội) khắc Mộc(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Gả thiếu nữ (sai danh phận). Cô gái về nhà chồng; xuất chinh gặp nguy; bói được quẻ này làm gì cũng bất lợi.", "key": "Gả muội — sai vị • Danh không chính • Vọng động thì bất lợi", "lines": [1, 1, 0, 1, 0, 0], "tong": [53, "Tiệm"], "thac": [53, "Tiệm"]}, {"n": 55, "name": "Phong", "han": "豐", "up": "Chấn", "lo": "Ly", "upSym": "☳", "loSym": "☲", "upNat": "Sấm", "loNat": "Lửa", "upEl": "Mộc", "loEl": "Hỏa", "palace": "Khảm", "palaceEl": "Thủy", "sess": "5 thế", "rel": "Ngoại sinh Nội", "relDesc": "Mộc(ngoại) sinh Hỏa(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Phong thịnh tột đỉnh (sáng + động). Hanh thông, vua tới tế tự ở tông miếu, chớ lo; nên tế lúc chính ngọ — thịnh thì phải lo suy.", "key": "Phong thịnh tột đỉnh • Sáng + động • Thịnh thì lo suy", "lines": [1, 0, 1, 1, 0, 0], "tong": [56, "Lữ"], "thac": [59, "Hoán"]}, {"n": 56, "name": "Lữ", "han": "旅", "up": "Ly", "lo": "Cấn", "upSym": "☲", "loSym": "☶", "upNat": "Lửa", "loNat": "Núi", "upEl": "Hỏa", "loEl": "Thổ", "palace": "Ly", "palaceEl": "Hỏa", "sess": "1 thế", "rel": "Ngoại sinh Nội", "relDesc": "Hỏa(ngoại) sinh Thổ(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Lữ khách tha hương. Làm lễ nhỏ, trước khi đi đánh giặc gieo quẻ thì được quẻ may — khiêm thuận, cẩn trọng, giữ mình.", "key": "Lữ khách tha hương • Khiêm thuận, cẩn trọng • Lễ nhỏ, giữ mình", "lines": [0, 0, 1, 1, 0, 1], "tong": [55, "Phong"], "thac": [60, "Tiết"]}, {"n": 57, "name": "Tốn", "han": "巽", "up": "Tốn", "lo": "Tốn", "upSym": "☴", "loSym": "☴", "upNat": "Gió", "loNat": "Gió", "upEl": "Mộc", "loEl": "Mộc", "palace": "Tốn", "palaceEl": "Mộc", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Mộc ngộ Mộc: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Thuận nhập, mềm dẻo (gió luồn khắp). Biết tính toán thì làm lễ nhỏ; làm gì cũng lợi, gặp đại nhân thì rất may.", "key": "Thuận nhập, mềm dẻo • Khiêm hạ thấm dần • Theo đại nhân thì lợi", "lines": [0, 1, 1, 0, 1, 1], "tong": [58, "Đoài"], "thac": [51, "Chấn"]}, {"n": 58, "name": "Đoài", "han": "兌", "up": "Đoài", "lo": "Đoài", "upSym": "☱", "loSym": "☱", "upNat": "Đầm/Hồ", "loNat": "Đầm", "upEl": "Kim", "loEl": "Kim", "palace": "Đoài", "palaceEl": "Kim", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Kim ngộ Kim: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Vui hòa, cảm hứng (đầm). Muốn soán đoạt phải cúng tế trước, tốt nhất gieo quẻ hỏi ý thần — hòa duyệt chính đáng, lời nói thu phục.", "key": "Vui hòa, cảm hứng • Hòa duyệt chính đáng • Lời nói thu phục", "lines": [1, 1, 0, 1, 1, 0], "tong": [57, "Tốn"], "thac": [52, "Cấn"]}, {"n": 59, "name": "Hoán", "han": "渙", "up": "Tốn", "lo": "Khảm", "upSym": "☴", "loSym": "☵", "upNat": "Gió", "loNat": "Nước", "upEl": "Mộc", "loEl": "Thủy", "palace": "Ly", "palaceEl": "Hỏa", "sess": "5 thế", "rel": "Nội sinh Ngoại", "relDesc": "Thủy(nội) sinh Mộc(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Ly tán & hóa giải (gió thổi trên nước). Hồng thủy tràn, vua đích thân tới miếu tụ lòng người; lúc thuận lợi vượt sông lớn và gieo quẻ.", "key": "Ly tán, hóa giải • Tụ lại lòng người • Lúc nên vượt sông lớn", "lines": [0, 1, 0, 0, 1, 1], "tong": [60, "Tiết"], "thac": [55, "Phong"]}, {"n": 60, "name": "Tiết", "han": "節", "up": "Khảm", "lo": "Đoài", "upSym": "☵", "loSym": "☱", "upNat": "Nước", "loNat": "Đầm", "upEl": "Thủy", "loEl": "Kim", "palace": "Khảm", "palaceEl": "Thủy", "sess": "1 thế", "rel": "Nội sinh Ngoại", "relDesc": "Kim(nội) sinh Thủy(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Tiết chế, chừng mực. Cần tiết dục trước kỳ tế, nhưng khổ hạnh quá mức thì không bói cát hung được — lập khuôn phép, đo lường chuẩn.", "key": "Tiết chế, chừng mực • Chớ khổ hạnh thái quá • Lập khuôn phép", "lines": [1, 1, 0, 0, 1, 0], "tong": [59, "Hoán"], "thac": [56, "Lữ"]}, {"n": 61, "name": "Trung Phu", "han": "中孚", "up": "Tốn", "lo": "Đoài", "upSym": "☴", "loSym": "☱", "upNat": "Gió", "loNat": "Đầm", "upEl": "Mộc", "loEl": "Kim", "palace": "Cấn", "palaceEl": "Thổ", "sess": "Du hồn", "rel": "Nội khắc Ngoại", "relDesc": "Kim(nội) khắc Mộc(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Trung thực, thành tín tự trong lòng. Cúng dùng lễ mọn (heo, cá) cũng tốt; vượt sông lớn có lợi; nên gieo quẻ — tín cảm tới cả muông thú.", "key": "Trung thực, thành tín • Tín cảm tới muông • Lợi vượt sông lớn", "lines": [1, 1, 0, 0, 1, 1], "tong": [61, "Trung Phu"], "thac": [62, "Tiểu Quá"]}, {"n": 62, "name": "Tiểu Quá", "han": "小過", "up": "Chấn", "lo": "Cấn", "upSym": "☳", "loSym": "☶", "upNat": "Sấm", "loNat": "Núi", "upEl": "Mộc", "loEl": "Thổ", "palace": "Đoài", "palaceEl": "Kim", "sess": "Du hồn", "rel": "Ngoại khắc Nội", "relDesc": "Mộc(ngoại) khắc Thổ(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Hơi quá một chút (tiểu quá). Hanh thông, nên giữ chính; chỉ làm được việc nhỏ tầm thường, không làm chuyện lớn — chim nên đậu thấp, chớ bay cao.", "key": "Hơi quá một chút • Chỉ làm việc nhỏ • Chim đậu thấp, chớ bay cao", "lines": [0, 0, 1, 1, 0, 0], "tong": [62, "Tiểu Quá"], "thac": [61, "Trung Phu"]}, {"n": 63, "name": "Ký Tế", "han": "既濟", "up": "Khảm", "lo": "Ly", "upSym": "☵", "loSym": "☲", "upNat": "Nước", "loNat": "Lửa", "upEl": "Thủy", "loEl": "Hỏa", "palace": "Khảm", "palaceEl": "Thủy", "sess": "3 thế", "rel": "Ngoại khắc Nội", "relDesc": "Thủy(ngoại) khắc Hỏa(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Đã hoàn thành (thủy hỏa đã giao). Chuyện nhỏ cũng phải cúng tế, bói có lợi; làm gì cũng đầu xuôi đuôi lọt — nhưng thịnh cực phải phòng loạn.", "key": "Đã hoàn thành • Thủy hỏa giao • Thịnh cực phòng loạn", "lines": [1, 0, 1, 0, 1, 0], "tong": [64, "Vị Tế"], "thac": [64, "Vị Tế"]}, {"n": 64, "name": "Vị Tế", "han": "未濟", "up": "Ly", "lo": "Khảm", "upSym": "☲", "loSym": "☵", "upNat": "Lửa", "loNat": "Nước", "upEl": "Hỏa", "loEl": "Thủy", "palace": "Ly", "palaceEl": "Hỏa", "sess": "3 thế", "rel": "Nội khắc Ngoại", "relDesc": "Thủy(nội) khắc Hỏa(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Chưa hoàn thành, còn dang dở. Cần cúng tế; cáo nhỏ qua sông chỉ tổ ướt đuôi; bói được quẻ này thì chưa nên đi đâu/vọng tiến.", "key": "Chưa hoàn thành • Còn dang dở • Thận trọng, chưa nên vọng tiến", "lines": [0, 1, 0, 1, 0, 1], "tong": [63, "Ký Tế"], "thac": [63, "Ký Tế"]}];
+
+/* Thứ tự 8 Cung × 8 quẻ (copy NGUYÊN VĂN biến `order` từ file nguồn) */
+const ORDER=[["Càn","Kim",[1,44,33,12,20,23,35,14]],["Đoài","Kim",[58,47,45,31,39,15,62,54]],["Ly","Hỏa",[30,56,50,64,4,59,6,13]],["Chấn","Mộc",[51,16,40,32,46,48,28,17]],["Tốn","Mộc",[57,9,37,42,25,21,27,18]],["Khảm","Thủy",[29,60,3,63,49,55,36,7]],["Cấn","Thổ",[52,22,26,41,38,10,61,53]],["Khôn","Thổ",[2,24,19,11,34,43,5,8]]];
+
+/* Bảng tra cứu nhanh theo số quẻ */
+const QBYN={}; QUE.forEach(q=>QBYN[q.n]=q);
+
+/* Màu Ngũ Hành cho viền cung (trang trọng, trầm) */
+const ELCOL={Kim:'#b9bdc4',Mộc:'#7fae84',Thủy:'#6f97c4',Hỏa:'#c07a6a',Thổ:'#c9a14a'};
+
+/* ======================================================================
+   CANH — 8 cảnh giới (mapping 8 cung = 8 tượng thiên nhiên).
+   Mỗi entry: index trùng ORDER. Dùng để vẽ background thủy mặc + đặt tên cảnh.
+   ====================================================================== */
+const CANH=[
+  {cung:'Càn', nat:'Trời',     han:'乾', scene:'Thiên Khung — Mây Vàng Hào Quang', tip:'Trời cao trong vắt, hào quang vàng rọi xuống đỉnh núi mây.',
+   c1:'#1a2536',c2:'#0c1118',accent:'#e3c073', particle:'#e3c073', kind:'sky'},
+  {cung:'Đoài', nat:'Đầm/Hồ',  han:'兌', scene:'Trạch Vụ — Đầm Hồ Sương Phủ', tip:'Mặt đầm phẳng lặng, sương trắng la đà, lau sậy đung đưa.',
+   c1:'#16242a',c2:'#0a1014',accent:'#bcd6e0', particle:'#cfe3ea', kind:'lake'},
+  {cung:'Ly', nat:'Lửa',       han:'離', scene:'Hỏa Diệm — Lửa Đỏ Cam', tip:'Đỉnh núi ráng đỏ, tàn lửa bay lả tả như đom đóm.',
+   c1:'#2a1614',c2:'#150a0a',accent:'#e08a5a', particle:'#f0a060', kind:'fire'},
+  {cung:'Chấn', nat:'Sấm',     han:'震', scene:'Lôi Chấn — Bão Sấm Lôi Quang', tip:'Mây đen vần vũ, lằn sét loé qua, mưa giăng từng đợt.',
+   c1:'#1c2030',c2:'#0a0c14',accent:'#9a8fd0', particle:'#b6a8e6', kind:'thunder'},
+  {cung:'Tốn', nat:'Gió',      han:'巽', scene:'Phong Lâm — Trúc Xanh Lộng Gió', tip:'Rừng trúc xanh nghiêng theo gió, lá bay là là khắp lối.',
+   c1:'#13241c',c2:'#080f0b',accent:'#8fc79a', particle:'#a8d8b0', kind:'wind'},
+  {cung:'Khảm', nat:'Nước',    han:'坎', scene:'Thủy Uyên — Sông Sâu Xanh Lam', tip:'Dòng sông sâu thẳm sắc lam, sóng gợn lặng lờ trôi.',
+   c1:'#0e1c2e',c2:'#070d16',accent:'#6f97c4', particle:'#8fb4dc', kind:'water'},
+  {cung:'Cấn', nat:'Núi',      han:'艮', scene:'Sơn Thạch — Núi Đá Tĩnh Lặng', tip:'Dãy núi đá trầm mặc, sương mai vương trên vách đá.',
+   c1:'#23211a',c2:'#100f0b',accent:'#c9a14a', particle:'#d8c08a', kind:'mountain'},
+  {cung:'Khôn', nat:'Đất',     han:'坤', scene:'Địa Hoàng — Thổ Hoàng Bao La', tip:'Đồng đất vàng nâu mênh mông, sương đất bốc lên thấp thoáng.',
+   c1:'#251f15',c2:'#110e09',accent:'#d6b35e', particle:'#e0c478', kind:'earth'}
+];
+
+/* ======================================================================
+   PREFERS-REDUCED-MOTION — tôn trọng lựa chọn người dùng + nút bật/tắt
+   ====================================================================== */
+const RMKEY='kinhdich_reducedmotion';
+let REDUCED = (function(){
+  const saved=localStorage.getItem(RMKEY);
+  if(saved!==null) return saved==='1';
+  return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+})();
+function applyReducedClass(){document.documentElement.classList.toggle('reduced-motion',REDUCED);
+  const b=document.getElementById('rmBtn'); if(b)b.classList.toggle('on',!REDUCED);}
+function toggleReducedMotion(){REDUCED=!REDUCED;localStorage.setItem(RMKEY,REDUCED?'1':'0');applyReducedClass();
+  if(REDUCED){stopLinhQi();}else{startLinhQi();}
+  toast(REDUCED?'Đã tắt hiệu ứng động (an tĩnh)':'Đã bật hiệu ứng động');}
+
+/* ======================================================================
+   SVG NỀN THỦY MẶC theo từng nguyên tố (không cần ảnh ngoài)
+   Mỗi hàm trả về chuỗi SVG full-bleed, dùng gradient + path cách điệu.
+   ====================================================================== */
+function bgSVG(c){
+  const W=1000,H=620;
+  const grad=`<defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${c.c1}"/><stop offset="1" stop-color="${c.c2}"/></linearGradient>
+    <radialGradient id="glow" cx="0.7" cy="0.18" r="0.6">
+      <stop offset="0" stop-color="${c.accent}" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="${c.accent}" stop-opacity="0"/></radialGradient>
+    <linearGradient id="ink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${c.accent}" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="${c.accent}" stop-opacity="0.04"/></linearGradient>
+  </defs>`;
+  let body='';
+  const A=c.accent;
+  if(c.kind==='sky'){
+    body=`<circle cx="720" cy="130" r="78" fill="${A}" opacity="0.20"/>
+      <circle cx="720" cy="130" r="48" fill="${A}" opacity="0.30"/>
+      <path d="M0 360 Q180 300 360 350 T720 340 T1000 360 L1000 620 L0 620 Z" fill="url(#ink)"/>
+      <path d="M0 430 Q200 380 420 420 T820 410 T1000 430 L1000 620 L0 620 Z" fill="${c.c2}" opacity="0.7"/>
+      <path d="M120 250 q70 -34 150 -8 q60 -40 130 6 q40 -16 70 12 q-30 26 -90 18 q-50 28 -150 4 q-70 14 -110 -32 Z" fill="${A}" opacity="0.10"/>
+      <path d="M560 200 q60 -28 130 -6 q50 -30 100 8 q-26 22 -78 16 q-44 22 -126 0 q-40 8 -56 -18 Z" fill="${A}" opacity="0.08"/>`;
+  } else if(c.kind==='lake'){
+    body=`<path d="M0 300 Q250 270 500 295 T1000 300 L1000 620 L0 620 Z" fill="url(#ink)"/>
+      <ellipse cx="500" cy="470" rx="520" ry="120" fill="${A}" opacity="0.07"/>
+      <path d="M40 440 H360 M120 480 H520 M300 520 H700 M520 470 H940" stroke="${A}" stroke-opacity="0.16" stroke-width="2" fill="none"/>
+      <path d="M90 300 q-6 -60 6 -110 q14 36 8 110 Z M118 300 q-4 -46 4 -92 q12 30 6 92 Z" fill="${A}" opacity="0.18"/>
+      <path d="M880 300 q-6 -54 5 -100 q13 32 7 100 Z" fill="${A}" opacity="0.16"/>`;
+  } else if(c.kind==='fire'){
+    body=`<path d="M0 340 Q200 280 420 330 T820 320 T1000 340 L1000 620 L0 620 Z" fill="url(#ink)"/>
+      <path d="M520 470 q-40 -120 20 -210 q10 80 50 120 q30 -40 24 -96 q60 70 30 180 q40 -20 30 -90 q40 90 -24 196 q-90 40 -150 0 Z" fill="${A}" opacity="0.20"/>
+      <path d="M540 460 q-24 -80 14 -150 q8 56 36 84 q-6 50 -50 66 Z" fill="${A}" opacity="0.30"/>
+      <path d="M0 440 Q250 400 520 440 T1000 440 L1000 620 L0 620 Z" fill="${c.c2}" opacity="0.65"/>`;
+  } else if(c.kind==='thunder'){
+    body=`<path d="M120 70 q60 -22 130 -4 q50 -28 110 6 q60 -26 130 4 q40 -14 70 10 q-30 24 -86 16 q-50 24 -134 2 q-60 18 -140 -4 q-60 12 -90 -30 Z" fill="${A}" opacity="0.10"/>
+      <path d="M580 80 L540 230 L600 220 L548 360" stroke="${A}" stroke-width="3" fill="none" opacity="0.55"/>
+      <path d="M560 100 L536 210 L584 204 L540 320" stroke="#fff" stroke-width="1.2" fill="none" opacity="0.5"/>
+      <path d="M0 380 Q220 330 460 376 T900 366 T1000 380 L1000 620 L0 620 Z" fill="url(#ink)"/>
+      <path d="M0 460 Q260 420 520 460 T1000 460 L1000 620 L0 620 Z" fill="${c.c2}" opacity="0.7"/>`;
+  } else if(c.kind==='wind'){
+    body=`<path d="M0 360 Q220 320 460 356 T900 348 T1000 360 L1000 620 L0 620 Z" fill="url(#ink)"/>
+      <g stroke="${A}" stroke-width="3.5" fill="none" opacity="0.34" stroke-linecap="round">
+        <path d="M160 600 Q150 420 176 250"/><path d="M210 600 Q204 440 232 300"/>
+        <path d="M780 600 Q792 430 770 270"/><path d="M838 600 Q846 450 824 320"/></g>
+      <g stroke="${A}" stroke-width="1.6" fill="none" opacity="0.22">
+        <path d="M260 200 q120 -24 220 6"/><path d="M300 250 q140 -20 250 10"/>
+        <path d="M560 170 q120 -18 200 8"/></g>`;
+  } else if(c.kind==='water'){
+    body=`<path d="M0 280 Q250 250 500 278 T1000 280 L1000 620 L0 620 Z" fill="url(#ink)"/>
+      <g stroke="${A}" stroke-opacity="0.2" stroke-width="2.4" fill="none">
+        <path d="M0 380 Q120 360 240 380 T480 380 T720 380 T1000 380"/>
+        <path d="M0 430 Q120 410 240 430 T480 430 T720 430 T1000 430"/>
+        <path d="M0 482 Q120 462 240 482 T480 482 T720 482 T1000 482"/></g>
+      <path d="M0 520 Q250 500 500 520 T1000 520 L1000 620 L0 620 Z" fill="${c.c2}" opacity="0.6"/>`;
+  } else if(c.kind==='mountain'){
+    body=`<path d="M0 480 L180 300 L300 400 L470 230 L640 410 L800 290 L1000 470 L1000 620 L0 620 Z" fill="url(#ink)"/>
+      <path d="M0 520 L220 360 L420 470 L640 330 L860 480 L1000 400 L1000 620 L0 620 Z" fill="${c.c2}" opacity="0.75"/>
+      <path d="M420 250 q24 -10 50 -2 q40 -16 84 4 q-20 18 -60 12 q-40 14 -94 -2 q-20 4 20 -12 Z" fill="${A}" opacity="0.12"/>`;
+  } else { /* earth */
+    body=`<path d="M0 360 Q250 340 500 358 T1000 360 L1000 620 L0 620 Z" fill="url(#ink)"/>
+      <path d="M0 440 Q250 415 500 440 T1000 440 L1000 620 L0 620 Z" fill="${c.c2}" opacity="0.6"/>
+      <g stroke="${A}" stroke-opacity="0.14" stroke-width="2" fill="none">
+        <path d="M40 500 H340"/><path d="M260 540 H620"/><path d="M520 500 H900"/></g>
+      <path d="M60 360 q-4 -40 4 -74 q10 24 4 74 Z M86 360 q-3 -30 3 -58 q8 18 4 58 Z" fill="${A}" opacity="0.12"/>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">${grad}
+    <rect width="${W}" height="${H}" fill="url(#sky)"/>
+    <rect width="${W}" height="${H}" fill="url(#glow)"/>
+    ${body}</svg>`;
+}
+
+/* ======================================================================
+   TRẠNG THÁI + LƯU localStorage  (GIỮ NGUYÊN từ MVP — cùng key & shape)
+   ====================================================================== */
+const SKEY='kinhdich_quest_v1';
+function freshState(){return{done:[],than:0,the:0,khi:0,xp:0,badges:[]};}
+function loadState(){try{const s=JSON.parse(localStorage.getItem(SKEY));if(s&&Array.isArray(s.done))return Object.assign(freshState(),s);}catch(e){}return freshState();}
+let STATE=loadState();
+function saveState(){try{localStorage.setItem(SKEY,JSON.stringify(STATE));}catch(e){}}
+
+/* trạng thái 1 quẻ: done | next(mở) | lock — luật tuần tự trong cung (GIỮ NGUYÊN) */
+function queStatus(qn){
+  if(STATE.done.includes(qn))return'done';
+  for(const [cung,cel,members] of ORDER){
+    const idx=members.indexOf(qn);
+    if(idx===-1)continue;
+    if(idx===0)return'next';
+    if(STATE.done.includes(members[idx-1]))return'next';
+    return'lock';
+  }
+  return'lock';
+}
+
+/* ======================================================================
+   VẼ 6 HÀO từ lines[] (GIỮ NGUYÊN)
+   ====================================================================== */
+function yaoHTML(lines){
+  return lines.map(v=> v===1
+    ? '<div class="yao yang"><i></i></div>'
+    : '<div class="yao yin"><i></i><i></i></div>'
+  ).join('');
+}
+
+/* Unicode ký hiệu quẻ ䷀–䷿ (GIỮ NGUYÊN) */
+const HEXGLYPH={1:'䷀',2:'䷁',3:'䷂',4:'䷃',5:'䷄',6:'䷅',7:'䷆',8:'䷇',9:'䷈',10:'䷉',11:'䷊',12:'䷋',13:'䷌',14:'䷍',15:'䷎',16:'䷏',17:'䷐',18:'䷑',19:'䷒',20:'䷓',21:'䷔',22:'䷕',23:'䷖',24:'䷗',25:'䷘',26:'䷙',27:'䷚',28:'䷛',29:'䷜',30:'䷝',31:'䷞',32:'䷟',33:'䷠',34:'䷡',35:'䷢',36:'䷣',37:'䷤',38:'䷥',39:'䷦',40:'䷧',41:'䷨',42:'䷩',43:'䷪',44:'䷫',45:'䷬',46:'䷭',47:'䷮',48:'䷯',49:'䷰',50:'䷱',51:'䷲',52:'䷳',53:'䷴',54:'䷵',55:'䷶',56:'䷷',57:'䷸',58:'䷹',59:'䷺',60:'䷻',61:'䷼',62:'䷽',63:'䷾',64:'䷿'};
+function hexGlyphByN(qn){return HEXGLYPH[qn]||'卦';}
+
+/* ======================================================================
+   CHARACTER PANEL + CẢNH GIỚI (GIỮ NGUYÊN ngưỡng REALMS & công thức)
+   ====================================================================== */
+const REALMS=[[0,'Phàm Nhân'],[40,'Luyện Khí'],[100,'Trúc Cơ'],[200,'Kim Đan'],[340,'Nguyên Anh'],[520,'Hóa Thần'],[760,'Đại Thừa']];
+const REALM_SEAL={'Phàm Nhân':'凡','Luyện Khí':'氣','Trúc Cơ':'基','Kim Đan':'丹','Nguyên Anh':'嬰','Hóa Thần':'神','Đại Thừa':'乘'};
+const REALM_SUB={
+  'Luyện Khí':'Khí cảm bắt đầu lưu chuyển trong kinh mạch.',
+  'Trúc Cơ':'Nền móng đạo cơ đã vững, tâm định không lay.',
+  'Kim Đan':'Kết tụ thành đan, một luồng chân khí viên mãn.',
+  'Nguyên Anh':'Nguyên thần hiện hình, thần thức rộng mở.',
+  'Hóa Thần':'Hợp nhất với khí của trời đất, biến hóa khôn lường.',
+  'Đại Thừa':'Đạo đã thành — quẻ tượng thông suốt trong tâm.'};
+function realmOf(xp){let r='Phàm Nhân';REALMS.forEach(([t,nm])=>{if(xp>=t)r=nm;});return r;}
+function renderChar(){
+  document.getElementById('v-than').textContent=STATE.than;
+  document.getElementById('v-the').textContent=STATE.the;
+  document.getElementById('v-khi').textContent=STATE.khi;
+  document.getElementById('b-than').style.width=Math.min(100,STATE.than/64*100)+'%';
+  document.getElementById('b-the').style.width=Math.min(100,STATE.the/64*100)+'%';
+  document.getElementById('b-khi').style.width=Math.min(100,STATE.khi/64*100)+'%';
+  document.getElementById('realm').textContent=realmOf(STATE.xp);
+  const next=(REALMS.find(([t])=>t>STATE.xp)||[STATE.xp+40])[0];
+  document.getElementById('xplbl').textContent='Đạo hạnh '+STATE.xp;
+  document.getElementById('xpnext').textContent='→ '+next;
+  document.getElementById('xpfill').style.width=Math.min(100,STATE.xp/next*100)+'%';
+  const cl=document.getElementById('cunglist');
+  cl.innerHTML=`<div class="ci" style="color:var(--gold);margin-bottom:3px"><b>Tiến độ 8 Cảnh</b><b>${STATE.done.length}/64</b></div>`+
+    ORDER.map(([cung,cel,mem])=>{const d=mem.filter(q=>STATE.done.includes(q)).length;
+      return `<div class="ci"><span>${cung} <span style="color:${ELCOL[cel]}">·${cel}</span></span><b>${d}/8</b></div>`;}).join('');
+}
+
+/* ======================================================================
+   ĐẠO HẠNH + ĐỘT PHÁ CẢNH GIỚI
+   gainXP: cộng XP, lưu, nếu vượt ngưỡng cảnh giới mới -> hiệu ứng đột phá.
+   ====================================================================== */
+function gainXP(amount){
+  const before=realmOf(STATE.xp);
+  STATE.xp+=amount;
+  const after=realmOf(STATE.xp);
+  saveState(); renderChar();
+  if(after!==before){ breakthrough(after); }
+  return after!==before;
+}
+
+/* ======================================================================
+   SINH CÂU HỎI cho 1 quẻ (GIỮ NGUYÊN logic genQ 6 loại của MVP)
+   ====================================================================== */
+function rint(n){return Math.floor(Math.random()*n);}
+function sample(arr,k,exclude){const pool=arr.filter(x=>x!==exclude);const out=[];while(out.length<k&&pool.length){out.push(pool.splice(rint(pool.length),1)[0]);}return out;}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=rint(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+const TRIG=['Càn','Đoài','Ly','Chấn','Tốn','Khảm','Cấn','Khôn'];
+const CUNGS=[...new Set(QUE.map(q=>q.palace))];
+function genQFor(q,type){
+  if(type===0){const opts=shuffle([q.key,...sample(QUE.map(x=>x.key),3,q.key)]);
+    return{q:`Đâu là <b>key points</b> của quẻ <b>${q.name}</b>?`,opts,ans:q.key};}
+  if(type===1){const kw=q.key.split('•')[0].trim();const opts=shuffle([q.name,...sample(QUE.map(x=>x.name),3,q.name)]);
+    return{q:`Quẻ nào có cốt lõi: «<b>${kw}</b>»?`,opts,ans:q.name};}
+  if(type===2){const opts=shuffle([q.up,...sample(TRIG,3,q.up)]);
+    return{q:`<b>Thượng quái</b> (ngoại) của quẻ <b>${q.name}</b> là quái gì?`,opts,ans:q.up};}
+  if(type===3){const opts=shuffle([q.lo,...sample(TRIG,3,q.lo)]);
+    return{q:`<b>Hạ quái</b> (nội) của quẻ <b>${q.name}</b> là quái gì?`,opts,ans:q.lo};}
+  if(type===4){const opts=shuffle([q.palace,...sample(CUNGS,3,q.palace)]);
+    return{q:`Quẻ <b>${q.name}</b> thuộc <b>Bát Cung</b> nào?`,opts,ans:q.palace};}
+  const tn=q.tong[1];const opts=shuffle([tn,...sample(QUE.map(x=>x.name),3,tn)]);
+  return{q:`<b>Quẻ Tổng</b> (lật ngược) của quẻ <b>${q.name}</b> là quẻ nào?`,opts,ans:tn};
+}
+function buildBattle(q){
+  const types=shuffle([0,1,2,3,4,5]).slice(0,3);
+  if(!types.some(t=>t===2||t===3))types[0]=2;
+  return types.map(t=>genQFor(q,t));
+}
+
+/* ======================================================================
+   MODAL: linh ngộ 1 quẻ -> ấn chứng (battle) -> thông quẻ  (GIỮ NGUYÊN cơ chế)
+   ====================================================================== */
+const ov=document.getElementById('ov'), modal=document.getElementById('modal');
+function closeModal(){ov.classList.remove('show');}
+ov.addEventListener('click',e=>{if(e.target===ov)closeModal();});
+
+function openLocked(qn,prev){
+  const q=QBYN[qn];
+  modal.innerHTML=`<button class="x" onclick="closeModal()">✕</button>
+    <div class="qtag">🔒 Chưa khai mở</div>
+    <h2 class="han" style="font-size:22px;margin:4px 0 8px">${q.n}. ${q.name} <span class="han" style="color:var(--gold2)">${q.han}</span></h2>
+    <div class="sec">Quẻ này thuộc <b>Cảnh ${q.palace}</b>. Phải linh ngộ quẻ trước — <b>${prev?prev.name:'?'}</b> ${prev?'('+prev.han+')':''} — rồi mới khai mở được.</div>
+    <div class="sec" style="color:var(--sub)">Tu luyện theo thứ tự để nội lực vững từng bước.</div>`;
+  ov.classList.add('show');
+}
+
+let CUR=null;
+function openLesson(qn){
+  const q=QBYN[qn];
+  const battle=buildBattle(q);
+  CUR={q,battle,qi:0,hp:battle.length,max:battle.length};
+  const tris=`<span class="sym">${q.upSym}</span>${q.up} <span style="color:var(--faint)">trên</span> · <span class="sym">${q.loSym}</span>${q.lo} <span style="color:var(--faint)">dưới</span>`;
+  modal.innerHTML=`<button class="x" onclick="closeModal()">✕</button>
+    <div class="qtag">Cảnh ${q.palace} · ${q.palaceEl} · ${q.sess}</div>
+    <div class="lhead">
+      <div class="hexbox">${yaoHTML(q.lines)}</div>
+      <div class="ltitle">
+        <div class="big-han han">${q.han}</div>
+        <h2 class="han">${q.n}. ${q.name}</h2>
+        <div class="tris">${tris} <span class="glyph han">${hexGlyphByN(q.n)}</span></div>
+      </div>
+    </div>
+    <div class="sec"><b>Ý nghĩa.</b> ${q.mean}</div>
+    <div class="keys">${q.key.split('•').map(k=>`<div class="k">◦ ${k.trim()}</div>`).join('')}</div>
+    <div class="meta-row"><b>Nội–Ngoại:</b> ${q.relDesc}<br><b>Quẻ Tổng:</b> #${q.tong[0]} ${q.tong[1]} &nbsp;·&nbsp; <b>Quẻ Thác:</b> #${q.thac[0]} ${q.thac[1]}</div>
+    <div class="divider"><span>Ấn chứng để thông quẻ</span></div>
+    <div class="trial" id="trial"></div>`;
+  ov.classList.add('show');
+  renderBattle();
+}
+function renderBattle(){
+  if(STATE.done.includes(CUR.q.n)){return victory(true);}
+  const b=CUR.battle[CUR.qi];
+  document.getElementById('trial').innerHTML=`
+    <div class="trial-bar"><div class="em">🛡️</div>
+      <div><div class="nm han">Ấn chứng — Quẻ ${CUR.q.name}</div>
+      <div class="hp"><i id="thp" style="width:${CUR.hp/CUR.max*100}%"></i></div></div></div>
+    <div class="qstep">Câu ${CUR.qi+1} / ${CUR.max} — trả lời đúng để tiến</div>
+    <div class="qq">${b.q}</div>
+    <div class="opts">${b.opts.map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join('')}</div>`;
+  document.querySelectorAll('#trial .opt').forEach(o=>o.addEventListener('click',()=>answer(+o.dataset.i)));
+}
+function answer(i){
+  const b=CUR.battle[CUR.qi]; const btns=document.querySelectorAll('#trial .opt');
+  if(b.opts[i]===b.ans){
+    btns[i].classList.add('ok'); btns.forEach(x=>x.style.pointerEvents='none');
+    CUR.hp--; const hp=document.getElementById('thp'); if(hp)hp.style.width=(CUR.hp/CUR.max*100)+'%';
+    setTimeout(()=>{CUR.qi++; if(CUR.qi<CUR.battle.length){renderBattle();} else victory(false);},700);
+  } else {
+    btns[i].classList.add('no'); setTimeout(()=>btns[i].classList.remove('no'),360);
+    toast('Chưa đúng — ngẫm lại ý nghĩa quẻ rồi thử lại');
+  }
+}
+function victory(already){
+  const q=CUR.q;
+  let broke=false;
+  if(!already && !STATE.done.includes(q.n)){
+    STATE.done.push(q.n);
+    STATE.than+=1; STATE.the+=1; STATE.khi+=1;
+    if(!STATE.badges.includes(q.name))STATE.badges.push(q.name);
+    saveState();
+    broke=gainXP(10);                 // +10 Đạo hạnh, có thể đột phá
+    renderChar(); renderCanh(); renderList();
+    toast('☯ +10 Đạo hạnh · an chứng quẻ '+q.name);
+  }
+  modal.innerHTML=`<button class="x" onclick="closeModal()">✕</button>
+    <div class="victory">
+      <div class="seal han">${hexGlyphByN(q.n)}</div>
+      <h3 class="han">Thông quẻ ${q.name}!</h3>
+      <div class="vp">${already?'Quẻ này ngươi đã lĩnh hội từ trước.':'Đã khắc ghi vào tâm — linh quang sáng trên hành trình.'}</div>
+      <div class="reward">
+        <span class="rw">神 +1 Thần</span><span class="rw">體 +1 Thể</span>
+        <span class="rw">氣 +1 Khí</span><span class="rw">+10 Đạo hạnh</span>
+        <span class="rw">🏅 ${q.han} ${q.name}</span></div>
+      <div class="sec" style="text-align:left;color:var(--sub);font-size:12px">
+        <b style="color:var(--gold2)">Ghi nhớ:</b> ${q.key.split('•')[0].trim()} — ${q.mean.split('.')[0]}.</div>
+    </div>
+    <button class="cta han" onclick="closeModal()">Tiếp tục tu luyện →</button>`;
+  // nếu vừa đột phá, modal thông quẻ đã đóng tạm; mở lại sau khi đóng đột phá
+  if(broke){ ov.classList.remove('show'); pendingVictoryModal=modal.innerHTML; }
+}
+
+/* ======================================================================
+   DI CANH — render 1 cảnh: nền thủy mặc + đường tu (8 quẻ) + la bàn
+   ====================================================================== */
+let curCanh=0;
+/* toạ độ 8 viên đá trên đường winding (theo % của pathwrap) */
+const STONE_POS=[
+  {x:11,y:82},{x:26,y:60},{x:18,y:36},{x:37,y:24},
+  {x:55,y:38},{x:50,y:64},{x:71,y:72},{x:86,y:46}
+];
+function buildPathD(pts){
+  // pts: array {x,y} theo viewBox 1000x600 -> đường cong mượt qua các điểm
+  let d=`M ${pts[0].x} ${pts[0].y}`;
+  for(let i=1;i<pts.length;i++){
+    const p0=pts[i-1],p1=pts[i];
+    const cx=(p0.x+p1.x)/2;
+    d+=` Q ${cx} ${p0.y} ${cx} ${(p0.y+p1.y)/2} T ${p1.x} ${p1.y}`;
+  }
+  return d;
+}
+function renderCompass(){
+  const c=document.getElementById('compass');
+  c.innerHTML=ORDER.map(([cung,cel,mem],ci)=>{
+    const d=mem.filter(q=>STATE.done.includes(q)).length;
+    const done=d===8;
+    return `<button class="cbtn ${ci===curCanh?'on':''} ${done?'cdone':''}" onclick="gotoCanh(${ci})" title="${CANH[ci].scene}">
+      <span class="cdot"></span><span class="han">${cung}</span><span class="ce">${cel} ${d}/8</span></button>`;
+  }).join('');
+}
+function renderCanh(){
+  const ci=curCanh, c=CANH[ci], [cung,cel,mem]=ORDER[ci];
+  // background
+  const bg=document.getElementById('canhbg');
+  bg.innerHTML=bgSVG(c);
+  bg.classList.add('active');
+  // header
+  const d=mem.filter(q=>STATE.done.includes(q)).length;
+  document.getElementById('canhTitle').textContent=`${c.scene}`;
+  document.getElementById('canhEl').innerHTML=`Cảnh <b>${cung}</b> · ${c.nat} · Ngũ hành ${cel} <span style="color:var(--faint)">— ${c.tip}</span>`;
+  document.getElementById('canhProg').innerHTML=`Đã thông<br><b>${d}</b> / 8 quẻ`;
+  document.getElementById('world').style.setProperty('--accent2',c.accent);
+  // path + stones
+  const wrap=document.getElementById('pathwrap');
+  // clear old stones (keep svg)
+  wrap.querySelectorAll('.stone').forEach(s=>s.remove());
+  // path geometry in viewBox coords (1000x600)
+  const ptsVB=STONE_POS.map(p=>({x:p.x*10,y:p.y*6}));
+  const dAll=buildPathD(ptsVB);
+  document.getElementById('ptrack').setAttribute('d',dAll);
+  // lit portion: up to last done stone in sequence
+  let litCount=0; for(let i=0;i<mem.length;i++){ if(STATE.done.includes(mem[i]))litCount=i+1; else break; }
+  document.getElementById('plit').setAttribute('d', litCount>0?buildPathD(ptsVB.slice(0,litCount)) :'');
+  // stones
+  mem.forEach((qn,qi)=>{
+    const q=QBYN[qn]; const st=queStatus(qn); const pos=STONE_POS[qi];
+    const el=document.createElement('div');
+    el.className=`stone ${st}`;
+    el.style.left=pos.x+'%'; el.style.top=pos.y+'%';
+    el.innerHTML=`<div class="disc"><span class="gx han">${hexGlyphByN(qn)}</span><span class="qn">${qn}</span></div>
+      <div class="nm han">${q.name}</div>`;
+    el.title=`#${qn} ${q.name} (${q.han}) — ${st==='done'?'đã thông':st==='next'?'mở, vào linh ngộ':'chưa khai mở'}`;
+    el.addEventListener('click',()=>{
+      const s=queStatus(qn);
+      if(s==='lock'){ openLocked(qn,QBYN[mem[mem.indexOf(qn)-1]]); return; }
+      openLesson(qn);
+    });
+    wrap.appendChild(el);
+  });
+  renderCompass();
+  // particle color follows scene
+  LINHQI_COLOR=c.particle;
+}
+/* chuyển cảnh với transition sương tan */
+let switching=false;
+function gotoCanh(ci,instant){
+  if(ci===curCanh && !instant){ renderCanh(); return; }
+  ci=(ci+CANH.length)%CANH.length;
+  if(REDUCED||instant){ curCanh=ci; renderCanh(); return; }
+  if(switching)return; switching=true;
+  const veil=document.getElementById('veil'), bg=document.getElementById('canhbg');
+  veil.classList.add('on'); bg.classList.remove('active');
+  setTimeout(()=>{ curCanh=ci; renderCanh();
+    setTimeout(()=>{veil.classList.remove('on');switching=false;},60);
+  },420);
+}
+function nextCanh(){gotoCanh(curCanh+1);}
+function prevCanh(){gotoCanh(curCanh-1);}
+
+/* ======================================================================
+   LIST MODE (fallback mobile / dễ nhìn) — GIỮ NGUYÊN, đổi nhãn nhẹ
+   ====================================================================== */
+function renderList(){
+  const wrap=document.getElementById('listmode');
+  wrap.innerHTML=ORDER.map(([cung,cel,mem],ci)=>{
+    const d=mem.filter(q=>STATE.done.includes(q)).length;
+    const rows=mem.map(qn=>{
+      const q=QBYN[qn]; const st=queStatus(qn);
+      const stLbl=st==='done'?'<span class="st done">✓ đã thông</span>':st==='next'?'<span class="st next">▶ linh ngộ</span>':'<span class="st lock">🔒 khóa</span>';
+      return `<div class="lrow ${st==='lock'?'locked':''}" data-qn="${qn}">
+        <span class="qn">#${qn}</span>
+        <span class="hex han">${hexGlyphByN(qn)}</span>
+        <span class="nm han">${q.name}<small>${q.han} · ${q.upSym}${q.up}/${q.loSym}${q.lo}</small></span>
+        ${stLbl}</div>`;
+    }).join('');
+    return `<div class="lc">
+      <div class="hd"><span class="badge han" style="background:${ELCOL[cel]}22;color:${ELCOL[cel]};border:1px solid ${ELCOL[cel]}55">${cung}</span>
+        <h4 class="han">Cảnh ${cung} — ${CANH[ci].nat}</h4><span class="cnt">${cel} · ${d}/8</span></div>
+      ${rows}</div>`;
+  }).join('');
+  wrap.querySelectorAll('.lrow').forEach(r=>r.addEventListener('click',()=>{
+    const qn=+r.dataset.qn; if(queStatus(qn)==='lock'){const mem=ORDER.find(o=>o[2].includes(qn))[2];openLocked(qn,QBYN[mem[mem.indexOf(qn)-1]]);return;} openLesson(qn);
+  }));
+}
+let listOn=false;
+function toggleMode(){
+  listOn=!listOn;
+  document.getElementById('world').style.display=listOn?'none':'block';
+  document.getElementById('listmode').classList.toggle('show',listOn);
+  document.getElementById('modeBtn').innerHTML=listOn?'☰ Chế độ đi cảnh':'☷ Chế độ danh sách';
+}
+
+/* ======================================================================
+   LINH KHÍ — particle canvas nhẹ (giới hạn số hạt, dừng khi reduced-motion)
+   ====================================================================== */
+let LINHQI_COLOR='#e3c073';
+let _qiRAF=null, _qiParts=[], _qiCanvas, _qiCtx, _qiW=0,_qiH=0;
+const QI_MAX = 26;            // giới hạn hạt cho nhẹ máy
+function _qiResize(){
+  if(!_qiCanvas)return;
+  const r=_qiCanvas.parentElement.getBoundingClientRect();
+  _qiW=_qiCanvas.width=Math.max(1,Math.floor(r.width));
+  _qiH=_qiCanvas.height=Math.max(1,Math.floor(r.height));
+}
+function _qiSeed(){
+  _qiParts=[];
+  for(let i=0;i<QI_MAX;i++){
+    _qiParts.push({x:Math.random()*_qiW,y:Math.random()*_qiH,
+      r:0.6+Math.random()*1.8, vy:-(0.12+Math.random()*0.3), vx:(Math.random()-0.5)*0.15,
+      a:0.15+Math.random()*0.4, ph:Math.random()*Math.PI*2});
+  }
+}
+function _qiTick(){
+  if(!_qiCtx)return;
+  _qiCtx.clearRect(0,0,_qiW,_qiH);
+  for(const p of _qiParts){
+    p.y+=p.vy; p.x+=p.vx + Math.sin(p.ph+=0.01)*0.12;
+    if(p.y< -4){p.y=_qiH+4;p.x=Math.random()*_qiW;}
+    if(p.x<-4)p.x=_qiW+4; if(p.x>_qiW+4)p.x=-4;
+    _qiCtx.beginPath();
+    _qiCtx.fillStyle=LINHQI_COLOR;
+    _qiCtx.globalAlpha=p.a*(0.6+0.4*Math.sin(p.ph));
+    _qiCtx.arc(p.x,p.y,p.r,0,Math.PI*2); _qiCtx.fill();
+  }
+  _qiCtx.globalAlpha=1;
+  _qiRAF=requestAnimationFrame(_qiTick);
+}
+function startLinhQi(){
+  if(REDUCED)return;
+  _qiCanvas=document.getElementById('linhqi'); if(!_qiCanvas)return;
+  _qiCtx=_qiCanvas.getContext('2d');
+  _qiResize(); _qiSeed();
+  if(_qiRAF)cancelAnimationFrame(_qiRAF);
+  _qiRAF=requestAnimationFrame(_qiTick);
+}
+function stopLinhQi(){ if(_qiRAF){cancelAnimationFrame(_qiRAF);_qiRAF=null;} if(_qiCtx)_qiCtx.clearRect(0,0,_qiW,_qiH); }
+window.addEventListener('resize',()=>{ if(_qiCanvas&&!REDUCED){_qiResize();_qiSeed();} });
+/* tiet kiem dien/CPU: dung particle khi tab an, chay lai khi quay lai */
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){ if(_qiRAF){cancelAnimationFrame(_qiRAF);_qiRAF=null;} }
+  else if(!REDUCED && _qiCanvas && !_qiRAF){ _qiRAF=requestAnimationFrame(_qiTick); }
+});
+
+/* ======================================================================
+   TỌA THIỀN / ĐIỀU TỨC — vòng tròn thở 4s vào · giữ · 4s ra
+   Tích Đạo hạnh nhẹ theo mỗi vòng thở trọn vẹn (chủ động tu luyện).
+   ====================================================================== */
+const BREATH=[
+  {ph:'Hít vào',  sub:'Hít vào — tâm tĩnh lặng',  cls:'inhale', ms:4000},
+  {ph:'Giữ',      sub:'Giữ — khí trầm đan điền',  cls:'hold',   ms:2000},
+  {ph:'Thở ra',   sub:'Thở ra — miệng tươi cười', cls:'exhale', ms:4000},
+  {ph:'Lặng',     sub:'Buông — trống rỗng, an nhiên', cls:'exhale', ms:1500}
+];
+let breathOn=false, breathStep=0, breathTimer=null, breathCycles=0, breathGain=0, medStarsRAF=null;
+const XP_PER_CYCLE=2;          // mỗi vòng thở trọn = +2 Đạo hạnh
+function openMeditate(){
+  document.getElementById('medOv').classList.add('show');
+  breathCycles=0; breathGain=0; breathStep=0;
+  document.getElementById('medCycles').textContent='0';
+  document.getElementById('medGain').textContent='0';
+  document.getElementById('medPhase').textContent='Tọa thiền';
+  document.getElementById('medSub').textContent='Ngồi thẳng, buông vai, theo dõi hơi thở';
+  document.getElementById('medStartBtn').textContent='Bắt đầu điều tức';
+  setMedStars(true);
+}
+function closeMeditate(){
+  stopBreath();
+  document.getElementById('medOv').classList.remove('show');
+  setMedStars(false);
+}
+function toggleBreath(){ breathOn?stopBreath():startBreath(); }
+function startBreath(){
+  breathOn=true; breathStep=0;
+  document.getElementById('medStartBtn').textContent='Dừng điều tức';
+  stepBreath();
+}
+function stopBreath(){
+  breathOn=false; if(breathTimer){clearTimeout(breathTimer);breathTimer=null;}
+  const orb=document.getElementById('breathOrb');
+  if(orb)orb.className='breath-orb';
+  const b=document.getElementById('medStartBtn'); if(b)b.textContent='Tiếp tục điều tức';
+  const p=document.getElementById('medPhase'); if(p)p.textContent='Tạm nghỉ';
+}
+function stepBreath(){
+  if(!breathOn)return;
+  const s=BREATH[breathStep];
+  const orb=document.getElementById('breathOrb');
+  orb.className='breath-orb '+s.cls;
+  document.getElementById('medPhase').textContent=s.ph;
+  document.getElementById('medSub').textContent=s.sub;
+  breathTimer=setTimeout(()=>{
+    breathStep++;
+    if(breathStep>=BREATH.length){
+      breathStep=0; breathCycles++;
+      // tích Đạo hạnh mỗi vòng thở trọn vẹn
+      breathGain+=XP_PER_CYCLE;
+      document.getElementById('medCycles').textContent=breathCycles;
+      document.getElementById('medGain').textContent=breathGain;
+      const broke=gainXP(XP_PER_CYCLE);
+      // khí tăng nhẹ theo định lực
+      if(breathCycles%3===0){ STATE.khi=Math.min(64,STATE.khi+1); saveState(); renderChar(); }
+      if(broke){ /* đột phá hiện ngay, vẫn cho ngồi tiếp */ }
+    }
+    stepBreath();
+  }, REDUCED? Math.min(1500,s.ms) : s.ms);
+}
+/* sao lấp lánh nền thiền (rất nhẹ, tĩnh nếu reduced-motion) */
+function setMedStars(on){
+  const cv=document.getElementById('medStars'); if(!cv)return;
+  if(!on){ if(medStarsRAF){cancelAnimationFrame(medStarsRAF);medStarsRAF=null;} const cx=cv.getContext('2d'); cx&&cx.clearRect(0,0,cv.width,cv.height); return; }
+  const ctx=cv.getContext('2d');
+  function rz(){cv.width=window.innerWidth;cv.height=window.innerHeight;}
+  rz();
+  const N=REDUCED?40:70;
+  const stars=Array.from({length:N},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.3,t:Math.random()*Math.PI*2}));
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    for(const s of stars){ s.t+=0.02;
+      ctx.beginPath(); ctx.fillStyle='#e3c073';
+      ctx.globalAlpha=REDUCED?0.3:(0.2+0.3*Math.abs(Math.sin(s.t)));
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    if(!REDUCED) medStarsRAF=requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ======================================================================
+   ĐỘT PHÁ CẢNH GIỚI — hào quang / chấn động / flash + dòng chữ
+   ====================================================================== */
+let pendingVictoryModal=null, _btSparkRAF=null;
+function breakthrough(realm){
+  const ov2=document.getElementById('btOv');
+  document.getElementById('btSeal').textContent=REALM_SEAL[realm]||'道';
+  document.getElementById('btRealm').textContent=realm;
+  document.getElementById('btSub').textContent='Đột phá: '+(REALM_SUB[realm]||'Cảnh giới mới mở ra.');
+  ov2.classList.add('show');
+  if(!REDUCED) btSpark();
+}
+function closeBreakthrough(){
+  document.getElementById('btOv').classList.remove('show');
+  if(_btSparkRAF){cancelAnimationFrame(_btSparkRAF);_btSparkRAF=null;}
+  // nếu đột phá đến từ thắng battle, mở lại modal thông quẻ
+  if(pendingVictoryModal){ modal.innerHTML=pendingVictoryModal; pendingVictoryModal=null; ov.classList.add('show'); }
+}
+function btSpark(){
+  const cv=document.getElementById('btspark'); const ctx=cv.getContext('2d');
+  cv.width=window.innerWidth; cv.height=window.innerHeight;
+  const cx=cv.width/2, cy=cv.height*0.42;
+  const parts=Array.from({length:60},()=>{const a=Math.random()*Math.PI*2,sp=2+Math.random()*6;
+    return{x:cx,y:cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,r:1+Math.random()*2.4};});
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    let alive=false;
+    for(const p of parts){ if(p.life<=0)continue; alive=true;
+      p.x+=p.vx;p.y+=p.vy;p.vy+=0.04;p.life-=0.012;
+      ctx.beginPath(); ctx.fillStyle='#e3c073'; ctx.globalAlpha=Math.max(0,p.life);
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    if(alive) _btSparkRAF=requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ======================================================================
+   MISC
+   ====================================================================== */
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('show'),2400);}
+function resetGame(){if(confirm('Khởi đầu lại toàn bộ hành trình tu luyện? Mọi tiến độ sẽ xóa.')){localStorage.removeItem(SKEY);STATE=loadState();curCanh=0;renderChar();renderCanh();renderList();toast('Đã khởi đầu lại.');}}
+
+/* ======================================================================
+   KHỞI ĐỘNG
+   ====================================================================== */
+applyReducedClass();
+renderChar();
+gotoCanh(0,true);
+renderList();
+startLinhQi();
+</script>
+</body></html>
+
