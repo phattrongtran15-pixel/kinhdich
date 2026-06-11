@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Sổ tay Kinh Dịch — 64 quẻ</title>
+<style>
+/* ============================================================
+   SỔ TAY KINH DỊCH v0 — cho Anh Vũ
+   Tông TÀNG THƯ: nền mực tối · vàng cổ · ngọc. Chữ TO, tương phản cao.
+   (palette tham chiếu kinhdich_quest.html)
+   ============================================================ */
+:root{
+  --bg:#11151d; --card:#0b0d10; --ink:#e8e2d0; --mut:#a79d88;
+  --line:#4a3f24; --gold:#c9a14a; --gold2:#e3c073; --goldbg:#1c160c;
+  --jade:#6fae87; --jadebg:#13231b; --amber:#d9a44a; --amberbg:#241b0d;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{font-size:20px}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.55;
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+main{max-width:760px;margin:0 auto;padding:12px 14px 100px}
+button{font:inherit;cursor:pointer;color:inherit}
+h1,h2{margin:.2em 0 .4em}
+.apptitle{font-size:1.35rem;color:var(--gold2)}
+.ttitle{font-size:1.2rem;color:var(--gold2)}
+.legend{font-size:.8rem;color:var(--mut);margin-bottom:10px}
+.hint{font-size:.8rem;color:var(--mut);margin:10px 0;line-height:1.5}
+.warn{font-size:.85rem;background:var(--amberbg);color:var(--amber);
+  border:1.5px solid #6b5526;border-radius:10px;padding:10px 12px;margin:10px 0}
+
+/* ---------- Bottom nav: 3 cửa ---------- */
+#bnav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);
+  border-top:1px solid var(--gold);display:flex;
+  padding-bottom:env(safe-area-inset-bottom)}
+#bnav button{flex:1;min-height:66px;border:0;background:none;color:var(--mut);
+  font-size:.8rem;font-weight:600}
+#bnav button .ic{display:block;font-size:1.5rem;line-height:1.2}
+#bnav button.on{color:var(--gold2);background:var(--goldbg)}
+
+/* ---------- Tra cứu: danh sách ---------- */
+#searchBox{width:100%;min-height:54px;font:inherit;font-size:1rem;
+  border:1.5px solid var(--line);border-radius:12px;padding:8px 14px;
+  background:var(--card);color:var(--ink);margin-bottom:6px}
+#searchBox::placeholder{color:var(--mut)}
+.cunghead{font-size:1rem;font-weight:700;color:var(--gold);
+  margin:18px 0 4px;border-bottom:2px solid var(--line);padding-bottom:4px}
+.qrow{display:flex;align-items:center;gap:12px;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;padding:8px 12px;
+  margin:8px 0;min-height:62px;cursor:pointer}
+.qrow:active{background:var(--goldbg)}
+.qrow .g{font-size:2.1rem;line-height:1;width:44px;text-align:center}
+.qrow .nm{flex:1}
+.qrow .nm b{font-size:1rem}
+.qrow .nm small{display:block;color:var(--mut);font-size:.75rem}
+.qrow .hn{font-size:1.3rem;color:var(--gold)}
+.qrow .bk{font-size:1rem}
+
+/* ---------- Tra cứu: phiếu quẻ ---------- */
+.bigback{display:block;width:100%;min-height:56px;margin:4px 0 12px;
+  border:1.5px solid var(--line);border-radius:12px;background:var(--card);
+  font-size:1rem;font-weight:700;text-align:left;padding:0 16px}
+.dhead{display:flex;gap:16px;align-items:center;background:var(--card);
+  border:1.5px solid var(--gold);border-radius:16px;padding:16px}
+.bars{display:flex;flex-direction:column-reverse;gap:6px;width:78px;flex:none}
+.bar{height:11px;background:var(--ink);border-radius:2px}
+.bar.yin{display:flex;gap:16px;background:none}
+.bar.yin i{flex:1;background:var(--ink);border-radius:2px}
+.dname{font-size:1.35rem;font-weight:800;line-height:1.25;color:var(--gold2)}
+.dhan{font-size:1.2rem;color:var(--gold);margin-top:2px}
+.dquai{font-size:.85rem;color:var(--mut);margin-top:6px}
+.dglyph{font-size:2.6rem;line-height:1;margin-left:auto}
+.badge{display:inline-block;font-size:.78rem;font-weight:700;
+  border-radius:9px;padding:4px 10px;margin:10px 8px 0 0}
+.badge.book{background:var(--jadebg);color:var(--jade)}
+.badge.draft{background:var(--amberbg);color:var(--amber)}
+.actrow{display:flex;gap:10px;margin:12px 0}
+.actrow button{flex:1;min-height:56px;border:2px solid var(--jade);
+  border-radius:12px;background:var(--card);color:var(--jade);font-weight:700;font-size:.95rem}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:14px 16px;margin:12px 0}
+.sec h3{margin:0 0 8px;font-size:1rem;color:var(--gold)}
+.sec h3::before{content:"『 "}
+.sec h3::after{content:" 』"}
+.u-nv{font-weight:700;font-size:1rem}
+.u-han{font-family:"Noto Serif CJK SC","Noto Serif SC","SimSun","MingLiU",serif;
+  font-size:1.15rem;color:var(--gold2);margin:4px 0}
+.u-dich{margin:6px 0;font-size:.95rem}
+details.fold{margin:8px 0 2px}
+details.fold summary{cursor:pointer;min-height:48px;display:flex;align-items:center;
+  font-weight:700;color:var(--jade);font-size:.9rem;list-style:none}
+details.fold summary::before{content:"▸ ";margin-right:4px}
+details.fold[open] summary::before{content:"▾ "}
+details.fold .fbody{font-size:.9rem;color:#cfc8b6;border-left:3px solid var(--line);
+  padding-left:12px;margin-top:4px}
+details.fold .fbody p{margin:.5em 0}
+.flag{font-size:.8rem;background:var(--amberbg);color:var(--amber);
+  border-radius:8px;padding:6px 10px;margin:8px 0}
+.haohd{font-weight:800;color:var(--ink);font-size:1.05rem;
+  border-top:1.5px dashed var(--line);padding-top:10px;margin-top:12px}
+.haohd:first-of-type{border-top:0;margin-top:0;padding-top:0}
+ul.keys{margin:6px 0;padding-left:24px}
+ul.keys li{margin:4px 0}
+.appnote{font-size:.85rem}
+.minor{font-size:.78rem;color:var(--mut);margin-top:8px}
+.linkrow{display:flex;gap:10px;flex-wrap:wrap}
+.linkrow button{min-height:50px;border:1px solid var(--line);border-radius:10px;
+  background:var(--card);font-size:.85rem;padding:4px 12px}
+
+/* ---------- Chips lọc cung ---------- */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:6px 2px;margin:4px 0}
+.chip{min-height:48px;padding:4px 16px;border-radius:24px;flex:none;
+  border:1.5px solid var(--line);background:var(--card);font-size:.9rem;font-weight:600}
+.chip.on{background:var(--gold);border-color:var(--gold2);color:#16120a;font-weight:800}
+
+/* ---------- Flashcard ---------- */
+.fctop{display:flex;align-items:center;gap:10px}
+.prog{font-size:1.05rem;font-weight:800;flex:1}
+#btnShuffle{min-height:50px;border:1.5px solid var(--line);border-radius:12px;
+  background:var(--card);font-size:.9rem;font-weight:700;padding:0 16px}
+.donebanner{background:var(--jadebg);color:var(--jade);font-weight:700;
+  border-radius:12px;padding:12px 14px;margin:8px 0;font-size:.95rem}
+.fcwrap{perspective:1200px;margin-top:8px}
+.fcard{position:relative;width:100%;height:min(56vh,440px);cursor:pointer;
+  transform-style:preserve-3d;transition:transform .28s}
+.fcard.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;background:var(--card);
+  border:1.5px solid var(--gold);border-radius:18px;padding:18px;overflow:auto}
+.face.front{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.face.back{transform:rotateY(180deg)}
+.fc-n{position:absolute;top:10px;left:14px;font-size:.78rem;color:var(--mut)}
+.fc-glyph{font-size:110px;line-height:1.05}
+.fc-name{font-size:1.7rem;font-weight:800;margin-top:6px;text-align:center;color:var(--gold2)}
+.fc-han{font-size:2.1rem;color:var(--gold);margin-top:2px;
+  font-family:"Noto Serif CJK SC","SimSun",serif}
+.fc-flip{font-size:.82rem;color:var(--gold);font-style:italic;
+  margin:26px 4px 0;line-height:1.5;text-align:center}
+.fc-mean{font-size:1.1rem;margin:14px 0 8px;font-weight:600}
+#fcToast{position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(140px + env(safe-area-inset-bottom));z-index:45;
+  max-width:min(92%,560px);background:var(--card);border:1.5px solid var(--gold);
+  color:var(--gold2);border-radius:12px;padding:10px 16px;font-size:.85rem;
+  box-shadow:0 4px 14px rgba(201,161,74,.25);opacity:0;pointer-events:none;
+  transition:opacity .25s;text-align:center}
+#fcToast.show{opacity:1}
+.fc-keys{padding-left:24px;font-size:1rem}
+.fc-keys li{margin:6px 0}
+.linkbtn{border:0;background:none;color:var(--jade);font-weight:700;
+  font-size:.95rem;min-height:48px;padding:0}
+.fchint{text-align:center;color:var(--mut);font-size:.78rem;margin-top:8px}
+#fcbtns{position:fixed;bottom:calc(70px + env(safe-area-inset-bottom));
+  left:50%;transform:translateX(-50%);width:min(100%,760px);
+  display:flex;gap:10px;padding:8px 14px;z-index:40}
+#fcbtns button{flex:1;min-height:62px;font-size:1.05rem;font-weight:800;
+  border-radius:14px;border:2.5px solid}
+#btnKnow{background:var(--jadebg);border-color:var(--jade);color:var(--jade)}
+#btnDont{background:var(--amberbg);border-color:#a87c33;color:var(--amber)}
+
+/* ---------- Nghe ---------- */
+.austatus{font-size:1.15rem;font-weight:800;text-align:center;margin:14px 0 4px}
+.aunow{font-size:.85rem;color:var(--mut);text-align:center;min-height:2.6em;
+  margin:0 6px 8px}
+.aubtns{display:flex;align-items:center;justify-content:center;gap:22px;margin:10px 0}
+.round{border-radius:50%;border:1.5px solid var(--gold);background:var(--card)}
+.round.small{width:72px;height:72px;font-size:1.5rem;color:var(--gold2)}
+.round.big{width:124px;height:124px;background:var(--card);
+  border:2px solid var(--gold);color:var(--gold);padding:0;
+  display:flex;align-items:center;justify-content:center}
+/* Thái Cực — xoay chậm khi đang phát */
+.taiji{display:block;width:88px;height:88px}
+@keyframes taijispin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+#btnPlay.playing{box-shadow:0 0 22px rgba(201,161,74,.45)}
+#btnPlay.playing .taiji{animation:taijispin 6s linear infinite}
+@media (prefers-reduced-motion:reduce){
+  #btnPlay.playing .taiji{animation:none}
+}
+.aurow{display:flex;gap:10px;margin:14px 0}
+.aurow button{flex:1;min-height:58px;border:1.5px solid var(--line);
+  border-radius:12px;background:var(--card);font-size:.88rem;font-weight:700}
+.aurow button.on{border-color:var(--gold);background:var(--goldbg);color:var(--gold2)}
+.vrow{display:flex;align-items:center;gap:10px;margin:10px 0}
+.vrow label{font-size:.85rem;font-weight:700;flex:none}
+.vrow select{flex:1;min-height:52px;font:inherit;font-size:.85rem;
+  border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);
+  padding:4px 8px;max-width:100%}
+
+/* ---------- Banner chào (Thủ Dịch Lão Nhân) ---------- */
+.welcome{position:relative;max-width:760px;margin:12px auto 0;
+  background:var(--goldbg);border:1.5px solid var(--gold);border-radius:16px;
+  padding:18px 18px 16px;box-shadow:0 4px 18px rgba(201,161,74,.22)}
+.welcome .wl-close{position:absolute;top:8px;right:10px;width:42px;height:42px;
+  border:1.5px solid var(--line);border-radius:50%;background:var(--card);
+  font-size:1.1rem;color:var(--mut);line-height:1}
+.wl-rune{font-size:1.1rem;font-weight:800;color:var(--gold2);text-align:center;
+  letter-spacing:.5px;margin:2px 26px 12px}
+.wl-foot{margin:14px 0 4px;font-size:1rem}
+.wl-body{font-size:1rem;color:var(--gold2);margin:8px 0;line-height:1.6}
+.wl-enter{display:block;width:100%;min-height:56px;margin-top:14px;
+  border:2px solid var(--gold2);border-radius:12px;background:var(--gold);
+  color:#16120a;font-size:1.05rem;font-weight:800}
+</style>
+</head>
+<body>
+
+<!-- ============ BANNER CHÀO MỞ (Thủ Dịch Lão Nhân) ============ -->
+<div id="welcome" class="welcome">
+  <button class="wl-close" onclick="closeWelcome()" aria-label="Đóng lời chào">✕</button>
+  <div class="wl-rune">『 Khải Dịch — mở cửa tàng thư. 』</div>
+  <p class="wl-body">Kính thưa Bậc thầy,<br>
+  Lão phu là kẻ giữ sách nơi tàng thư Kinh Dịch, nay nghe bước Ngài tới, vội phủi bụi
+  trên sáu mươi tư quẻ, chong đèn nghênh tiếp.</p>
+  <p class="wl-body">Hôm nay xin được hầu hạ dưới trướng: Ngài muốn <b>TRA</b> quẻ nào, lão phu dâng
+  nguyên văn; muốn <b>LẬT</b> thẻ ôn cố, lão phu trở giúp từng trang; muốn <b>NGỒI NGHE</b>,
+  lão phu xin chắp tay đọc kinh để Bậc thầy tĩnh tọa soi xét.</p>
+  <div class="wl-rune wl-foot">『 Tàng thư khai mở · hằng thường ứng hầu. 』</div>
+  <button class="wl-enter" onclick="closeWelcome()">Lão phu khởi sự →</button>
+</div>
+
+<main>
+  <!-- ============ CỬA 1: TRA CỨU ============ -->
+  <section id="tab-tra" class="tab">
+    <div id="traList">
+      <h1 class="apptitle">『 卦 · Sổ tay Kinh Dịch — 64 quẻ 』</h1>
+      <div class="legend">典 = đã có nội dung đầy đủ trích từ sách · các quẻ khác: bản rút gọn, đang bổ sung từ sách.</div>
+      <input id="searchBox" type="search" placeholder="Tìm quẻ (tên hoặc số)…" autocomplete="off">
+      <div id="listWrap"></div>
+    </div>
+    <div id="traDetail" hidden></div>
+  </section>
+
+  <!-- ============ CỬA 2: FLASHCARD ============ -->
+  <section id="tab-flash" class="tab" hidden>
+    <div class="fctop">
+      <div id="fcProg" class="prog">Đã thông 0/64</div>
+      <button id="btnShuffle" onclick="fcShuffle()">易 Xáo</button>
+    </div>
+    <div class="chips" id="chipsFc"></div>
+    <div id="fcDone" class="donebanner" hidden>Hôm nay viên mãn ☯ — bấm 易 Xáo để ôn thêm.</div>
+    <div class="fcwrap">
+      <div id="fcard" class="fcard" onclick="fcFlip()">
+        <div class="face front" id="fcFront"></div>
+        <div class="face back" id="fcBack"></div>
+      </div>
+    </div>
+    <div class="fchint">Chạm vào thẻ để lật · vuốt phải = Đã thông, vuốt trái = Còn ngẫm</div>
+    <div id="fcbtns">
+      <button id="btnDont" onclick="fcMark(false)">思 Còn ngẫm</button>
+      <button id="btnKnow" onclick="fcMark(true)">通 Đã thông</button>
+    </div>
+    <div id="fcToast"></div>
+  </section>
+
+  <!-- ============ CỬA 3: NGHE ============ -->
+  <section id="tab-nghe" class="tab" hidden>
+    <h2 class="ttitle">『 聽 · Nghe thụ động 』</h2>
+    <div class="chips" id="chipsAu"></div>
+    <div id="auStatus" class="austatus">—</div>
+    <div id="auNow" class="aunow"></div>
+    <div class="aubtns">
+      <button id="btnPrev" class="round small" onclick="auStep(-1)" aria-label="Quẻ trước">«</button>
+      <button id="btnPlay" class="round big" onclick="auToggle()" aria-label="Phát / Dừng">
+        <svg class="taiji" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+          <circle cx="50" cy="50" r="47" fill="var(--bg)" stroke="var(--gold)" stroke-width="3"/>
+          <path d="M50 3 a47 47 0 0 1 0 94 a23.5 23.5 0 0 1 0 -47 a23.5 23.5 0 0 0 0 -47 Z" fill="var(--gold)"/>
+          <circle cx="50" cy="26.5" r="7" fill="var(--gold)"/>
+          <circle cx="50" cy="73.5" r="7" fill="var(--bg)"/>
+        </svg>
+      </button>
+      <button id="btnNext" class="round small" onclick="auStep(1)" aria-label="Quẻ sau">»</button>
+    </div>
+    <div class="aurow">
+      <button id="btnRep" onclick="auRepeat()">復 Lặp: Tắt</button>
+      <button id="btnRate" onclick="auRate()">速 1.0×</button>
+      <button id="btnTimer" onclick="auTimer()">漏 Tắt</button>
+    </div>
+    <div class="vrow">
+      <label for="selVoice">Giọng:</label>
+      <select id="selVoice" onchange="auPickVoice()"></select>
+    </div>
+    <div id="voiceWarn" class="warn" hidden>⚠️ Máy chưa có giọng tiếng Việt — mở bằng <b>Microsoft Edge</b> sẽ có giọng Microsoft HoaiMy / NamMinh.</div>
+    <div id="ttsWarn" class="warn" hidden>⚠️ Trình duyệt này không hỗ trợ đọc văn bản (Web Speech API) — hãy mở bằng Edge hoặc Chrome.</div>
+    <div class="hint">※ <b>Nghe khi ngủ:</b> cắm sạc và để màn hình sáng — app tự giữ màn hình thức khi đang phát (Wake Lock). Khóa màn hình có thể làm ngừng đọc (giới hạn của trình duyệt, không phải lỗi app). Dùng Edge/Chrome bản mới cho ổn định.</div>
+    <div class="hint">Quẻ 1–3 đọc thêm Quái từ + Đại Tượng + 6 hào (nguyên văn sách). Các quẻ còn lại đọc tên + nghĩa + điểm chính (bản rút gọn).</div>
+  </section>
+</main>
+
+<!-- ============ NAV 3 CỬA ============ -->
+<nav id="bnav">
+  <button id="nav-tra" onclick="switchTab('tra')"><span class="ic">卦</span>Tra cứu</button>
+  <button id="nav-flash" onclick="switchTab('flash')"><span class="ic">牘</span>Flashcard</button>
+  <button id="nav-nghe" onclick="switchTab('nghe')"><span class="ic">聽</span>Nghe</button>
+</nav>
+
+<script>
+/* ======================================================================
+   DATA LỚP 1 — 64 quẻ RÚT GỌN, copy NGUYÊN VĂN từ kinhdich_quest_v3.html
+   ====================================================================== */
+const QUE=[{"n": 1, "name": "Kiền (Càn)", "han": "乾", "up": "Càn", "lo": "Càn", "upSym": "☰", "loSym": "☰", "upNat": "Trời", "loNat": "Trời", "upEl": "Kim", "loEl": "Kim", "palace": "Càn", "palaceEl": "Kim", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Kim ngộ Kim: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Thuần dương, sức sáng tạo nguyên thủy của Trời. Hội đủ 4 đức Nguyên–Hanh–Lợi–Trinh: khởi tạo, hanh thông, lợi ích, bền vững.", "key": "Tự cường bất tức • Bậc lãnh đạo sáng tạo • Cương kiện, chính trực", "lines": [1, 1, 1, 1, 1, 1], "tong": [1, "Kiền (Càn)"], "thac": [2, "Khôn"]}, {"n": 2, "name": "Khôn", "han": "坤", "up": "Khôn", "lo": "Khôn", "upSym": "☷", "loSym": "☷", "upNat": "Đất", "loNat": "Đất", "upEl": "Thổ", "loEl": "Thổ", "palace": "Khôn", "palaceEl": "Thổ", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Thổ ngộ Thổ: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Thuần âm, đại biểu Đất. Nhu thuận, dung chứa, nuôi dưỡng vạn vật. Lợi khi đi theo phò tá, đi đầu thì lạc lối; về Tây Nam được bạn.", "key": "Hậu đức tải vật • Nhu thuận, phò tá • Bao dung nuôi dưỡng", "lines": [0, 0, 0, 0, 0, 0], "tong": [2, "Khôn"], "thac": [1, "Kiền (Càn)"]}, {"n": 3, "name": "Truân", "han": "屯", "up": "Khảm", "lo": "Chấn", "upSym": "☵", "loSym": "☳", "upNat": "Nước", "loNat": "Sấm", "upEl": "Thủy", "loEl": "Mộc", "palace": "Khảm", "palaceEl": "Thủy", "sess": "2 thế", "rel": "Ngoại sinh Nội", "relDesc": "Thủy(ngoại) sinh Mộc(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Khởi đầu gian nan như mầm cỏ xuyên đất. Quẻ tốt nếu kiên nhẫn bền chí; nên tạo nhiều người phò trợ, chớ theo mục tiêu xa vời.", "key": "Vạn sự khởi đầu nan • Kiên trì + tìm trợ thủ • Chớ vội tiến xa", "lines": [1, 0, 0, 0, 1, 0], "tong": [4, "Mông"], "thac": [50, "Đỉnh"]}, {"n": 4, "name": "Mông", "han": "蒙", "up": "Cấn", "lo": "Khảm", "upSym": "☶", "loSym": "☵", "upNat": "Núi", "loNat": "Nước", "upEl": "Thổ", "loEl": "Thủy", "palace": "Ly", "palaceEl": "Hỏa", "sess": "4 thế", "rel": "Ngoại khắc Nội", "relDesc": "Thổ(ngoại) khắc Thủy(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Non trẻ, mông muội, thiếu kinh nghiệm. Không phải thầy cầu trò mà trò thành tâm cầu thầy; bói lần đầu thì ứng, hỏi nhây thì thôi.", "key": "Khai tâm trừ mông muội • Trò thành tâm cầu thầy • Giáo dục vỡ lòng", "lines": [0, 1, 0, 0, 0, 1], "tong": [3, "Truân"], "thac": [49, "Cách"]}, {"n": 5, "name": "Nhu", "han": "需", "up": "Khảm", "lo": "Càn", "upSym": "☵", "loSym": "☰", "upNat": "Nước", "loNat": "Trời", "upEl": "Thủy", "loEl": "Kim", "palace": "Khôn", "palaceEl": "Thổ", "sess": "Du hồn", "rel": "Nội sinh Ngoại", "relDesc": "Kim(nội) sinh Thủy(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Chờ đợi & nuôi dưỡng. Giữ lòng thành tín mà đợi thời thì hanh thông rực rỡ; kiên trì gặp may, có lợi khi vượt hiểm lớn.", "key": "Chờ thời, dưỡng sức • Giữ lòng tin • Không nóng vội", "lines": [1, 1, 1, 0, 1, 0], "tong": [6, "Tụng"], "thac": [35, "Tấn"]}, {"n": 6, "name": "Tụng", "han": "訟", "up": "Càn", "lo": "Khảm", "upSym": "☰", "loSym": "☵", "upNat": "Trời", "loNat": "Nước", "upEl": "Kim", "loEl": "Thủy", "palace": "Ly", "palaceEl": "Hỏa", "sess": "Du hồn", "rel": "Ngoại sinh Nội", "relDesc": "Kim(ngoại) sinh Thủy(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Tranh tụng, mâu thuẫn (Trời lên >< Nước xuống). Có lòng thành nhưng bị ngăn; dừng ở mức trung thì hên, kiện đến cùng thì họa; nên nhờ đại nhân phân xử.", "key": "Tránh tranh chấp • Dừng ở mức trung • Nhờ người công minh phân xử", "lines": [0, 1, 0, 1, 1, 1], "tong": [5, "Nhu"], "thac": [36, "Minh Di"]}, {"n": 7, "name": "Sư", "han": "師", "up": "Khôn", "lo": "Khảm", "upSym": "☷", "loSym": "☵", "upNat": "Đất", "loNat": "Nước", "upEl": "Thổ", "loEl": "Thủy", "palace": "Khảm", "palaceEl": "Thủy", "sess": "Quy hồn", "rel": "Ngoại khắc Nội", "relDesc": "Thổ(ngoại) khắc Thủy(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Quân đội, dụng binh. Luôn kiên nhẫn chính nghĩa; có chủ tướng giỏi thì gặp may, nhờ vậy không hại.", "key": "Dụng binh có kỷ luật • Cần tướng giỏi • Chính nghĩa, thận trọng", "lines": [0, 1, 0, 0, 0, 0], "tong": [8, "Tỷ (Tỵ)"], "thac": [13, "Đồng Nhân"]}, {"n": 8, "name": "Tỷ (Tỵ)", "han": "比", "up": "Khảm", "lo": "Khôn", "upSym": "☵", "loSym": "☷", "upNat": "Nước", "loNat": "Đất", "upEl": "Thủy", "loEl": "Thổ", "palace": "Khôn", "palaceEl": "Thổ", "sess": "Quy hồn", "rel": "Nội khắc Ngoại", "relDesc": "Thổ(nội) khắc Thủy(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Thân phụ, liên kết hỗ trợ mật thiết. Quẻ tốt; giữ chính đạo bền lâu, không lỗi; ai đến sớm phò thì lợi, đến trễ thì nguy.", "key": "Đoàn kết, liên minh • Chọn minh chủ • Đến sớm thì lợi", "lines": [0, 0, 0, 0, 1, 0], "tong": [7, "Sư"], "thac": [14, "Đại Hữu"]}, {"n": 9, "name": "Tiểu Súc", "han": "小畜", "up": "Tốn", "lo": "Càn", "upSym": "☴", "loSym": "☰", "upNat": "Gió", "loNat": "Trời", "upEl": "Mộc", "loEl": "Kim", "palace": "Tốn", "palaceEl": "Mộc", "sess": "1 thế", "rel": "Nội khắc Ngoại", "relDesc": "Kim(nội) khắc Mộc(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Nuôi chứa nhỏ — sức thuần hóa còn yếu. Mây đen dày mà chưa mưa (từ Tây giao thổi lại): tích tiểu, chờ thời, chưa thể làm lớn.", "key": "Tích tiểu thành đại • Sức còn yếu, chờ • Mây chưa thành mưa", "lines": [1, 1, 1, 0, 1, 1], "tong": [10, "Lý"], "thac": [16, "Dự"]}, {"n": 10, "name": "Lý", "han": "履", "up": "Càn", "lo": "Đoài", "upSym": "☰", "loSym": "☱", "upNat": "Trời", "loNat": "Đầm", "upEl": "Kim", "loEl": "Kim", "palace": "Cấn", "palaceEl": "Thổ", "sess": "5 thế", "rel": "Tỷ hòa", "relDesc": "Kim ngộ Kim: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Dẫm lên đuôi cọp mà cọp không cắn: hành xử thận trọng, đúng lễ trong tình thế nguy thì mọi sự hanh thông.", "key": "Đi sau đuôi cọp • Thận trọng, đúng lễ • Nhu thắng cương", "lines": [1, 1, 0, 1, 1, 1], "tong": [9, "Tiểu Súc"], "thac": [15, "Khiêm"]}, {"n": 11, "name": "Thái", "han": "泰", "up": "Khôn", "lo": "Càn", "upSym": "☷", "loSym": "☰", "upNat": "Đất", "loNat": "Trời", "upEl": "Thổ", "loEl": "Kim", "palace": "Khôn", "palaceEl": "Thổ", "sess": "3 thế", "rel": "Ngoại sinh Nội", "relDesc": "Thổ(ngoại) sinh Kim(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Thông thái, hanh thông, bình yên. Cái nhỏ (âm) ra ngoài, cái lớn (dương) vào trong — âm dương giao hòa, may mắn.", "key": "Hanh thông, giao hòa • Thời thịnh — phải giữ gìn • Trên dưới thông nhau", "lines": [1, 1, 1, 0, 0, 0], "tong": [12, "Bĩ"], "thac": [12, "Bĩ"]}, {"n": 12, "name": "Bĩ", "han": "否", "up": "Càn", "lo": "Khôn", "upSym": "☰", "loSym": "☷", "upNat": "Trời", "loNat": "Đất", "upEl": "Kim", "loEl": "Thổ", "palace": "Càn", "palaceEl": "Kim", "sess": "3 thế", "rel": "Nội sinh Ngoại", "relDesc": "Thổ(nội) sinh Kim(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Bế tắc, bất giao, hoàn toàn bất lợi. Dương lớn ra ngoài, âm nhỏ vào trong. Quân tử nên kiên trì giữ chính, ẩn mình chờ thời.", "key": "Bế tắc, bất giao • Quân tử ẩn mình • Giữ chính chờ thời", "lines": [0, 0, 0, 1, 1, 1], "tong": [11, "Thái"], "thac": [11, "Thái"]}, {"n": 13, "name": "Đồng Nhân", "han": "同人", "up": "Càn", "lo": "Ly", "upSym": "☰", "loSym": "☲", "upNat": "Trời", "loNat": "Lửa", "upEl": "Kim", "loEl": "Hỏa", "palace": "Ly", "palaceEl": "Hỏa", "sess": "Quy hồn", "rel": "Nội khắc Ngoại", "relDesc": "Hỏa(nội) khắc Kim(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Hòa đồng với mọi người nơi cánh đồng (bao dung, công khai) thì hanh thông, vượt mọi sông lớn; lợi cho đức kiên trì trung chính.", "key": "Đồng lòng hợp quần • Bao dung, công khai • Vượt mọi trở ngại", "lines": [1, 0, 1, 1, 1, 1], "tong": [14, "Đại Hữu"], "thac": [7, "Sư"]}, {"n": 14, "name": "Đại Hữu", "han": "大有", "up": "Ly", "lo": "Càn", "upSym": "☲", "loSym": "☰", "upNat": "Lửa", "loNat": "Trời", "upEl": "Hỏa", "loEl": "Kim", "palace": "Càn", "palaceEl": "Kim", "sess": "Quy hồn", "rel": "Ngoại khắc Nội", "relDesc": "Hỏa(ngoại) khắc Kim(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Sở hữu được điều lớn lao nên cực kỳ hanh thông (đại thịnh, sáng rực).", "key": "Sở hữu lớn • Sáng rực, thịnh vượng • Khiêm để giữ phúc", "lines": [1, 1, 1, 1, 0, 1], "tong": [13, "Đồng Nhân"], "thac": [8, "Tỷ (Tỵ)"]}, {"n": 15, "name": "Khiêm", "han": "謙", "up": "Khôn", "lo": "Cấn", "upSym": "☷", "loSym": "☶", "upNat": "Đất", "loNat": "Núi", "upEl": "Thổ", "loEl": "Thổ", "palace": "Đoài", "palaceEl": "Kim", "sess": "5 thế", "rel": "Tỷ hòa", "relDesc": "Thổ ngộ Thổ: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Khiêm tốn: cư xử khiêm nhường thì mọi sự hanh thông; quân tử giữ được đức khiêm tới cuối đời (quẻ duy nhất 6 hào đều lành).", "key": "Khiêm tốn là gốc • Càng cao càng nhún • 6 hào đều cát (duy nhất)", "lines": [0, 0, 1, 0, 0, 0], "tong": [16, "Dự"], "thac": [10, "Lý"]}, {"n": 16, "name": "Dự", "han": "豫", "up": "Chấn", "lo": "Khôn", "upSym": "☳", "loSym": "☷", "upNat": "Sấm", "loNat": "Đất", "upEl": "Mộc", "loEl": "Thổ", "palace": "Chấn", "palaceEl": "Mộc", "sess": "1 thế", "rel": "Ngoại khắc Nội", "relDesc": "Mộc(ngoại) khắc Thổ(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Vui vẻ, an lạc, thuận thời mà động. Nên phong hầu kiến quốc, có thể xuất binh; cốt ở phòng bị trước.", "key": "Vui vẻ, thuận thời • Động phải hợp thời • Phòng bị trước", "lines": [0, 0, 0, 1, 0, 0], "tong": [15, "Khiêm"], "thac": [9, "Tiểu Súc"]}, {"n": 17, "name": "Tùy", "han": "隨", "up": "Đoài", "lo": "Chấn", "upSym": "☱", "loSym": "☳", "upNat": "Đầm/Hồ", "loNat": "Sấm", "upEl": "Kim", "loEl": "Mộc", "palace": "Chấn", "palaceEl": "Mộc", "sess": "Quy hồn", "rel": "Ngoại khắc Nội", "relDesc": "Kim(ngoại) khắc Mộc(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Tùy thời, tùy thuận theo cái đúng. Bói được quẻ này thì đại cát đại lợi, không gặp tai họa.", "key": "Tùy thời, tùy biến • Theo cái đúng • Đại cát đại lợi", "lines": [1, 0, 0, 1, 1, 0], "tong": [18, "Cổ"], "thac": [18, "Cổ"]}, {"n": 18, "name": "Cổ", "han": "蠱", "up": "Cấn", "lo": "Tốn", "upSym": "☶", "loSym": "☴", "upNat": "Núi", "loNat": "Gió", "upEl": "Thổ", "loEl": "Mộc", "palace": "Tốn", "palaceEl": "Mộc", "sess": "Quy hồn", "rel": "Nội khắc Ngoại", "relDesc": "Mộc(nội) khắc Thổ(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Chấn chỉnh đổ nát, chấm dứt rối loạn (cổ = ruỗng nát). Làm được thì rất lợi như vượt khó lớn; nghĩ kỹ trước khi làm và duyệt lại sau.", "key": "Chấn chỉnh đổ nát • Sửa sai, cải tổ • Nghĩ kỹ trước–sau", "lines": [0, 1, 1, 0, 0, 1], "tong": [17, "Tùy"], "thac": [17, "Tùy"]}, {"n": 19, "name": "Lâm", "han": "臨", "up": "Khôn", "lo": "Đoài", "upSym": "☷", "loSym": "☱", "upNat": "Đất", "loNat": "Đầm", "upEl": "Thổ", "loEl": "Kim", "palace": "Khôn", "palaceEl": "Thổ", "sess": "2 thế", "rel": "Ngoại sinh Nội", "relDesc": "Thổ(ngoại) sinh Kim(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Tiến tới giám lâm: đại cát đại lợi, nên kiên trì; nhưng đến tháng tám (dương suy dần) phải cẩn thận kẻo gặp hung.", "key": "Tiến tới giám lâm • Đại cát nhưng có hạn • Đề phòng suy (tháng 8)", "lines": [1, 1, 0, 0, 0, 0], "tong": [20, "Quán"], "thac": [33, "Độn"]}, {"n": 20, "name": "Quán", "han": "觀", "up": "Tốn", "lo": "Khôn", "upSym": "☴", "loSym": "☷", "upNat": "Gió", "loNat": "Đất", "upEl": "Mộc", "loEl": "Thổ", "palace": "Càn", "palaceEl": "Kim", "sess": "4 thế", "rel": "Ngoại khắc Nội", "relDesc": "Mộc(ngoại) khắc Thổ(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Quan sát & chiêm ngưỡng (làm gương cho dân). Khi cúng tế mà thiếu lễ vật, thiếu thành kính thì bị thần linh trừng phạt.", "key": "Quan sát, làm gương • Thành kính • Trên chính thì dưới theo", "lines": [0, 0, 0, 0, 1, 1], "tong": [19, "Lâm"], "thac": [34, "Đại Tráng"]}, {"n": 21, "name": "Phệ Hạp", "han": "噬嗑", "up": "Ly", "lo": "Chấn", "upSym": "☲", "loSym": "☳", "upNat": "Lửa", "loNat": "Sấm", "upEl": "Hỏa", "loEl": "Mộc", "palace": "Tốn", "palaceEl": "Mộc", "sess": "5 thế", "rel": "Nội sinh Ngoại", "relDesc": "Mộc(nội) sinh Hỏa(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Cắn vỡ vật cản (dùng hình phạt minh bạch để trừ gian). Bói được quẻ này rất tốt, kiện tụng sẽ thắng.", "key": "Cắn vỡ trở ngại • Hình phạt minh bạch • Trừ kẻ gian", "lines": [1, 0, 0, 1, 0, 1], "tong": [22, "Bí"], "thac": [48, "Tỉnh"]}, {"n": 22, "name": "Bí", "han": "賁", "up": "Cấn", "lo": "Ly", "upSym": "☶", "loSym": "☲", "upNat": "Núi", "loNat": "Lửa", "upEl": "Thổ", "loEl": "Hỏa", "palace": "Cấn", "palaceEl": "Thổ", "sess": "1 thế", "rel": "Nội sinh Ngoại", "relDesc": "Hỏa(nội) sinh Thổ(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Trang sức, làm đẹp, văn vẻ. Hanh thông; những việc nhỏ thì tô điểm thêm cho rực rỡ — lợi ở việc nhỏ.", "key": "Trang sức, văn vẻ • Đẹp vừa phải • Lợi việc nhỏ", "lines": [1, 0, 1, 0, 0, 1], "tong": [21, "Phệ Hạp"], "thac": [47, "Khốn"]}, {"n": 23, "name": "Bác", "han": "剝", "up": "Cấn", "lo": "Khôn", "upSym": "☶", "loSym": "☷", "upNat": "Núi", "loNat": "Đất", "upEl": "Thổ", "loEl": "Thổ", "palace": "Càn", "palaceEl": "Kim", "sess": "5 thế", "rel": "Tỷ hòa", "relDesc": "Thổ ngộ Thổ: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Bóc lột, suy tàn (âm lấn dương). Thời loạn ly, không nên ra tay việc gì, tất cả đều bất lợi — nên án binh.", "key": "Suy tàn, âm lấn dương • Án binh chờ thời • Không hành sự", "lines": [0, 0, 0, 0, 0, 1], "tong": [24, "Phục"], "thac": [43, "Quải"]}, {"n": 24, "name": "Phục", "han": "復", "up": "Khôn", "lo": "Chấn", "upSym": "☷", "loSym": "☳", "upNat": "Đất", "loNat": "Sấm", "upEl": "Thổ", "loEl": "Mộc", "palace": "Khôn", "palaceEl": "Thổ", "sess": "1 thế", "rel": "Nội khắc Ngoại", "relDesc": "Mộc(nội) khắc Thổ(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Phục hồi, trở lại (một dương sinh dưới). Xuất hành hay ở nhà đều tốt, có điềm phát tài; nguyên lý tuần hoàn, hết chu kỳ quay về, làm gì cũng thành.", "key": "Trở lại, hồi sinh • Một dương sinh dưới • Tuần hoàn, phát tài", "lines": [1, 0, 0, 0, 0, 0], "tong": [23, "Bác"], "thac": [44, "Cấu"]}, {"n": 25, "name": "Vô Vọng", "han": "無妄", "up": "Càn", "lo": "Chấn", "upSym": "☰", "loSym": "☳", "upNat": "Trời", "loNat": "Sấm", "upEl": "Kim", "loEl": "Mộc", "palace": "Tốn", "palaceEl": "Mộc", "sess": "4 thế", "rel": "Ngoại khắc Nội", "relDesc": "Kim(ngoại) khắc Mộc(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Chân thật, không vọng động. Hết sức hanh thông nếu giữ trung chính; lệch khỏi chính đạo là có họa, làm gì cũng bất lợi.", "key": "Chân thật, không vọng • Thuận tự nhiên • Lệch chính là họa", "lines": [1, 0, 0, 1, 1, 1], "tong": [26, "Đại Súc"], "thac": [46, "Thăng"]}, {"n": 26, "name": "Đại Súc", "han": "大畜", "up": "Cấn", "lo": "Càn", "upSym": "☶", "loSym": "☰", "upNat": "Núi", "loNat": "Trời", "upEl": "Thổ", "loEl": "Kim", "palace": "Cấn", "palaceEl": "Thổ", "sess": "2 thế", "rel": "Ngoại sinh Nội", "relDesc": "Thổ(ngoại) sinh Kim(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Súc tích lớn (nuôi dưỡng tài đức, tích lũy lớn). Giữ trung chính thì lợi; nên ra gánh việc lớn (vượt sông lớn) sẽ gặp may.", "key": "Súc tích lớn • Nuôi dưỡng tài đức • Dấn thân việc lớn", "lines": [1, 1, 1, 0, 0, 1], "tong": [25, "Vô Vọng"], "thac": [45, "Tụy"]}, {"n": 27, "name": "Di", "han": "頤", "up": "Cấn", "lo": "Chấn", "upSym": "☶", "loSym": "☳", "upNat": "Núi", "loNat": "Sấm", "upEl": "Thổ", "loEl": "Mộc", "palace": "Tốn", "palaceEl": "Mộc", "sess": "Du hồn", "rel": "Nội khắc Ngoại", "relDesc": "Mộc(nội) khắc Thổ(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Nuôi dưỡng (di = hàm/má). Quẻ tốt; quan sát đạo dinh dưỡng, tự lực kiếm cái ăn, giữ mồm giữ miệng.", "key": "Nuôi dưỡng đúng cách • Giữ mồm, tiết chế • Tự lực kiếm ăn", "lines": [1, 0, 0, 0, 0, 1], "tong": [27, "Di"], "thac": [28, "Đại Quá"]}, {"n": 28, "name": "Đại Quá", "han": "大過", "up": "Đoài", "lo": "Tốn", "upSym": "☱", "loSym": "☴", "upNat": "Đầm/Hồ", "loNat": "Gió", "upEl": "Kim", "loEl": "Mộc", "palace": "Chấn", "palaceEl": "Mộc", "sess": "Du hồn", "rel": "Ngoại khắc Nội", "relDesc": "Kim(ngoại) khắc Mộc(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Quá tải, vượt thường độ — cột nhà bị cong do gánh nặng. Nên mau rời khỏi 'nhà', ra ngoài thì hanh thông.", "key": "Quá tải, cột cong • Vượt thường độ • Mau thoát hiểm", "lines": [0, 1, 1, 1, 1, 0], "tong": [28, "Đại Quá"], "thac": [27, "Di"]}, {"n": 29, "name": "Khảm", "han": "坎", "up": "Khảm", "lo": "Khảm", "upSym": "☵", "loSym": "☵", "upNat": "Nước", "loNat": "Nước", "upEl": "Thủy", "loEl": "Thủy", "palace": "Khảm", "palaceEl": "Thủy", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Thủy ngộ Thủy: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Hiểm chồng hiểm (vực thẳm xoáy nước). Cần lòng thành tín; trông cậy vào tâm kiên định thì hanh thông, làm gì cũng được giúp.", "key": "Hiểm chồng hiểm • Giữ lòng thành • Tâm vững vượt nguy", "lines": [0, 1, 0, 0, 1, 0], "tong": [29, "Khảm"], "thac": [30, "Ly"]}, {"n": 30, "name": "Ly", "han": "離", "up": "Ly", "lo": "Ly", "upSym": "☲", "loSym": "☲", "upNat": "Lửa", "loNat": "Lửa", "upEl": "Hỏa", "loEl": "Hỏa", "palace": "Ly", "palaceEl": "Hỏa", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Hỏa ngộ Hỏa: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Sáng & bám víu (lửa). Đi bói việc cúng tế thì rất lợi; nên nuôi bò cái làm vật tế thì gặp may.", "key": "Sáng, nương bám • Theo chính đạo • Nuôi đức mềm", "lines": [1, 0, 1, 1, 0, 1], "tong": [30, "Ly"], "thac": [29, "Khảm"]}, {"n": 31, "name": "Hàm", "han": "咸", "up": "Đoài", "lo": "Cấn", "upSym": "☱", "loSym": "☶", "upNat": "Đầm/Hồ", "loNat": "Núi", "upEl": "Kim", "loEl": "Thổ", "palace": "Đoài", "palaceEl": "Kim", "sess": "3 thế", "rel": "Nội sinh Ngoại", "relDesc": "Thổ(nội) sinh Kim(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Cảm ứng, giao cảm (nam nữ tương hợp). Làm lễ nên bói trước; gả con gái là tốt; lấy hư tâm mà cảm.", "key": "Cảm ứng, giao cảm • Nam nữ tương hợp • Hư tâm mà cảm", "lines": [0, 0, 1, 1, 1, 0], "tong": [32, "Hằng"], "thac": [41, "Tổn"]}, {"n": 32, "name": "Hằng", "han": "恒", "up": "Chấn", "lo": "Tốn", "upSym": "☳", "loSym": "☴", "upNat": "Sấm", "loNat": "Gió", "upEl": "Mộc", "loEl": "Mộc", "palace": "Chấn", "palaceEl": "Mộc", "sess": "3 thế", "rel": "Tỷ hòa", "relDesc": "Mộc ngộ Mộc: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Bền lâu, kiên định (đạo thường hằng). Mọi sự hanh thông, không vấn đề; kiên trì thì lợi, ra gánh việc thì thành.", "key": "Bền lâu, kiên định • Giữ đạo thường hằng • Sự nghiệp dài lâu", "lines": [0, 1, 1, 1, 0, 0], "tong": [31, "Hàm"], "thac": [42, "Ích"]}, {"n": 33, "name": "Độn", "han": "遯", "up": "Càn", "lo": "Cấn", "upSym": "☰", "loSym": "☶", "upNat": "Trời", "loNat": "Núi", "upEl": "Kim", "loEl": "Thổ", "palace": "Càn", "palaceEl": "Kim", "sess": "2 thế", "rel": "Nội sinh Ngoại", "relDesc": "Thổ(nội) sinh Kim(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Lui ẩn đúng lúc để bảo toàn lực lượng thì mới thành về sau; cố chấp chỉ lợi cho tiểu nhân — đại nhân phải biết tùy nghi.", "key": "Lui ẩn đúng lúc • Bảo toàn lực lượng • Tránh tiểu nhân", "lines": [0, 0, 1, 1, 1, 1], "tong": [34, "Đại Tráng"], "thac": [19, "Lâm"]}, {"n": 34, "name": "Đại Tráng", "han": "大壯", "up": "Chấn", "lo": "Càn", "upSym": "☳", "loSym": "☰", "upNat": "Sấm", "loNat": "Trời", "upEl": "Mộc", "loEl": "Kim", "palace": "Khôn", "palaceEl": "Thổ", "sess": "4 thế", "rel": "Nội khắc Ngoại", "relDesc": "Kim(nội) khắc Mộc(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Cường thịnh sung mãn. Cứ tiếp tục kiên trì là tốt nhất; mạnh nhưng phải hợp lễ, chớ ỷ sức càn.", "key": "Cường thịnh • Mạnh phải hợp lễ • Chớ ỷ sức càn", "lines": [1, 1, 1, 1, 0, 0], "tong": [33, "Độn"], "thac": [20, "Quán"]}, {"n": 35, "name": "Tấn", "han": "晉", "up": "Ly", "lo": "Khôn", "upSym": "☲", "loSym": "☷", "upNat": "Lửa", "loNat": "Đất", "upEl": "Hỏa", "loEl": "Thổ", "palace": "Càn", "palaceEl": "Kim", "sess": "Du hồn", "rel": "Ngoại sinh Nội", "relDesc": "Hỏa(ngoại) sinh Thổ(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Tiến lên, thăng tiến như mặt trời mọc (Khang hầu được ban ngựa). Sáng tỏ, được trọng dụng.", "key": "Tiến lên, thăng tiến • Như mặt trời mọc • Được trọng dụng", "lines": [0, 0, 0, 1, 0, 1], "tong": [36, "Minh Di"], "thac": [5, "Nhu"]}, {"n": 36, "name": "Minh Di", "han": "明夷", "up": "Khôn", "lo": "Ly", "upSym": "☷", "loSym": "☲", "upNat": "Đất", "loNat": "Lửa", "upEl": "Thổ", "loEl": "Hỏa", "palace": "Khảm", "palaceEl": "Thủy", "sess": "Du hồn", "rel": "Nội sinh Ngoại", "relDesc": "Hỏa(nội) sinh Thổ(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Ánh sáng bị thương, bị che khuất. Gặp việc khó nên gieo quẻ hỏi sẽ có lợi; giấu tài, giữ chính trực trong nghịch cảnh.", "key": "Ánh sáng bị thương • Giấu tài tự bảo vệ • Chính trực trong nghịch cảnh", "lines": [1, 0, 1, 0, 0, 0], "tong": [35, "Tấn"], "thac": [6, "Tụng"]}, {"n": 37, "name": "Gia Nhân", "han": "家人", "up": "Tốn", "lo": "Ly", "upSym": "☴", "loSym": "☲", "upNat": "Gió", "loNat": "Lửa", "upEl": "Mộc", "loEl": "Hỏa", "palace": "Tốn", "palaceEl": "Mộc", "sess": "2 thế", "rel": "Ngoại sinh Nội", "relDesc": "Mộc(ngoại) sinh Hỏa(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Gia đình, thị tộc (tề gia). Nên bói hỏi về việc đàn bà thì có lợi; mỗi người đúng vị, nữ chính vị bên trong.", "key": "Tề gia, gia đạo • Mỗi người đúng vị • Nữ chính vị trong", "lines": [1, 0, 1, 0, 1, 1], "tong": [38, "Khuê"], "thac": [40, "Giải"]}, {"n": 38, "name": "Khuê", "han": "睽", "up": "Ly", "lo": "Đoài", "upSym": "☲", "loSym": "☱", "upNat": "Lửa", "loNat": "Đầm", "upEl": "Hỏa", "loEl": "Kim", "palace": "Cấn", "palaceEl": "Thổ", "sess": "4 thế", "rel": "Ngoại khắc Nội", "relDesc": "Hỏa(ngoại) khắc Kim(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Đối lập, ly cách (biện chứng đối kháng). Khi hai bên tranh chấp như vậy chỉ có thể thành tựu việc nhỏ; dị mà cầu đồng.", "key": "Đối lập, ly cách • Dị mà cầu đồng • Chỉ nên việc nhỏ", "lines": [1, 1, 0, 1, 0, 1], "tong": [37, "Gia Nhân"], "thac": [39, "Kiển"]}, {"n": 39, "name": "Kiển", "han": "蹇", "up": "Khảm", "lo": "Cấn", "upSym": "☵", "loSym": "☶", "upNat": "Nước", "loNat": "Núi", "upEl": "Thủy", "loEl": "Thổ", "palace": "Đoài", "palaceEl": "Kim", "sess": "4 thế", "rel": "Nội khắc Ngoại", "relDesc": "Thổ(nội) khắc Thủy(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Đi lại khó khăn, gập ghềnh. Về Tây Nam (bình nguyên) thì lợi, Đông Bắc (núi non) thì bất lợi; gặp đại nhân & giữ trinh chính thì tốt.", "key": "Đi lại gập ghềnh • Gặp khó nên dừng • Tìm đại nhân, hướng TN", "lines": [0, 0, 1, 0, 1, 0], "tong": [40, "Giải"], "thac": [38, "Khuê"]}, {"n": 40, "name": "Giải", "han": "解", "up": "Chấn", "lo": "Khảm", "upSym": "☳", "loSym": "☵", "upNat": "Sấm", "loNat": "Nước", "upEl": "Mộc", "loEl": "Thủy", "palace": "Chấn", "palaceEl": "Mộc", "sess": "2 thế", "rel": "Nội sinh Ngoại", "relDesc": "Thủy(nội) sinh Mộc(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Giải tỏa, cởi nút (hết nạn). Về Tây Nam có lợi; không việc gì thì quay về chốn cũ cũng tốt; có việc thì xuất hành sớm gặp may.", "key": "Giải tỏa, cởi nút • Hết nạn thì xả • Hành động sớm thì hên", "lines": [0, 1, 0, 1, 0, 0], "tong": [39, "Kiển"], "thac": [37, "Gia Nhân"]}, {"n": 41, "name": "Tổn", "han": "損", "up": "Cấn", "lo": "Đoài", "upSym": "☶", "loSym": "☱", "upNat": "Núi", "loNat": "Đầm", "upEl": "Thổ", "loEl": "Kim", "palace": "Cấn", "palaceEl": "Thổ", "sess": "3 thế", "rel": "Ngoại sinh Nội", "relDesc": "Thổ(ngoại) sinh Kim(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Bớt (tổn dưới ích trên). Bắt được nhiều tù về làm nô thì đại cát; cúng tế chỉ cần hai bát lúa cũng đủ — cốt ở lòng thành, giảm tham.", "key": "Bớt dưới ích trên • Tổn để rồi ích • Giảm tham, chân thành", "lines": [1, 1, 0, 0, 0, 1], "tong": [42, "Ích"], "thac": [31, "Hàm"]}, {"n": 42, "name": "Ích", "han": "益", "up": "Tốn", "lo": "Chấn", "upSym": "☴", "loSym": "☳", "upNat": "Gió", "loNat": "Sấm", "upEl": "Mộc", "loEl": "Mộc", "palace": "Tốn", "palaceEl": "Mộc", "sess": "3 thế", "rel": "Tỷ hòa", "relDesc": "Mộc ngộ Mộc: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Tăng ích (bớt trên ích dưới). Làm việc gì cũng lợi, vượt cả sông lớn, đem lại kết quả tốt đẹp.", "key": "Bớt trên ích dưới • Làm gì cũng lợi • Vượt sông lớn thành công", "lines": [1, 0, 0, 0, 1, 1], "tong": [41, "Tổn"], "thac": [32, "Hằng"]}, {"n": 43, "name": "Quải", "han": "夬", "up": "Đoài", "lo": "Càn", "upSym": "☱", "loSym": "☰", "upNat": "Đầm/Hồ", "loNat": "Trời", "upEl": "Kim", "loEl": "Kim", "palace": "Khôn", "palaceEl": "Thổ", "sess": "5 thế", "rel": "Tỷ hòa", "relDesc": "Kim ngộ Kim: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Quyết đoán trừ tà (công khai nêu tại triều). Ban quân lệnh nghiêm, dứt khoát tiến đánh, không dung túng kẻ xấu.", "key": "Quyết đoán trừ tà • Công khai chính danh • Dứt khoát loại tiểu nhân", "lines": [1, 1, 1, 1, 1, 0], "tong": [44, "Cấu"], "thac": [23, "Bác"]}, {"n": 44, "name": "Cấu", "han": "姤", "up": "Càn", "lo": "Tốn", "upSym": "☰", "loSym": "☴", "upNat": "Trời", "loNat": "Gió", "upEl": "Kim", "loEl": "Mộc", "palace": "Càn", "palaceEl": "Kim", "sess": "1 thế", "rel": "Ngoại khắc Nội", "relDesc": "Kim(ngoại) khắc Mộc(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Gặp gỡ bất ngờ (một âm chớm sinh dưới năm dương). 'Cô dâu đã bị chó cắn có thương tích' — nay rước dâu thì không tốt; đề phòng mầm họa/cám dỗ.", "key": "Gặp gỡ bất ngờ • Một âm chớm sinh • Đề phòng cám dỗ/mầm họa", "lines": [0, 1, 1, 1, 1, 1], "tong": [43, "Quải"], "thac": [24, "Phục"]}, {"n": 45, "name": "Tụy", "han": "萃", "up": "Đoài", "lo": "Khôn", "upSym": "☱", "loSym": "☷", "upNat": "Đầm/Hồ", "loNat": "Đất", "upEl": "Kim", "loEl": "Thổ", "palace": "Đoài", "palaceEl": "Kim", "sess": "2 thế", "rel": "Nội sinh Ngoại", "relDesc": "Thổ(nội) sinh Kim(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Tụ hội, quy tụ. Vua đến thái miếu, dịp tốt cho bá quan yết kiến; gieo quẻ rất lợi, dùng lễ lớn thì làm gì cũng thành.", "key": "Tụ hội, quy tụ • Vua tới miếu • Lễ trọng thì thành", "lines": [0, 0, 0, 1, 1, 0], "tong": [46, "Thăng"], "thac": [26, "Đại Súc"]}, {"n": 46, "name": "Thăng", "han": "升", "up": "Khôn", "lo": "Tốn", "upSym": "☷", "loSym": "☴", "upNat": "Đất", "loNat": "Gió", "upEl": "Thổ", "loEl": "Mộc", "palace": "Chấn", "palaceEl": "Mộc", "sess": "4 thế", "rel": "Nội khắc Ngoại", "relDesc": "Mộc(nội) khắc Thổ(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Thăng tiến dần (như cây mọc lên). Chiêu binh cần cử hành lễ tế long trọng, nên gặp đại nhân; viễn chinh phương Nam sẽ thành.", "key": "Thăng tiến dần • Như cây mọc lên • Gặp đại nhân, tiến Nam", "lines": [0, 1, 1, 0, 0, 0], "tong": [45, "Tụy"], "thac": [25, "Vô Vọng"]}, {"n": 47, "name": "Khốn", "han": "困", "up": "Đoài", "lo": "Khảm", "upSym": "☱", "loSym": "☵", "upNat": "Đầm/Hồ", "loNat": "Nước", "upEl": "Kim", "loEl": "Thủy", "palace": "Đoài", "palaceEl": "Kim", "sess": "1 thế", "rel": "Ngoại sinh Nội", "relDesc": "Kim(ngoại) sinh Thủy(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Khốn cùng, bế tắc. Thân trong cảnh khốn, cúng tế gieo quẻ; quẻ báo mai sau thành đại nhân, không họa — nhưng nói ra ai tin; giữ chí, chờ vận.", "key": "Khốn cùng, bế tắc • Giữ chí kiên định • Nói ít làm nhiều, chờ vận", "lines": [0, 1, 0, 1, 1, 0], "tong": [48, "Tỉnh"], "thac": [22, "Bí"]}, {"n": 48, "name": "Tỉnh", "han": "井", "up": "Khảm", "lo": "Tốn", "upSym": "☵", "loSym": "☴", "upNat": "Nước", "loNat": "Gió", "upEl": "Thủy", "loEl": "Mộc", "palace": "Chấn", "palaceEl": "Mộc", "sess": "5 thế", "rel": "Ngoại sinh Nội", "relDesc": "Thủy(ngoại) sinh Mộc(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Giếng nước nuôi dân (nguồn bất biến). Chỉ nên sửa thành, chớ động giếng; giếng khô hay gàu bể thì xui — chớ bỏ cái gốc.", "key": "Giếng nuôi dân • Nguồn bất biến • Sửa người chớ bỏ gốc", "lines": [0, 1, 1, 0, 1, 0], "tong": [47, "Khốn"], "thac": [21, "Phệ Hạp"]}, {"n": 49, "name": "Cách", "han": "革", "up": "Đoài", "lo": "Ly", "upSym": "☱", "loSym": "☲", "upNat": "Đầm/Hồ", "loNat": "Lửa", "upEl": "Kim", "loEl": "Hỏa", "palace": "Khảm", "palaceEl": "Thủy", "sess": "4 thế", "rel": "Nội khắc Ngoại", "relDesc": "Hỏa(nội) khắc Kim(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Cách mạng, đổi mới (cải cách). Ngày cúng tế lớn dùng lễ trọng; nên bói hỏi ý thần để tránh hối hận — đúng thời mới cải.", "key": "Cách mạng, đổi mới • Thuận thiên ứng nhân • Đúng thời mới cải", "lines": [1, 0, 1, 1, 1, 0], "tong": [50, "Đỉnh"], "thac": [4, "Mông"]}, {"n": 50, "name": "Đỉnh", "han": "鼎", "up": "Ly", "lo": "Tốn", "upSym": "☲", "loSym": "☴", "upNat": "Lửa", "loNat": "Gió", "upEl": "Hỏa", "loEl": "Mộc", "palace": "Ly", "palaceEl": "Hỏa", "sess": "2 thế", "rel": "Nội sinh Ngoại", "relDesc": "Mộc(nội) sinh Hỏa(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Đỉnh (vạc nấu — nuôi hiền, đổi mới). Bói được quẻ này rất tốt, nên làm lễ tạ thần linh; an định, dưỡng người tài.", "key": "Vạc nấu, đổi mới • An định, dưỡng hiền • Quẻ rất tốt, tạ ơn", "lines": [0, 1, 1, 1, 0, 1], "tong": [49, "Cách"], "thac": [3, "Truân"]}, {"n": 51, "name": "Chấn", "han": "震", "up": "Chấn", "lo": "Chấn", "upSym": "☳", "loSym": "☳", "upNat": "Sấm", "loNat": "Sấm", "upEl": "Mộc", "loEl": "Mộc", "palace": "Chấn", "palaceEl": "Mộc", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Mộc ngộ Mộc: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Sấm động chấn kinh. Lúc tế, sấm vang trăm dặm mà người vẫn bình tĩnh cười nói, không làm rơi rượu lễ — kinh mà không loạn, biết tự xét.", "key": "Sấm động, chấn kinh • Kinh mà không loạn • Tỉnh giác, tự xét", "lines": [1, 0, 0, 1, 0, 0], "tong": [52, "Cấn"], "thac": [57, "Tốn"]}, {"n": 52, "name": "Cấn", "han": "艮", "up": "Cấn", "lo": "Cấn", "upSym": "☶", "loSym": "☶", "upNat": "Núi", "loNat": "Núi", "upEl": "Thổ", "loEl": "Thổ", "palace": "Cấn", "palaceEl": "Thổ", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Thổ ngộ Thổ: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Dừng đúng lúc (cấn = ngưng, núi). Trả quan về ẩn, người tìm không thấy; bói được quẻ này không tai họa — tĩnh tại, an định.", "key": "Dừng đúng lúc • Tĩnh tại, an định • Biết ngừng là biết đạo", "lines": [0, 0, 1, 0, 0, 1], "tong": [51, "Chấn"], "thac": [58, "Đoài"]}, {"n": 53, "name": "Tiệm", "han": "漸", "up": "Tốn", "lo": "Cấn", "upSym": "☴", "loSym": "☶", "upNat": "Gió", "loNat": "Núi", "upEl": "Mộc", "loEl": "Thổ", "palace": "Cấn", "palaceEl": "Thổ", "sess": "Quy hồn", "rel": "Ngoại khắc Nội", "relDesc": "Mộc(ngoại) khắc Thổ(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Tiến tuần tự (tiệm = dần dần, như chim đậu dần). Con gái vu quy là tốt lành; đây là lúc thích hợp gieo quẻ — vững từng bước.", "key": "Tiến tuần tự • Vững từng bước • Hôn sự tốt lành", "lines": [0, 0, 1, 0, 1, 1], "tong": [54, "Quy Muội"], "thac": [54, "Quy Muội"]}, {"n": 54, "name": "Quy Muội", "han": "歸妹", "up": "Chấn", "lo": "Đoài", "upSym": "☳", "loSym": "☱", "upNat": "Sấm", "loNat": "Đầm", "upEl": "Mộc", "loEl": "Kim", "palace": "Đoài", "palaceEl": "Kim", "sess": "Quy hồn", "rel": "Nội khắc Ngoại", "relDesc": "Kim(nội) khắc Mộc(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Gả thiếu nữ (sai danh phận). Cô gái về nhà chồng; xuất chinh gặp nguy; bói được quẻ này làm gì cũng bất lợi.", "key": "Gả muội — sai vị • Danh không chính • Vọng động thì bất lợi", "lines": [1, 1, 0, 1, 0, 0], "tong": [53, "Tiệm"], "thac": [53, "Tiệm"]}, {"n": 55, "name": "Phong", "han": "豐", "up": "Chấn", "lo": "Ly", "upSym": "☳", "loSym": "☲", "upNat": "Sấm", "loNat": "Lửa", "upEl": "Mộc", "loEl": "Hỏa", "palace": "Khảm", "palaceEl": "Thủy", "sess": "5 thế", "rel": "Ngoại sinh Nội", "relDesc": "Mộc(ngoại) sinh Hỏa(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Phong thịnh tột đỉnh (sáng + động). Hanh thông, vua tới tế tự ở tông miếu, chớ lo; nên tế lúc chính ngọ — thịnh thì phải lo suy.", "key": "Phong thịnh tột đỉnh • Sáng + động • Thịnh thì lo suy", "lines": [1, 0, 1, 1, 0, 0], "tong": [56, "Lữ"], "thac": [59, "Hoán"]}, {"n": 56, "name": "Lữ", "han": "旅", "up": "Ly", "lo": "Cấn", "upSym": "☲", "loSym": "☶", "upNat": "Lửa", "loNat": "Núi", "upEl": "Hỏa", "loEl": "Thổ", "palace": "Ly", "palaceEl": "Hỏa", "sess": "1 thế", "rel": "Ngoại sinh Nội", "relDesc": "Hỏa(ngoại) sinh Thổ(nội): khách sinh chủ — được bên ngoài bồi đắp (nhận trợ lực).", "mean": "Lữ khách tha hương. Làm lễ nhỏ, trước khi đi đánh giặc gieo quẻ thì được quẻ may — khiêm thuận, cẩn trọng, giữ mình.", "key": "Lữ khách tha hương • Khiêm thuận, cẩn trọng • Lễ nhỏ, giữ mình", "lines": [0, 0, 1, 1, 0, 1], "tong": [55, "Phong"], "thac": [60, "Tiết"]}, {"n": 57, "name": "Tốn", "han": "巽", "up": "Tốn", "lo": "Tốn", "upSym": "☴", "loSym": "☴", "upNat": "Gió", "loNat": "Gió", "upEl": "Mộc", "loEl": "Mộc", "palace": "Tốn", "palaceEl": "Mộc", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Mộc ngộ Mộc: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Thuận nhập, mềm dẻo (gió luồn khắp). Biết tính toán thì làm lễ nhỏ; làm gì cũng lợi, gặp đại nhân thì rất may.", "key": "Thuận nhập, mềm dẻo • Khiêm hạ thấm dần • Theo đại nhân thì lợi", "lines": [0, 1, 1, 0, 1, 1], "tong": [58, "Đoài"], "thac": [51, "Chấn"]}, {"n": 58, "name": "Đoài", "han": "兌", "up": "Đoài", "lo": "Đoài", "upSym": "☱", "loSym": "☱", "upNat": "Đầm/Hồ", "loNat": "Đầm", "upEl": "Kim", "loEl": "Kim", "palace": "Đoài", "palaceEl": "Kim", "sess": "Bản cung", "rel": "Tỷ hòa", "relDesc": "Kim ngộ Kim: cùng hành, tương trợ — nội lực nhất quán.", "mean": "Vui hòa, cảm hứng (đầm). Muốn soán đoạt phải cúng tế trước, tốt nhất gieo quẻ hỏi ý thần — hòa duyệt chính đáng, lời nói thu phục.", "key": "Vui hòa, cảm hứng • Hòa duyệt chính đáng • Lời nói thu phục", "lines": [1, 1, 0, 1, 1, 0], "tong": [57, "Tốn"], "thac": [52, "Cấn"]}, {"n": 59, "name": "Hoán", "han": "渙", "up": "Tốn", "lo": "Khảm", "upSym": "☴", "loSym": "☵", "upNat": "Gió", "loNat": "Nước", "upEl": "Mộc", "loEl": "Thủy", "palace": "Ly", "palaceEl": "Hỏa", "sess": "5 thế", "rel": "Nội sinh Ngoại", "relDesc": "Thủy(nội) sinh Mộc(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Ly tán & hóa giải (gió thổi trên nước). Hồng thủy tràn, vua đích thân tới miếu tụ lòng người; lúc thuận lợi vượt sông lớn và gieo quẻ.", "key": "Ly tán, hóa giải • Tụ lại lòng người • Lúc nên vượt sông lớn", "lines": [0, 1, 0, 0, 1, 1], "tong": [60, "Tiết"], "thac": [55, "Phong"]}, {"n": 60, "name": "Tiết", "han": "節", "up": "Khảm", "lo": "Đoài", "upSym": "☵", "loSym": "☱", "upNat": "Nước", "loNat": "Đầm", "upEl": "Thủy", "loEl": "Kim", "palace": "Khảm", "palaceEl": "Thủy", "sess": "1 thế", "rel": "Nội sinh Ngoại", "relDesc": "Kim(nội) sinh Thủy(ngoại): chủ sinh khách — ta hao lực để nuôi bên ngoài (cho đi, cống hiến).", "mean": "Tiết chế, chừng mực. Cần tiết dục trước kỳ tế, nhưng khổ hạnh quá mức thì không bói cát hung được — lập khuôn phép, đo lường chuẩn.", "key": "Tiết chế, chừng mực • Chớ khổ hạnh thái quá • Lập khuôn phép", "lines": [1, 1, 0, 0, 1, 0], "tong": [59, "Hoán"], "thac": [56, "Lữ"]}, {"n": 61, "name": "Trung Phu", "han": "中孚", "up": "Tốn", "lo": "Đoài", "upSym": "☴", "loSym": "☱", "upNat": "Gió", "loNat": "Đầm", "upEl": "Mộc", "loEl": "Kim", "palace": "Cấn", "palaceEl": "Thổ", "sess": "Du hồn", "rel": "Nội khắc Ngoại", "relDesc": "Kim(nội) khắc Mộc(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Trung thực, thành tín tự trong lòng. Cúng dùng lễ mọn (heo, cá) cũng tốt; vượt sông lớn có lợi; nên gieo quẻ — tín cảm tới cả muông thú.", "key": "Trung thực, thành tín • Tín cảm tới muông • Lợi vượt sông lớn", "lines": [1, 1, 0, 0, 1, 1], "tong": [61, "Trung Phu"], "thac": [62, "Tiểu Quá"]}, {"n": 62, "name": "Tiểu Quá", "han": "小過", "up": "Chấn", "lo": "Cấn", "upSym": "☳", "loSym": "☶", "upNat": "Sấm", "loNat": "Núi", "upEl": "Mộc", "loEl": "Thổ", "palace": "Đoài", "palaceEl": "Kim", "sess": "Du hồn", "rel": "Ngoại khắc Nội", "relDesc": "Mộc(ngoại) khắc Thổ(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Hơi quá một chút (tiểu quá). Hanh thông, nên giữ chính; chỉ làm được việc nhỏ tầm thường, không làm chuyện lớn — chim nên đậu thấp, chớ bay cao.", "key": "Hơi quá một chút • Chỉ làm việc nhỏ • Chim đậu thấp, chớ bay cao", "lines": [0, 0, 1, 1, 0, 0], "tong": [62, "Tiểu Quá"], "thac": [61, "Trung Phu"]}, {"n": 63, "name": "Ký Tế", "han": "既濟", "up": "Khảm", "lo": "Ly", "upSym": "☵", "loSym": "☲", "upNat": "Nước", "loNat": "Lửa", "upEl": "Thủy", "loEl": "Hỏa", "palace": "Khảm", "palaceEl": "Thủy", "sess": "3 thế", "rel": "Ngoại khắc Nội", "relDesc": "Thủy(ngoại) khắc Hỏa(nội): khách chế ngự chủ — bị bên ngoài áp chế, cần hóa giải.", "mean": "Đã hoàn thành (thủy hỏa đã giao). Chuyện nhỏ cũng phải cúng tế, bói có lợi; làm gì cũng đầu xuôi đuôi lọt — nhưng thịnh cực phải phòng loạn.", "key": "Đã hoàn thành • Thủy hỏa giao • Thịnh cực phòng loạn", "lines": [1, 0, 1, 0, 1, 0], "tong": [64, "Vị Tế"], "thac": [64, "Vị Tế"]}, {"n": 64, "name": "Vị Tế", "han": "未濟", "up": "Ly", "lo": "Khảm", "upSym": "☲", "loSym": "☵", "upNat": "Lửa", "loNat": "Nước", "upEl": "Hỏa", "loEl": "Thủy", "palace": "Ly", "palaceEl": "Hỏa", "sess": "3 thế", "rel": "Nội khắc Ngoại", "relDesc": "Thủy(nội) khắc Hỏa(ngoại): chủ chế ngự khách — ta chủ động khống chế tình thế.", "mean": "Chưa hoàn thành, còn dang dở. Cần cúng tế; cáo nhỏ qua sông chỉ tổ ướt đuôi; bói được quẻ này thì chưa nên đi đâu/vọng tiến.", "key": "Chưa hoàn thành • Còn dang dở • Thận trọng, chưa nên vọng tiến", "lines": [0, 1, 0, 1, 0, 1], "tong": [63, "Ký Tế"], "thac": [63, "Ký Tế"]}];
+
+/* Thứ tự 8 Cung × 8 quẻ (nguyên văn từ kinhdich_quest_v3.html) */
+const ORDER=[["Càn","Kim",[1,44,33,12,20,23,35,14]],["Đoài","Kim",[58,47,45,31,39,15,62,54]],["Ly","Hỏa",[30,56,50,64,4,59,6,13]],["Chấn","Mộc",[51,16,40,32,46,48,28,17]],["Tốn","Mộc",[57,9,37,42,25,21,27,18]],["Khảm","Thủy",[29,60,3,63,49,55,36,7]],["Cấn","Thổ",[52,22,26,41,38,10,61,53]],["Khôn","Thổ",[2,24,19,11,34,43,5,8]]];
+
+/* ======================================================================
+   DATA LỚP 2 — 3 quẻ PILOT trích NGUYÊN VĂN từ sách Chtt TQ.docx
+   (nhúng thẳng từ data/que_full_pilot.json — file:// không fetch được)
+   ====================================================================== */
+const PILOT={"meta":{"nguon":"Chtt TQ.docx (Chu Dịch học thuật, ~4025 đoạn)","duong_dan_goc":"C:\\Users\\phatt\\OneDrive\\Desktop\\Chtt TQ.docx","ngay_trich":"2026-06-11","phuong_phap":"Python zipfile đọc word/document.xml, tách <w:p>, gom <w:t>, map theo chỉ số đoạn văn — COPY nguyên văn, không viết lại","pham_vi":"PILOT 3 quẻ đầu (1 Kiền, 2 Khôn, 3 Truân) — đoạn văn #211–#363 trong sách","quy_uoc":{"nguyen_van":"Phiên âm Hán-Việt in hoa đúng như sách (kèm nhãn 'QUÁI TỪ :', 'SƠ CỬU :'... của sách)","han_van":"Nguyên văn chữ Hán đúng như sách","dich":"Đoạn 'Dịch nghĩa :' của sách, giữ nguyên cả nhãn","giai":"Các đoạn 'Giải thích :' + bình giảng của sách, nối bằng dòng trống, nguyên văn","chu_giai":"Mục 'TỔNG LUẬN' cuối mỗi quẻ","flags":"Chỗ sách không tách bạch / nghi lỗi in — giữ nguyên khối + cắm cờ"}},"que":[{"n":1,"ten":"Kiền (Càn)","han":"乾","ky_hieu":"䷀","tieu_de_sach":"1. QUẺ KIỀN 乾  ䷀","mo_ta_que":"Kiền (Càn) tượng-trưng bằng sáu vạch ngang (nghĩa là sáu hào dương). Ba hào dưới tạo thành nội quái, ba hào trên tạo thành ngoại quái. Cần nhớ nguyên-tắc « nội vi chủ, ngoại vi khách » trong khi giải đoán, nghĩa là phần nội quái là phần cương-yếu, phần ngoại quái là phần bổ-sung. Quẻ Kiền là quẻ thuần dương (kiền thượng, kiền hạ).","quai_tu":{"nguyen_van":"QUÁI TỪ : KIỀN : NGUYÊN, HANH, LỢI, TRINH.","han_van":"乾 : 元, 亨, 利, 貞.","dich":"Dịch nghĩa　: Quẻ Kiền có bốn ý nghĩa chính　: nguyên 元　(năng-lực sáng tạo nguyên thủy = primal creative power), hanh 亨 (tiến bộ không ngừng = unending progress), lợi 利 (lợi thế = advantage), trinh 貞 (kiên trì, bền bỉ = persistence).","giai":"Giải thích : R.L. Wing dịch chung lại thành một câu : « Năng-lực sáng-tạo đem đến sự tiến-bộ phi-thường. Nếu kiên-trì đúng đắn sẽ có lợi thế » (Creative Power brings exceptional progress. There is an advantage in correct persistence).\n\nLý Đỉnh Tộ giải thêm : « Theo Thuyết Quái, Kiền tức là Kiện (mạnh mẽ). Thiên (trời) là thể mà Kiện là dụng, vận-hành không ngừng, biến-hóa vô-cùng, thánh-nhân đặt làm nguyên-tắc, muốn cho hậu-nhân noi theo cái dụng của thiên, nên mới đặt tên là Kiền. Tử Hạ truyện viết : nguyên tức là lúc bắt đầu (nguyên, thủy dã), hanh là thông suốt (hanh, thông dã), lợi là hòa hoãn (lợi, hòa dã), trinh nghĩa là chính đáng (trinh, chính dã). »\n\nRichard Wilhelm giải thích thêm : « Năng-lực do mỗi quẻ thể hiện cần phải được giải-thích theo hai nghĩa : năng-lực tác-động trong vũ-trụ nói chung và năng-lực tác-dụng trong thế-giới nhân-sự. Đứng về phương-diện vũ-trụ, quẻ Kiền tượng-trưng cho năng-lực sáng-tạo, mạnh mẽ của thần tính. Đứng về phương-diện nhân-sự, quẻ này tượng-trưng cho hành-động sáng-tạo của thánh-nhân, của người lãnh-đạo, dùng năng-lực của mình để thức tỉnh và khai-triển phẩm-chất tốt đẹp nơi mọi người ».\n\nTrong quẻ này chúng ta thấy rõ mầm mống của tư-tưởng « thiên nhân hợp nhất » 天 人 合 一 : thế-giới vũ-trụ ngoại-tại (macrocosm) và thế-giới nhân-sự (microcosm) tương-thông mật-thiết. Hành-động của người quân-tử (vua, người cai-trị) là phản-ánh hành-động (dụng) của trời. Trời đem lại sự sống cho vạn vật thông qua năng-lực sáng-tạo nguyên-thủy, thánh-nhân cũng nhờ năng-lực trong bản-thân để khải-minh cho nhân-dân, phát-triển thiện-tính trong bản-thân họ. Đây là mối quan-hệ thực sự hiểu theo nghĩa đen, không phải lối nói ẩn-dụ, giống như mối quan-hệ giữa Đạo và Đức : Đạo là năng-lực phổ-biến điều-hành sự biến-hóa không ngừng trong thế-giới vật-chất và Đức là sự thể-hiện cụ-thể của Đạo nơi thánh-nhân. Mức độ Đức tập-trung nơi cá-nhân càng cao bao nhiêu thì mức-độ thánh-trí của cá-nhân đó càng cao bấy nhiêu. Cả bốn đức-tính : nguyên, hanh, lợi, trinh đều áp-dụng cho cả thế-giới vật-chất (thế-giới của thần-tính) và thế-giới con người (quân-tử, thánh-nhân, người cai-trị = cả ba chỉ là một khái-niệm chung nhất trong thời cổ-đại).\n\nPhan Bội-Châu giải-thích câu « quân tử dĩ tự cường bất tức » 君 子 以 自 強 不 息 như sau : « Mình nên tự đốc xúc lấy mình, dưỡng thành một sức mạnh ở giữa mình mà chẳng chờ ai giúp đỡ. » Chúng tôi cho rằng đây là lối giải-thích mang màu sắc luân-lý của Nho-gia về sau, không phải ý-nghĩa nguyên-thủy, vốn mang màu sắc siêu-hình và tôn-giáo nhiều hơn. Quân-tử là người cưu-mang trong bản-thân sức mạnh sáng-tạo của trời đất vũ-trụ và không ngừng sử-dụng năng-lực đó vào việc giáo-hóa nhân-dân. Giải-thích theo phong-cách Phan Bội-Châu khá phổ-biến, nhưng nếu chúng ta chấp-nhận lối giải-thích này, một câu phát-biểu (statement) nói lên mối quan-hệ máu thịt giữa vũ-trụ thần-tính (tượng-trưng bằng nội quái) và người quân-tử (tượng-trưng bằng ngoại-quái) đã bị chuyển-hóa thành một lời khuyên đạo-đức (moral advice).","flags":["Sách viết phần 'Giải thích' CHUNG cho cả Quái từ + Đại Tượng (R.L. Wing dịch gộp) — không tách bạch được, giữ nguyên khối tại quai_tu.giai"]},"dai_tuong":{"nguyen_van":"TƯỢNG　: THIÊN HÀNH KIỆN, QUÂN TỬ DĨ TỰ CƯỜNG BẤT TỨC.","han_van":"天 行 健, 君 子 以 自 強 不 息.","dich":"Dịch nghĩa　: Trời vận chuyển mạnh mẽ, người quân-tử noi theo vận-dụng đức-tính mạnh mẽ của mình để hành-sự.","giai":null,"flags":["Giải thích nằm chung trong quai_tu.giai (xem flag ở quai_tu)"]},"hao":[{"vi_tri":1,"ten_hao":"Sơ Cửu","nguyen_van":"SƠ CỬU : TIỀM LONG VẬT DỤNG.","han_van":"初 九 : 潛 龍 勿 用.","dich":"Dịch nghĩa : Hào 1 (từ dưới đếm lên), dương : Rồng nấp, không hoạt-động.","giai":"Giải thích : « Sơ » 初 có nghĩa là vạch thứ nhất, « cửu » 九 là danh từ chỉ riêng hào dương, cũng như « lục » 六 là danh từ chỉ riêng hào âm. « Tiềm long » biểu-tượng cho người quân-tử hay thánh-nhân vẫn còn chưa chính-thức xuất-đầu lộ-diện để thi-hành việc giáo-hóa, khải mông."},{"vi_tri":2,"ten_hao":"Cửu Nhị","nguyen_van":"CỬU NHỊ : HIỆN LONG TẠI ĐIỀN, LỢI, KIẾN ĐẠI NHÂN.","han_van":"九 二 : 現 龍 在 田, 利, 見 大 人.","dich":"Dịch nghĩa : Hào 2, dương : Rồng hiện trong ruộng, có lợi, sẽ gặp thánh-nhân.","giai":"Giải thích : Chúng tôi chấm câu khác với các học-giả xưa nay thường chấm câu thành : « Hiện long tại điền, lợi kiến đại nhân. » Do quan-niệm đây là sách bói toán, chúng tôi hình-dung ra khi đoán quẻ « hiện long tại điền » tác-giả Kinh Dịch giải-thích ý-nghĩa của hào này là « có lợi, sắp gặp được đại-nhân (thánh nhân) ». Nếu chấm câu theo lối thông thường thì có nghĩa : « Gặp đại nhân sẽ có lợi ».\n\nVương Bật 王 弼 chú : « Hiện long tại điền có nghĩa ra khỏi thời-kỳ tiềm-phục, ẩn nấp, như rồng rời khỏi đất sâu, bắt đầu ló dạng. »\n\nChúng ta vẫn thấy quan-hệ chặt chẽ giữa thiên-văn và nhân-sự. Khi có dấu hiệu rồng bắt đầu xuất-hiện, là thời-kỳ thánh-nhân sắp ra đời. Rồng là tinh-hoa của trời đất thì thánh-nhân là tinh-hoa của loài người. Rồng làm mây, phun nước, đem lại nguồn sống và sinh-lực cho vũ-trụ vật-chất. Thánh-nhân giáo-hóa nhân-dân, nâng cao đạo-đức, phát-triển tiềm-năng, làm nảy nở những hạt giống « thần tính » trong vũ-trụ tinh-thần của mỗi cá-nhân."},{"vi_tri":3,"ten_hao":"Cửu Tam","nguyen_van":"CỬU TAM : QUÂN TỬ CHUNG NHẬT KIỀN KIỀN, TỊCH DỊCH NHƯỢC, LỆ, VÔ CỮU.","han_van":"九 三 : 君 子 終 日 乾 乾, 夕 惕 若, 厲, 無 咎.","dich":"Dịch nghĩa : Hào 3, dương : Người lãnh-đạo trọn ngày phải hăng hái, hoạt-động mạnh mẽ, lúc nào cũng thận-trọng, phòng-bị sự nguy-hiểm có thể xảy ra. Không nên phạm lầm lỗi.","giai":"Giải thích : Kiền kiền 乾 乾 = hăng hái, hoạt-động (energetic). Tịch dịch nhược 夕 惕 若 = đến chiều tối vẫn còn ưu-tư lo lắng. Lệ 厲 = nguy-hiểm. Cữu 咎 = lầm lỗi. Các học-giả hiểu « cữu » đây là danh từ. Richard Wilhelm cũng dịch là « no blame ». Chúng tôi cho rằng đây là động từ nên dịch như trên, nghe hợp-lý hơn. Người lãnh-đạo (quân-tử) không nên để phạm lầm lỗi, vì những lỗi lầm này dễ đưa đến hậu quả nghiêm-trọng. Người lãnh-đạo không phải yên nghỉ trong sự thoải-mái, vô tư-lự, mà chính tự thân phải luôn luôn thận-trọng khi nghỉ ngơi và thật cường-kiện, quả quyết khi hoạt-động."},{"vi_tri":4,"ten_hao":"Cửu Tứ","nguyen_van":"CỬU TỨ : HOẶC DƯỢC TẠI UYÊN, VÔ CỮU.","han_van":"九 四 : 或 躍 在 淵, 無 咎.","dich":"Dịch nghĩa : Hào 4, dương : Hoặc nhảy tung lên, hoặc nằm yên dưới bờ vực sâu, không nên phạm sai lầm.","giai":"Giải thích : Dược 躍 = nhảy. Uyên 淵 = vực thẳm. James Legge dịch nhóm từ « hoặc dược tại uyên » 或 躍 在 淵 như sau : « có vẻ như đang nhảy lên, nhưng thực sự vẫn đang ở trong vực sâu » (as if he were leaping up, but still in the deep). Phan Bội-Châu không dịch, chỉ giảng là : « Địa-vị hào tứ, cũng như địa-vị hào tam, cũng xử cảnh bán thượng hạ lạc, rặt là ở vào cảnh tiến thối lưỡng nan. » Ngô Tất-Tố căn-cứ vào Trình Di giải : « Vực là chỗ của rồng ở. Hoặc là tiếng còn nghi-ngờ, nghĩa là không hẳn. Nhảy hay không nhảy, chỉ cốt kịp thời để tới chỗ yên ổn. Thánh-nhân hành-động, không việc gì mà không phải thời. »\n\nTôn Đức-Hậu trong Kinh Dịch tân giải viết : « Tứ dương : rồng đang tung bay nhưng chỉ là tung bay một lần, cần thận-trọng trầm xuống vực nước sâu, dưỡng tinh-thần, nhuệ khí, nếu có thể tiến thoái thận-trọng, tức có thể tránh khỏi điều dữ. » Chúng tôi cho rằng giải-thích như vậy là vô lý. Rõ ràng nếu chúng ta theo dõi từ hào dương thứ nhất tính lên (nghĩa là từ nội quái ra ngoại quái) chúng ta thấy những bước tiến-bộ : từ tiềm long vật dụng, đến hiện long tại điền, và bây giờ là hoặc dược tại uyên, nên giải-thích như Phan Bội-Châu là hợp-lý nhất (đây là tình-trạng tiến thoái lưỡng nan, cần thận-trọng) hoặc như James Legge dịch. Rồng ở đây chưa tung bay (phải chờ đến hào năm « phi long tại thiên ») nhưng có vẻ như muốn nhảy tung lên, hoặc đang chần chừ nằm yên dưới vực, diễn tả thái-độ người quân-tử (lãnh-đạo) cần phải có sự chọn lựa dứt khoát trong hai thái-độ và sự chọn lựa này cần phải được tiến-hành một cách thận-trọng.\n\nRichard Wilhelm giảng : « Đây là giai-đoạn chuyển tiếp (transition), được tự-do chọn lựa. Thánh-nhân có hai khả-năng : có thể bay vút lên cao và đóng một vai trò quan-trọng trong xã-hội, hoặc có thể rút lui vào cô-độc để tự phát-triển bản-thân. Ông ta có thể chọn con đường của một người anh-hùng, hay con đường ẩn dật của một nhà hiền-triết. »"},{"vi_tri":5,"ten_hao":"Cửu Ngũ","nguyen_van":"CỬU NGŨ : PHI LONG TẠI THIÊN, LỢI, KIẾN ĐẠI NHÂN.","han_van":"九 五 : 飛 龍 在 天, 利, 見 大 人.","dich":"Dịch nghĩa : Hào 5, dương : Rồng bay lên trời, điềm lành, sẽ gặp thánh-nhân.","giai":"Giải thích : Đây là giai-đoạn nối tiếp, rồng (chỉ thánh-nhân) đã tung bay trên bầu trời, chỉ người quân-tử lúc rồng mây gặp hội. Vị-trí số 5 là vị-trí dương, mà hào này là hào dương, tức là được vào vị-trí đắc-thế (đắc-vị). Phan Bội-Châu cho là « thiệt là một hào tốt nhất trong sáu hào ». Người lãnh-đạo đã được lên ngôi cửu ngũ, đã phát-huy quảng-đại ảnh-hưởng của bản-thân. Trong phần Tiểu-tượng cũng viết « Phi long tại thiên, đại nhân tạo dã » 飛 龍 在 天, 大 人 造 也, so sánh bậc thánh-nhân bắt đầu thi thố tài-năng với rồng bay cao trên trời. Tại đây Phan Bội-Châu và Tôn Đức-Hậu đưa ra hai giải-thích trái hẳn nhau về nhóm từ « lợi kiến đại nhân » 利 見 大 人.\n\nPhan Bội Châu-viết : « Tuy nhiên, việc trong thiên-hạ, há chỉ một thánh-nhân mà nên ư ? Có bậc thánh-nhân ở vị trên, tất phải có bậc thánh-nhân ở vị dưới, dùm giúp với nhau, trao đỡ cho nhau, mới làm nên sự-nghiệp to lớn, mà thiên hạ mới tin ngưỡng vào mình. Nên hào từ lại rằng : Lỵ (lợi) kiến đại nhân, nghĩa là cửu ngũ vẫn là đại-nhân, nhưng cũng phải lỵ kiến đại nhân ở dưới là cửu nhị nữa mới được, cũng như cửu nhị phải lỵ [lợi] kiến đại nhân ở trên là cửu ngũ đó vậy. » Tôn Đức-Hậu viết : « Ngũ dương : rồng bay lên trời. Cực điểm của Càn. Đây là điều mà người đức cao mới làm được nhưng vẫn cần dựa vào sự chỉ-đạo của người ưu-tú. »\n\nĐối với Phan Bội-Châu, người lãnh-đạo cần có hiền thần, lương đống giúp việc mới thành-công mỹ-mãn. Đối với Tôn Đức-Hậu thì ngược lại, người đức cao (thánh-nhân) vẫn cần được sự chỉ-đạo của đại-nhân (người lãnh-đạo có khả-năng). Thoạt nhìn qua, hai cách lý-giải có vẻ giống nhau, nhưng thực ra bản-chất trái ngược nhau. Lý-giải của Phan đặt trọng-tâm vào người giúp việc cho đấng quân-vương, những người có khả-năng (được ông gọi là thánh-nhân cấp dưới), và yêu-cầu quân-vương (người lãnh-đạo) tôn-trọng sự đóng góp của họ. Lý-giải của Tôn Đức-Hậu đặt trọng-tâm vào chính đấng quân-vương : mọi thánh-nhân, những người có tài-ba, khả-năng, cũng phải chịu sự chỉ-đạo, hướng dẫn của người lãnh-đạo (đại-nhân) thì mới phát-huy-đại khả-năng, tiềm-lực của bản-thân.\n\nKhổng Tử giải-thích khác hẳn : « Vạn vật đồng thanh tương ứng, đồng khí tương cầu, nước chảy vào chỗ trũng (thủy lưu thấp 水 流 濕), lửa tìm đến chỗ khô khan (hỏa tựu táo 火 就 燥), mây theo rồng (vân tòng long 雲 從 龍), gió theo hổ (phong tòng hổ 風 從 虎), Thánh-nhân ra đời, vạn vật trông theo (thánh-nhân tác nhi vạn vật đổ 聖 人 作 而 萬 物 睹). Vật nào gốc ở trời thì thân thuộc với cõi trên (bản hỗ thiên giả thân thượng 本 乎 天 者 親 上) vật nào gốc ở đất thì thân thuộc với cõi dưới (bản hỗ địa giả thân hạ 本 乎 地 者 親 下) ». Chu Hi trong Chu Dịch bản-nghĩa cũng theo cách giải-thích của Khổng Tử. Tóm tắt ý này là thánh-nhân lại tìm đến với thánh-nhân theo quy-luật đồng thanh tương ứng, đồng khí tương cầu, một quan-niệm quen thuộc của văn-hóa Trung-Quốc."},{"vi_tri":6,"ten_hao":"Thượng Cửu","nguyen_van":"THƯỢNG CỬU : KHÁNG LONG HỮU HỐI.","han_van":"上 九 : 亢 龍 有 悔.","dich":"Dịch nghĩa : Hào trên cùng, dương : Rồng bay quá cao coi chừng phải hối hận.","giai":"Giải thích : Vương Túc 王 肅 (theo Chu Dịch tập giải, Lý Đỉnh Tộ) giải-thích chữ « kháng » 亢 có nghĩa là « cao hết mức » (cùng cao 窮 高). Cả câu có nghĩa là « chỉ biết tiến mà không biết thoái có ngày phải hối hận » (trí tiến vong thoái cố hối dã 知 進 忘 退 故 悔 也). Có lẽ đây là tinh-hoa trong truyền-thống minh-triết Trung-Hoa. Tục-ngữ Việt-Nam cũng có câu « trèo cao ngã đau » chính là diễn đạt nôm na khái-niệm này. Richard Wilhelm dịch ra là « Rồng ngạo-mạn có ngày hối hận » (Arrogant dragon will have cause to repent) và giải-thích thêm : « Khi một người đã đạt đến ngôi cao tột đỉnh, ông ta thường mất sự quan-hệ tiếp-xúc với mọi người còn lại, trở nên cô-lập và điều này sẽ dẫn đến sự thất-bại. Câu nói này cảnh-báo những tham-vọng quá lớn vượt ra khỏi năng-lực của bản-thân, chắc chắn sẽ dẫn đến sự sụp đổ quyền thế. »\n\nTrình Di giải-thích hơi khác như sau : « Trên tới chỗ quá cực, cho nên có sự ăn năn. Có lỗi thì có ăn năn, chỉ có thánh-nhân biết lễ tiến, lui, còn, mất mà không có lỗi, cho nên không đến ăn năn. » Chu Hi giải-thích càng khác hơn : « Quá-cực là ý lên quá mà không thể xuống. Khí dương đã cùng cực ở trên, hễ hơi động cựa thì sẽ có sự ăn năn. » Khổng Dĩnh-Đạt trong Chu Dịch chính nghĩa giải-thích : « Hào thượng cửu dương cương quá mức, lớn mà cực thịnh, cho nên gọi là « kháng long ». Giống như bậc thánh-nhân có long đức, ở trên ngôi cao tuyệt đỉnh, trong thời gian lâu, vạn vật phát-triển cực độ thì sẽ phản phục lại, do đó gây ra hối hận. » Nói chung, mọi giải-thích đều tương-đối thống-nhất : đây là lời cảnh-báo đối với người lãnh-đạo (quân-vương) không nên tự-mãn với các thành-tựu của bản-thân, xa rời quần-chúng, mà cần phải thận-trọng, biết nhượng-bộ khi nhu-cầu chính-trị đòi hỏi phải thỏa-hiệp, và chính khi ở ngôi vị cực cao cũng là lúc phải đương đầu với những nguy-hiểm lớn nhất."}],"chu_giai":"Trương Thiện-Văn và Hoàng Thọ-Kỳ tổng-luận về quẻ Kiền như sau : « Quẻ Kiền đứng đầu 64 quẻ Dịch, lấy trời làm hình-tượng tượng-trưng, biểu-thị nguyên-tố dương cương, tác-dụng cơ-bản của khí-chất mạnh mẽ, và quy-luật phát-triển biến-hoá của nó. Khổng Dĩnh-Đạt nói : « Ở đây tượng-trưng cho trời, nhưng sao không gọi là Thiên, mà gọi là Kiền ? » Ông tự đáp : « Thiên là tên của một thể cố-định (định thể chi danh 定 體 之 名) còn Kiền là gọi thể-dụng (thể dụng chi xưng　體 用 之 稱). Trời lấy mạnh mẽ làm dụng, vận-hành không ngừng, ứng hóa vô cùng, đây là lý của đại tự-nhiên. » (Chu Dịch chính nghĩa). Thực ra, ở đây là mối quan-hệ giữa biểu-tượng và ý-nghĩa. Phân-tích từ góc độ tượng-trưng thì mục-đích của quẻ Kiền là khuyến-khích người ta bắt chước tinh-thần cương-kiện của trời, để phấn đấu tiến lên. Đây cũng là điều mà Đại Tượng Truyện hết sức khen ngợi : « Người quân-tử [noi theo tính chất cương-kiện của trời] mà cố gắng không ngừng. » (Quân tử dĩ tự cường bất tức 君 子 以 自 強 不 息). Quái Từ dùng bốn chữ « nguyên, hanh, lợi, trinh » là khái-quát cao-độ công-đức của trời trên bốn phương-diện : khai-sáng vạn vật, khiến chúng hanh-thông, dồi dào có lợi, và kiên-cố. Ý nói khí dương là gốc khai sinh ra vạn vật trong vũ-trụ. Nhưng sự phát-triển của tự thân khí dương cương này lại có quy-luật nhất-định. Cho nên sáu hào lấy rồng làm tượng-trưng cho Dương, từ « tiềm long » 潛 龍 (rồng ẩn) ở hào sơ cho đến « kháng long » 亢 龍(rồng bay quá cao) ở hào thượng, đã chỉ ra một cách hình-tượng một quá-trình biến-hoá của khí dương từ lúc manh-nha, đến tiến-triển lớn thêm, đến thịnh-tráng, cho đến cùng cực tiêu vong. Trong đó, hào cửu ngũ « phi long tại thiên » 飛 龍 在 天 đã thể hiện tình-trạng chí thịnh chí mỹ của khí dương. Còn hào thượng cửu « kháng long hữu hối » 亢 龍 有 悔 vạch trần triết-lý « vật cực tất phản » 物 極 必 反(sự vật tiến đến chỗ cùng cực thì phản ngược), « Dương cực sinh Âm » 陽 極 生 陰 (Dương cực độ thì biến thành Âm). Hệ-thống triết-học biện-chứng của Chu Dịch đã đặt viên đá nền tảng ở nơi đây. Nếu tiến thêm một bước, từ đặc-trưng « Dịch giả, tượng dã » 易 者 象 也 (Dịch là tượng) [Hệ Từ Hạ Truyện] mà khảo-cứu, ta còn có thể phát-hiện cái thể của quẻ này là lấy trời làm biểu-tượng, còn hào từ của sáu hào thì lấy rồng làm biểu-tượng. Mục-đích không gì khác hơn là nói rõ khí-chất nội-tại của « dương cương ». Chu Hi nói : « Dịch khó xem. Nó không như các sách khác. Dịch nói một vật, nhưng thực ra chẳng phải là một vật. Như nói về rồng, thực ra không phải là rồng thật. » (Dịch nan khán, bất tỉ tha thư. Dịch thuyết nhất cá vật, phi chân thị nhất cá vật, như thuyết long phi chân long 易 難 看, 不 比 他 書, 易 說 一 個 物 非 真 是 一 個 物, 如 說 龍 非 眞 龍) [Chu Tử Ngữ Loại). Cái kiểu mượn biểu-tượng để ngụ-ý đó xuất-hiện khắp cả quyển Chu Dịch, và nó là nét đặc sắc quan-trọng có đủ trong trứ-tác triết-học tối-cổ hiện tồn này. »","ghi_chu_trich":["Dòng chuyển tiếp trong sách trước phần hào: 'Hào từ — giải-thích nghĩa từng hào :' (không mang nội dung, ghi lại để đủ 100%)","chu_giai = mục 'TỔNG LUẬN' trong sách (Trương Thiện-Văn & Hoàng Thọ-Kỳ)"],"nguon":"Chtt TQ.docx"},{"n":2,"ten":"Khôn","han":"坤","ky_hieu":"䷁","tieu_de_sach":"2. QUẺ KHÔN 坤  ䷁","mo_ta_que":"Khôn tượng-trưng bằng sáu vạch rời là quẻ thuần âm, đối-lập với Kiền là quẻ thuần dương. Nội quái và ngoại quái đều là Khôn, nên gọi là quẻ Bát Thuần Khôn.","quai_tu":{"nguyen_van":"QUÁI TỪ : KHÔN, NGUYÊN HANH, LỢI TẪN MÃ CHI TRINH. QUÂN TỬ HỮU DU VÃNG. TIÊN MÊ, HẬU ĐẮC CHỦ, LỢI. TÂY NAM ĐẮC BẰNG, ĐÔNG BẮC TÁNG BẰNG, AN TRINH, CÁT.","han_van":"坤 ,元 亨, 利 牝 馬 之 貞, 君 子 有 攸 往, 先 迷, 後 得 主, 利, 西 南 得 朋, 東 北 喪 朋, 安 貞, 吉．","dich":"Dịch nghĩa : Quẻ Khôn với năng-lực nguyên-thủy đem lại tiến-bộ phi-phàm, sẽ có lợi thế nếu biết kiên-trì, trung-chính, như ngựa cái (tẫn mã). Quân-tử khi có mục-tiêu hành-sự, nếu đi đầu, làm người lãnh-đạo có thể sai lầm, đi lạc lối, nhưng nếu biết đi theo phò-tá cho đấng quân-vương sẽ có lợi thế. Đi về phía Tây Nam sẽ được người giúp đỡ, không nên kết giao bạn bè khi ở phía Đông Bắc. Cứ thản-nhiên kiên-trì đi theo con đường của mình thì cuối cùng sẽ gặp được điều may mắn.","giai":"Giải thích : Đây là đoạn văn hầu hết các dịch-giả Việt-Nam đều dịch sai hoặc hết sức tối-nghĩa. Chẳng hạn Ngô Tất-Tố dịch như sau : « Quẻ Khôn : đầu cả, hanh-thông, lợi về nết trinh của ngựa cái. Quân-tử có sự đi. Trước mê, sau được. Chủ về lợi. Phía Tây Nam được bạn, phía Đông Nam mất bạn. Yên phận giữ nết trinh thì tốt. » Ngô Tất-Tố chấm câu như sau : « Tiên mê, hậu đắc, chủ lợi. » nên mới dịch là « trước mê, sau được, chủ về lợi ». Mộng Bình-Sơn cũng dịch « quân-tử hữu du vãng »  là « quân-tử có lui tới  » và « tiên mê hậu đắc » là « trước mê sau đạt ». Dịch như thế chẳng có ý-nghĩa gì cả nên chúng tôi chấm câu lại (theo Lý Đỉnh-Tộ) như sau : « Tiên mê, hậu đắc chủ, lợi » và dịch như trên. Còn Richard Wilhelm lại chấm câu là « Tiên mê, hậu đắc chủ, lợi Tây Nam đắc bằng » nên dịch là « Nếu cố gắng muốn cầm đầu (tiên), ông ta đi lạc hướng (mê), nhưng biết đi theo sau người khác (hậu), thì sẽ được hướng dẫn (đắc). Sẽ có lợi nếu tìm bạn ở hướng Nam và hướng Tây. » (If the superior man undertakes something and tries to lead, he goes astray ; But if he follows, he finds guidance. It is favorable to find friends in the west and south, To forego friends in the east and north. Quiet perseverance brings good fortune). Nghĩa là Richard Wilhelm cho rằng « tiên » và « hậu » là động từ. Nguyễn Duy-Hinh cũng dịch « tiên » và « hậu » là « cầm đầu » và « đi theo sau », theo bản bạch-thoại của Tôn-Chấn Thanh. Đây cũng là một kiến-giải độc-đáo và chúng tôi chấp-nhận kiến-giải này. James Legge cũng dịch tương-tự như Wilhelm. Có lẽ Wilhelm đã tham-khảo bản dịch của Legge.\n\nLý Đỉnh Tộ trong Chu Dịch tập giải giải « Lư Thị »  cho rằng « khôn » chỉ « đạo bề tôi » (thần đạo 臣 道), « đạo làm vợ » (thê đạo 妻 道). Nên đi đàng sau, không nên đi đàng đầu (hậu nhi bất tiên 後 而 不 先), đi đầu dễ sai lầm, đi lạc (tiên tắc mê, thất đạo hỹ 先 則 迷 失 道 矣), có lợi thế nếu biết đi sau, nhu thuận (hậu nhi thuận chi, tắc lợi 後 而 順 之, 則 利), cho nên mới nói « hậu đắc chủ » (cố viết hậu đắc chủ 故 曰 後 得 主). Chúng tôi theo cách chấm câu này của Lý Đỉnh-Tộ.\n\nÝ nghĩa của những câu trên đây sẽ sáng tỏ nếu chúng ta so sánh quẻ này với quẻ Kiền. Quẻ Kiền là thuần dương, tượng-trưng cho năng-lực sáng-tạo, dương cương, dũng mãnh, đi đầu, lãnh-đạo. Quẻ Khôn là thuần âm, tượng-trưng cho ôn-nhu, hòa thuận mềm mại, uyển-chuyển, phục-tùng, cho nên nếu đóng vai trò lãnh-đạo, đi đầu (tiên) chắc chắn sẽ phải dẫn cả đoàn người đi lạc, vào cõi mê muội, nhưng nếu biết khiêm-thuận đi theo phò-tá cho một nhân-vật lãnh-đạo tượng-trưng bởi quẻ Kiền, nghĩa là đúng vị-trí của mình, thì sẽ có lợi thế hơn (hậu đắc chủ, lợi). Khái-niệm tôn-ti trật-tự đã bắt đầu hình-thành từ đây. Các học-giả vẫn thường chấp-nhận luận-điểm cho rằng thái-độ trọng nam, khinh nữ bắt nguồn từ chế-độ xã-hội phong-kiến và thoát-thai, về mặt tư-tưởng, từ Nho-giáo. Chúng tôi cho rằng chính quyển Kinh Dịch này là nguồn gốc chính của tất cả mọi tư-duy chính-trị, xã-hội, tôn-giáo, triết-học tại Trung-Quốc và Nho-giáo chỉ kế-thừa và phát-huy một cái gì đã có sẵn. Việc tách rời Kinh Dịch và tư-tưởng Nho-giáo là không hợp-lý.\n\nTrương Thiện-Văn giải-thích về quẻ này như sau : « Về tượng quẻ, quẻ Khôn lấy đất làm hình-tượng tượng-trưng, với nghĩa « thuận ». Quái Từ nhấn mạnh : có lợi cho sự trinh-chính của ngựa cái, theo sau người thì sẽ làm chủ, an-trinh thì được cát tường... tất cả đều ám chỉ nghĩa « nhu thuận ». Cả 6 hào đều nói sự phát-triển, biến hóa theo tiền-đồ « Âm » tùy thuộc vào « Dương ».\n\nCòn về câu « Tây Nam đắc bằng, Đông Bắc táng bằng » thì có nghĩa là gì ? Chu Hi giải-thích hết sức khiên-cưỡng : « Âm không thể sánh với Dương, Âm chỉ lý-hội được một nửa, không như Dương, gồm được cả Âm, cho nên không gì không lợi. Âm chỉ dùng được một nửa, cho nên được ở Tây Nam thì mất ở Đông Bắc. »\n\nNguyễn Duy-Hinh giải-thích như sau : « Hướng Tây Nam thuộc Khôn cũng âm nên đi hướng đó được bạn. Hướng Đông Bắc thuộc dương nên không phù-hợp với Khôn (âm) vì vậy đi hướng đó mất bạn ». Vậy thì nguyên-tắc « đồng tính tương xích, dị tính tương hấp » 同 性 相 斥 異 性 相 吸 (cùng tính thì đẩy ra, khác tính thì hút vào) thì sao ? Còn tác-giả Mộng Bình-Sơn còn giải-thích kỳ-quặc hơn : « Tây Nam là phương âm, Tây Bắc (có lẽ tác-giả viết nhầm, đúng ra là Đông Bắc) là phương dương. Âm phải theo dương thì mọi việc mới sanh hóa được. » Nếu vậy phải đi về phía Đông Bắc mới đúng cách chứ ? Tôn Đức-Hậu nhận-định câu này rất tối-nghĩa, nhưng ông căn-cứ vào Chu Dịch chính nghĩa của Khổng Dĩnh-Đạt cho rằng phương-vị gốc của quẻ Khôn là Tây Nam, còn Đông Bắc là phương-vị dương. Đi về phương Bắc tức là muốn lấy chồng. Tôn Đức-Hậu thừa-nhận cách lý-giải này có phần miễn-cưỡng nhưng không đưa ra được kiến-giải gì mới. Vấn-đề chính là tại sao « muốn lấy chồng » lại « táng bằng » thì bản thân Khổng Dĩnh-Đạt cũng im lặng không giải-thích. Lý Kính-Trì trong Chu Dịch thám nguyên giải-thích « bằng » 朋 là cách nói gọn của « bằng bối » 朋 貝 (đơn-vị tiền-tệ cổ thời, mười bối ăn một bằng = bối thập trượng nhất xuyến vi bằng 貝 十 杖 一 串 為 朋).\n\nChính căn-cứ vào Lý Kính-Trì, nhà nghiên-cứu Dịch hiện-đại Từ Tử-Hùng đã dịch câu « Tây Nam đắc bằng » ra bạch-thoại là « đi về hướng Tây Nam có được phát tài » (Tây Nam hành hoạch đắc tài vật 西 南 行 獲 得 財 物) và « đi về hướng Đông Bắc thất thoát tài sản » (Đông Bắc hành táng thất tài vật 東 北 行 喪 失 財 物). Đây cũng là một cách giải-thích hay cần tham-khảo.\n\nKhi nghiên-cứu đoạn văn này chúng tôi thấy cách giải-thích của Richard Wilhelm là tương-đối thỏa-đáng nhất nên dịch thoát như sau : Không nên hiểu chữ « bằng » đây chỉ bạn hữu thông-thường mà nên hiểu đó là những người phụ-tá, giúp việc cho mình thành-công. Bài học rút ra là một khi đã xác-định mục-tiêu hành-sự, người quân-tử cần người trợ-lực, giúp đỡ trong những hoàn-cảnh khó khăn. Phương Tây và phương Nam tượng-trưng cho hoàn-cảnh và giây phút khó khăn, nguy-hiểm, vì hai phương này thuộc âm (Khôn), thể hiện khi năng-lực thuần âm (khôn) bổ-sung cho năng-lực thuần dương (Kiền), giống như trong hai mùa xuân, thu. Trong hoàn-cảnh đó người quân-tử phải huy-động toàn-bộ năng-lực của mình, tìm bạn ở đây có nghĩa là tìm kiếm sự hướng dẫn hay trợ giúp. Nhưng cũng có lúc người quân-tử cần một mình suy-tư và đặt kế-hoạch cho tương-lai. Khi đó phải cần sống trong cô-đơn, tịch-mịch, xa lánh bạn bè. Phương Đông tượng-trưng cho nơi người quân-tử nhận được mệnh-lệnh từ đấng quân-vương, và phương Bắc là nơi phải cáo-trình lên cấp trên những gì đã được thực-hiện. Khi nhận mệnh-lệnh để soạn-thảo kế-hoạch, người quân-tử phải biết tự-lực suy nghĩ. Khi báo-cáo những điều đã thực-hiện, người quân-tử lại cần phải trung-thực, khách-quan, không theo những ý-kiến của người khác và phải một mình chịu trách-nhiệm trước đấng quân-vương."},"dai_tuong":{"nguyen_van":"TƯỢNG VIẾT : ĐỊA THẾ KHÔN, QUÂN TỬ DĨ HẬU ĐỨC TẢI VẬT.","han_van":"象 曰 : 地 勢 坤, 君 子 以 厚 德 載 物,","dich":"Dịch nghĩa : Tượng bàn : Đất tạo nên điều-kiện hình-thành thế-lực của quẻ Khôn. Cũng giống như vậy, người quân-tử phải biết dùng năng-lực đạo-đức sâu dày trong bản-thân để hỗ-trợ, cưu-mang vạn vật.","giai":"Giải thích : Chữ « thế » 勢 ở đây dùng như động từ. Chúng tôi nương theo bản dịch của R.L. Wing : « Ảnh-hưởng mạnh mẽ của sự mẫn-cảm tiếp thu tạo thành điều-kiện cho sự Đáp Ứng Tự Nhiên. Một người sáng suốt biết dùng các phẩm-chất cao đẹp của mình để trợ giúp người đời » (The powerful influence of receptivity (earth) forms the condition for Natural Response. An enlightened person, therefore, uses moral excellence to support the outside world). R.L.. Wing dùng chữ « Natural Response » để dịch quẻ Khôn và « receptivity » (tính-chất mẫn-cảm, nhu-thuận) để dịch chữ Địa. Tôn Đức-Hậu viết : « Công năng của mặt đất là Khôn. Người quân-tử gặp tượng quẻ này, phải lấy cái đức dày để bao-dung muôn dân. » Còn Richard Wilhelm dịch : « Khôn (sự tận tâm tiếp thu) là điều-kiện tạo thành mặt đất. Người quân-tử vốn là người có tư-cách khoan-dung, độ-lượng, gánh vác cả thế-giới trên vai » (The earth's condition is receptive devotion. Thus the superior man who has breadth of character carries the outer world).\n\nR.L. Wing bàn về ý-nghĩa quẻ này rất hay như sau : « Trong thời-kỳ của sự Đáp Ứng Tự Nhiên, bạn đang phải đối phó với những thực-tế, chứ không phải với những tiềm-năng. Bạn chỉ biết được hoàn-cảnh xung quanh bạn nhưng không thấu hiểu những sức mạnh chi-phối hoàn-cảnh đó. Do đó bạn không nên hành-động một cách độc-lập hay tìm cách lãnh-đạo người khác. Nếu bạn cứ cố gắng muốn sai bảo người khác, chính bạn sẽ lạc lối và trở nên rối loạn. Vì bạn không được tiếp xúc với những sức mạnh đang chi-phối hoàn-cảnh, bạn cần có bạn bè và người cộng-sự giúp đỡ để hoàn-thành mục-tiêu. Nếu bạn chấp-nhận điều này bạn sẽ tìm thấy sự hướng dẫn. Một khi bạn cứ xuôi mình thuận theo sự đáp ứng tự nhiên và để cho mọi người dẫn dắt bạn, bạn có thể thành-tựu ngay cả những mục-đích lớn lao. Hãy giữ một tư-thái thoải-mái, nhu-thuận, đáp ứng tự nhiên ngay cả trong những vấn-đề kinh-doanh và chính-trị phức-tạp. Nhưng trên hết là đừng để cho bản-năng muốn lãnh-đạo lôi kéo bạn trong những tình-huống như vậy. Trong bản-thân bạn hãy biết sống trong cô-độc để suy nghĩ một cách khách-quan khi nghiền ngẫm về định-hướng của đời mình. Cố gắng phát-triển một thái-độ khoan-dung, có những ý-kiến phóng-khoáng và nhìn ngắm cuộc đời với một con mắt rộng lượng. Thái-độ khách-quan cộng thêm tư-cách đạo-đức vững chắc sẽ giúp cho sự Đáp Ứng Tự Nhiên của bạn trở nên trong sáng trong khi vẫn giữ được một cá tính mạnh mẽ, kiên-định. »"},"hao":[{"vi_tri":1,"ten_hao":"Sơ Lục","nguyen_van":"SƠ LỤC : LÝ SƯƠNG, KIÊN BĂNG CHÍ.","han_van":"初 六 : 履 霜, 堅 冰 至.","dich":"Dịch nghĩa : Hào 1, âm : Khi đạp lên sương thì biết băng dày sắp đến.","giai":"Giải-thích : Theo Chu Hi, lạnh thuộc Âm, nóng thuộc Dương. Đây là quẻ thuần âm và sơ lục là hào thứ nhất nên chúng ta có thể suy ra hào này chỉ lúc bắt đầu mùa thu, mới có sương giá, nhưng chắc chắn mùa đông sẽ đến, không sao tránh khỏi, cần phải dự-phòng thức ăn, quần áo, nơi trú ẩn... Richard Wilhelm viết : « Cũng như năng-lượng tạo ra ánh sáng tượng trưng cho sự sống, năng lượng đen tối tượng-trưng cho cái chết. Khi những sương giá xuất-hiện vào mùa thu, sức mạnh của bóng tối và lạnh lẽo đã khởi đầu.\n\nSau những dấu hiệu cảnh-báo đầu tiên này, những tín-hiệu của sự chết sẽ càng ngày càng xuất-hiện nhiều hơn, cho đến khi, theo những quy-luật bất biến, mùa đông khắc-nghiệt với băng tuyết sâu dày sẽ đến. »  Rõ ràng ý-nghĩa của hào là một lời cảnh-báo về những tai-họa sắp xảy ra mà mầm mống ban đầu đã xuất-hiện. Nhưng nếu đã là « những định-luật bất biến » rồi thì làm sao để phòng để cải-thiện tình-hình làm gì nữa ?\n\nPhan Bội-Châu giải thích : « Hào âm tuy mới sinh, nhưng tình-hình càng ngày càng nảy nở thêm mãi, âm sinh đến thượng lục, thời tất nhiên cướp hết phần dương, cũng in như bắt đầu mới có một đứa tiểu-nhân, thời những loài quân-tử tất có ngày vì nó mà tiêu diệt. »  Chúng tôi cho rằng giải-thích kiểu « ém âm » như vậy thì không phù-hợp với tông-chỉ của Dịch vốn là « nhất âm, nhất dương chi vị đạo », không thiên trọng bên nào. Chu Hi giải-thích hợp-lý hơn : « Âm Dương là gốc của tạo-hóa, thứ nọ không thể không có thứ kia, mà sự tiêu đi và lớn lên vẫn như thường, không phải là cái mà người ta có thể thêm bớt. Nhưng Dương chủ về sinh, Âm chủ về sát, thì loại của nó cũng có ngay gian khác nhau. Cho nên thánh-nhân làm Kinh Dịch, với chỗ « thứ nọ không thể không có thứ kia » đã dùng những chữ « kiện », « thuận », « nhân », « nghĩa », để nói cho rõ, mà không thiên về bề nào, đến chỗ chúng nó tiêu đi lớn lên ngay gian khác nhau, thì không bao giờ mà không chú ý đến sự nâng Dương, nén Âm »."},{"vi_tri":2,"ten_hao":"Lục Nhị","nguyen_van":"LỤC NHỊ : TRỰC, PHƯƠNG, ĐẠI, BẤT TẬP, VÔ BẤT LỢI.","han_van":"六 二 : 直, 方, 大, 不 習, 無 不 利.","dich":"Dịch nghĩa : Hào 2, âm : Thẳng thắn, vuông vắn, lớn lao, không cần phải nỗ-lực nhiều lần, nhưng không làm gì là không thành-công.","giai":"Giải thích : Hào này ở vị-trí thứ hai, nghĩa là đắc trung (hào 2 và hào 5 được xem là đắc trung) và là hào âm ở vào vị-trí âm nên cũng đắc-vị (đắc chính). Đây là một quẻ tốt. Mộng Bình-Sơn đã dịch một cách không được chính-xác như sau : « Thẳng, vuông, lớn thì chẳng học tập cũng không có gì bất lợi. » Nguyễn Duy-Hinh cũng dịch tương-tự : « Thẳng, vuông, lớn, không cần học tập vẫn không có điều gì không tốt lành. » Ngô Tất-Tố rất gọn : « Thẳng, vuông, lớn, không phải tập, không gì không lợi. » Phan Bội-Châu tuy không dịch, nhưng cũng giải-thích tương-tự. giải-thích của Tôn Đức-Hậu khác hẳn : « Mặt đất do bằng phẳng về bốn phía nên to lớn vô hạn, cần có đức lớn ngay ngắn, bằng phẳng như mặt đất, cho dù còn chưa thuần-thục vẫn khiến cho tất cả đều thuận-lợi. »\n\nRichard Wilhelm dịch : « Thẳng thắn, vuông vức, vĩ-đại. Không có mục-đích. Tuy nhiên, không có gì không được phát-triển » (Straight, square, great. Without purpose. Yet nothing remains unfurthered). Không hiểu Richard Wilhelm căn-cứ vào đâu để dịch « tập » (tập-quán, thói quen, thực-tập, học tập) ra thành « mục đích ».\n\nJames Legge dịch : « Thẳng thắn, vuông vức, vĩ-đại. Không cần phải nỗ-lực nhiều lần. Mọi phương-diện đều thuận-lợi » (The second six, divided, shows the attributes of being straight, square, and great. Its operation, without repeated efforts, will be in every respect advantageous). Bản dịch của Legge đọc nghe giống quẻ bói nhất.\n\nVương Bật giải : « Nằm ngay ngôi vị trung-tâm, đắc chính đạt đến cực độ của phẩm-chất địa. Cứ để tự-nhiên mà vạn vật tự sinh sản. Không cần lo lắng sửa sang mà công-trình tự thành. Vì vậy, không cần phải luyện tập mà không đâu không có lợi. »\n\nKhổng Dĩnh-Đạt giải : « Trực có nghĩa là sinh ra vạn vật không thiên lệch, phương chỉ thể yên tĩnh của mặt đất, đại có nghĩa bao gồm tất cả vạn vật. Nếu đạt được ba đức ấy, người quân-tử đã có được ba đức tính tốt đẹp nhất của đất, cho nên tự-nhiên mà sinh sôi, phát-triển, không cần phải nỗ-lực gì nhiều. »"},{"vi_tri":3,"ten_hao":"Lục Tam","nguyen_van":"LỤC TAM : HÀM CHƯƠNG KHẢ TRINH, HOẶC TÒNG VƯƠNG SỰ, VÔ THÀNH, HỮU CHUNG.","han_van":"六 三 : 含 章 可 貞, 或 從 王 事, 無 成, 有 終.","dich":"Dịch nghĩa : Hào 3, âm : Phải biết che giấu những đức-tính hoặc tài-năng xuất-sắc của bản-thân, nhưng vẫn phải kiên-trì giữ đạo trung-chính, nếu có khi theo phò-tá một đấng quân-vương sẽ tạo nên danh-vọng về sau bằng cách đừng tự nhận công-trạng về phần mình.","giai":"Giải thích : Mộng Bình-Sơn đã dịch sai đoạn này thành ra : « Ngậm văn có thể chính, hoặc theo đuổi việc nhà vua, không cậy công, thì được tốt lành về sau. » Không ai hiểu « ngậm văn có thể chính » nghĩa là gì. Có lẽ dịch-giả theo sát bản Ngô Tất-Tố : « Ngậm văn vẻ có thể chính ». Nguyễn Duy-Hinh tương đối sáng sủa hơn : « Giữ kín cái sáng láng văn vẻ mới có thể chính bền. Khi phò vua, chớ cậy công thì về sau tốt lành. » Tôn Đức-Hậu giải-thích :\n\n« Bên trong chứa đựng tài-năng xuất-chúng, chờ thời cơ đến. Nếu trí lực sáng suốt được thừa-nhận có thể theo đuổi nghiệp vương, không cần sự thành-công vĩ-đại, chỉ cầu toàn vẹn đến cùng là được. »\n\nRichard Wilhelm giải-thích rất thỏa đáng : « Nếu một người thoát khỏi được bệnh kiêu căng hợm hĩnh, anh ta có thể che giấu được khả-năng của mình, không gây sự chú ý của kẻ khác quá sớm, như thế anh có thể dần dần trưởng-thành mà không bị ai quấy rầy. Nếu điều-kiện cuộc sống yêu-cầu, anh có thể tham-gia vào chính-quyền, nhưng anh vẫn tham-gia một cách dè dặt đầy tự chủ. Người khôn ngoan nhường lại vinh-quang, danh tiếng cho kẻ khác. Anh không tìm cách quy công-trạng về mình đối với những thành-tựu mà chỉ hy-vọng có thể giải-phóng những sức mạnh hoạt-động tích-cực, nghĩa là hành-động thế nào để cho việc làm đem lại nhiều kết quả nhất cho tương-lai. »"},{"vi_tri":4,"ten_hao":"Lục Tứ","nguyen_van":"LỤC TỨ : QUÁT NANG, VÔ CỮU, VÔ DỰ.","han_van":"六 四 : 括 囊, 無 咎, 無 譽.","dich":"Dịch nghĩa : Hào 4, âm : Người quân-tử hành sự giống như cái túi thắt chặt kín, không phạm lỗi lầm, không cần đến lời khen.","giai":"Giải-thích : Câu này khá tối nghĩa. Nguyễn Duy-Hinh nửa dịch, nửa phiên âm như sau : « Thắt túi, vô cữu, không vinh-dự và giải-thích thêm : « Thắt túi chỉ gặp lúc nguy-hiểm thì giữ gìn lời nói và hành-động như thắt miệng túi lại. » Trình Di nói : « Hào tư ở gần ngôi năm, mà không có nghĩa tương-đắc, ấy là cái lúc trên dưới ngăn lấp, tự xử bằng cách chính đáng cũng là cái chỗ nguy nghi. Nếu như giấu kín cái khôn của mình, như thể thắt chặt miệng túi, không cho hở ra, thì có thể được không lỗi ; không thế, thì có hại. Đã giấu kín thì là không có tiếng khen. » Cách giải-thích này phù-hợp với câu « hàm chương khả trình » ở trên.\n\nRichard Wilhelm viết : « Quẻ Khôn khi chuyển động thì mở ra, khi nghỉ ngơi thì đóng lại. Ở đây muốn nói đến thái-độ cực kỳ dè dặt, thận-trọng. Đây là thời-gian nguy-hiểm, bởi vì bất kỳ sự nổi bật nào cũng sẽ dẫn đến hoặc là sự thù nghịch của nhiều kẻ thù không sao địch nổi nếu dám thách-thức họ hoặc dẫn đến sự thừa-nhận do hiểu lầm nếu bạn tỏ ra quá dễ dãi. Do đó cần phải luôn duy-trì một thái-độ kín đáo, giữ gìn, cho dù lúc ở một mình hay trong cơn đảo loạn của cuộc đời, vì nơi đó ta có thể ẩn náu rất tốt cho không ai biết đến mình. »"},{"vi_tri":5,"ten_hao":"Lục Ngũ","nguyen_van":"LỤC NGỮ : HOÀNG THƯỜNG, NGUYÊN CÁT.","han_van":"六 五 : 黄 裳, 元 吉.","dich":"Dịch nghĩa : Hào 5, âm : Quần màu vàng, cực kỳ tốt đẹp.","giai":"Giải thích : Chu Hi giải-thích rằng : « Vàng là màu trung-chính, quần là đồ trang sức phía dưới. Hào sáu năm là thể âm, ở ngôi tôn, cái đức trung thuận đầy ở trong mà hiện ra ngoài, cho nên tượng nó như thế, mà chiêm của nó thì là điều lành của bậc đại-thiện. » Tôn Đức-Hậu giải-thích : « Cái váy màu vàng, màu sắc của trung-ương. Váy mặc ở thân dưới, cần thuận theo thân trên. Tương-đương với cái đức của Khôn mỹ-mãn, lành lớn. » Vậy quần dưới đây tượng-trưng cho đạo bề tôi, người cấp dưới, cũng như phần trên tượng-trưng cho Khôn, người lãnh-đạo, bậc quân-vương. Cấp dưới thì phải thuận theo cấp trên, cấp dưới mà đòi độc-lập lãnh-đạo thì đó là đảo loạn. Ý này phù-hợp với ý-nghĩa của toàn quẻ.\n\nRichard Wilhelm cũng viết : « Màu vàng là màu của đất và là màu của vị trung-tâm, nó tượng-trưng cho những gì đáng tin cậy và chân thật. Quần dưới chỉ được trang điểm nhẹ nhàng nên tượng-trưng cho tính cẩn-trọng, dè dặt của người cao quý. Khi được mời giữ một chức-vụ quan-trọng nhưng không phải là ngôi vị lãnh-đạo, bí-quyết thành-công là phải biết cực-kỳ thận-trọng trong lời ăn tiếng nói. Cá-tính chân-thực và tinh-tế của một người không nên được thể hiện một cách trực-tiếp mà nên bộc lộ ra một cách gián-tiếp như thể một hiệu-quả phát ra từ bên trong nội-tâm. »","flags":["Sách in 'LỤC NGỮ' (lỗi chính tả của 'LỤC NGŨ' 六五) — nguyen_van giữ nguyên văn sách"]},{"vi_tri":6,"ten_hao":"Thượng Lục","nguyen_van":"THƯỢNG LỤC : LONG CHIẾN VU DÃ, KỲ HUYẾT HUYỀN HOÀNG.","han_van":"上 六 : 龍 戰 于 野, 其 血 玄 黄.","dich":"Dịch nghĩa : Hào trên cùng, âm : Hai rồng đánh nhau ngoài đồng, máu chúng màu đen và màu vàng.","giai":"Giải thích : Chu Hi giải-thích rằng : « Âm đã thịnh cực, đến nỗi tranh nhau với Dương, cả hai kẻ bại người bị thương. » Tôn Đức-Hậu giải-thích một cách mơ hồ : « Khi sự mềm yếu của âm đạt đến mức thịnh nhất, tất bắt đầu chống lại sự cứng mạnh. » Richard Wilhelm viết : « Đến vị-trí cao nhất này Âm phải nhường cho Dương. Nhưng nếu Âm cố duy-trì vị-trí của mình một cách không chính đáng, nghĩa là đòi lãnh-đạo thay vì phục vụ, Âm sẽ gây ra sự phẫn-nộ của những kẻ có quyền-lực. Tiếp theo tất-yếu phải có sự huyết đấu khiến cho mặc dù Âm bị lật đổ, cũng xảy ra cảnh lưỡng bại câu thương. Con rồng thứ nhất, tượng-trưng cho trời, tấn-công chú rồng dỏm tượng-trưng cho yếu-tố Đất phình đại quá lớn. Màu xanh đen là màu trời, màu vàng là màu đất. Như vậy, khi xảy ra hiện-tượng lưu huyết cả máu đen và máu vàng, đó là dấu-hiệu của một sự tương tranh không tự-nhiên gây tổn-thất cho cả hai năng-lực nguyên-thủy. »"}],"chu_giai":"Trương Thiện-Văn và Hoàng Thọ-Kỳ tổng-luận về quẻ Khôn như sau : « Chu Dịch xếp quẻ Khôn tiếp theo quẻ Kiền là ngụ-ý « thiên tôn địa ti »  天 尊 地 卑 (trời cao quý đất thấp hèn), « địa dĩ thừa thiên » 地 以 承 天 (đất vâng theo trời). Đại ý toàn quẻ là nói rõ quan-hệ Âm Dương đã đối-lập lại còn nương theo nhau mà tồn-tại. Trong quan-hệ mâu-thuẫn đối-lập này, Âm có địa-vị thứ-yếu và phụ-thuộc, nương theo Dương mà tồn-tại và phát-triển. Xét tượng của quẻ, Khôn tượng-trưng cho đất, mà ý-nghĩa là « thuận theo » . Quái Từ nhấn mạnh « lợi tẫn mã chi trinh » 利 牝 馬 之 貞, « hậu đắc chủ » 後 得 主 , để đi theo người và thu-hoạch điều tốt lành từ « an trinh »  安 貞. Tất cả điều ấy nêu rõ ý-nghĩa của sự nhu-thuận. Cả sáu hào âm nói lên quy-luật phát-triển biến-hoá trên tiền-đề « Âm phụ theo Dương ». Hào nhị ở thấp giữ trung. Hào ngũ ở trên nhưng khiêm-hạ. Hào tam và hào tứ hoặc « phụng quân » 奉 君 (phụng mệnh vua) hoặc « thoái xử » 退 處 (lui về) ; chúng đều cho thấy cái đức nhu-thuận của Khôn. Hào nhị và hào ngũ là tốt đẹp nhất. Còn hào sơ « lý sương » 履 霜 (bước lên sương) và hào thượng « long chiến »  龍 戰 (rồng đánh nhau) đối chiếu nhau, thể hiện sâu sắc tư-tưởng biện-chứng : Âm khí tích chứa nhỏ mãi thì sẽ lớn (tích vi tất trứ 積 微 必 着), thịnh cực thì sẽ trở lại Dương (thịnh cực phản Dương 盛 極 反 陽). Hệ Từ Thượng Truyện nói : Một Âm một Dương gọi là Đạo. Sách Chu Dịch mở đầu bằng hai quẻ Kiền và Khôn, cho thấy các tác-giả nhận-thức sâu sắc về quan-hệ biện-chứng Âm Dương. Nói cách khác, dường như các tác-giả của Chu Dịch có quan-điểm rằng : tác-dụng hỗ-tương của hai lực Âm Dương là nguồn gốc vận-hành, biến-hoá, và phát-triển mọi sự vật trong vũ-trụ. »","ghi_chu_trich":["chu_giai = mục 'TỔNG LUẬN' trong sách (Trương Thiện-Văn & Hoàng Thọ-Kỳ)"],"nguon":"Chtt TQ.docx"},{"n":3,"ten":"Truân","han":"屯","ky_hieu":"䷂","tieu_de_sach":"3. QUẺ TRUÂN 屯 ䷂","mo_ta_que":"Phần nội quái (ba vạch dưới) là quẻ Chấn. Phần ngoại quái (ba vạch trên) là quẻ Khảm. Còn gọi là quẻ Thủy Lôi Truân 水 雷 屯.","quai_tu":{"nguyen_van":"QUÁI TỪ : TRUÂN : NGUYÊN, HẠNH, LỢI, TRINH, VẬT DỤNG HỮU DU VÃNG, LỢI KIẾN HẦU.","han_van":"屯 : 元, 亨, 利, 貞, 勿 用 有 攸 往, 利 見 侯.","dich":"Dịch nghĩa : Quẻ Truân (sự khởi đầu khó khăn) là quẻ rất tốt gồm có bốn đức tính : sức sáng-tạo mạnh mẽ (nguyên) sẽ đưa đến thông suốt, thành-công (hanh), có nhiều lợi-thế, ưu-điểm (lợi) nếu biết kiên nhẫn bền chí (trinh). Không nên theo đuổi những mục-tiêu xa vời. Tốt nhất là nên tạo thêm nhiều người phò-trợ, giúp đỡ cho mình.","giai":"Giải thích : Có lẽ không có gì tối-nghĩa hơn bản dịch đoạn này của Ngô Tất-Tố : « Truân đầu cả, hanh-thông, lợi tốt, chính bền, chớ dùng có thửa đi, lợi về dựng tước hầu ». Bản của Mộng Bình-Sơn có lẽ nhờ hiện-đại hơn nên khá sáng sủa : « Quẻ Truân rất lớn, hanh-thông, lợi tốt, chính bền, gặp lúc gian-truân có thể hanh-thông nếu giữ vững điều chỉnh và đừng tiến vội mà tìm người hiền giúp mình thì có lợi. » Chúng tôi tham-khảo bản tiếng Anh của RL. Wing nên mới dịch như trên. James Legge dịch như sau : « Quẻ Truân : sẽ có tiến-bộ và thành-công lớn. Nhưng không nên khinh-suất thực-hiện bất kỳ hành-động gì. Có lợi thế lớn nếu phong tước cho chư-hầu » (Kun : there will be great progress and success. But any movement in advance should not be lightly undertaken. There will be great advantage in appointing feudal princes).\n\nRichard Wilhelm dịch : « Sự khó khăn ban đầu sẽ tạo ra thành-công vĩ-đại. Tiếp tục tiến-bộ nhờ sự kiên-trì, nhẫn-nại. Không nên thực-hiện việc gì. Sẽ có lợi thế nếu biết chỉ-định người phò-tá. » (Difficulty at the beginning works supreme success, furthering through perseverance. Nothing should be undertaken. It furthers one to appoint helpers). Wilhelm giải thích thêm : « Quẻ này tên Truân, thực sự ám-chỉ một nhánh cỏ cố gắng vươn lên từ lòng đất, phải đương đầu với bao nhiêu trở ngại, nên mới có nghĩa là « sự khó khăn ban đầu ». Quẻ này cho thấy cách trời đất tạo ra con người như thế nào. Đây là sự giao-hòa đầu tiên, gặp nhiều trắc trở khó nhọc. Quẻ Chấn ở dưới diễn tả sự vươn lên, chuyển-động hướng lên và tượng là sấm. Quẻ Khảm ở trên diễn tả hố thẳm nước sâu, đầy bất-trắc hiểm-nguy, chuyển-động hướng xuống và tượng là mưa. Tình-thế là một trạng-thái phồn-thực, hỗn loạn : sấm và mưa giăng đầy trời. Nhưng cơn hỗn loạn đang qua đi. Hố thẳm chìm dần xuống, chuyển-động đi lên dần dần vượt qua cơn nguy-hiểm. Một cơn bão sấm sẽ quét sạch mọi căng thẳng và mọi sự hít thở thoải-mái trở lại. » Tôn Đức-Hậu giải-thích : « Truân là thời-kỳ gian khổ sản-sinh ra khí cương (Kiền) và nhu (Khôn) giao nhau. Nhưng không sợ gian khổ (Khảm) mà cần hoạt-động mới sôi nổi (Chấn), không lâu sẽ đột phá chướng-ngại, vươn lên phồn-vinh. Thật giống như nhiệt-năng của nắng và mưa (Chấn, Khảm) lấp đầy giữa trời đất, sẽ thấm nhuần cho vạn vật trên mặt đất. »","flags":["Sách in 'LỢI KIẾN HẦU' / '利 見 侯' — bản thông dụng là '利建侯' (lợi KIẾN/dựng tước hầu); chính TỔNG LUẬN của sách dùng '建 侯'. Giữ nguyên văn, cần đối chiếu khi soát tay"]},"dai_tuong":{"nguyen_van":"TƯỢNG VIẾT : VÂN LÔI TRUÂN, QUÂN TỬ DĨ KINH LUÂN.","han_van":"象曰 : 雲 雷 屯, 君 子 以 經 綸.","dich":"Dịch nghĩa : Tượng viết : Mây và sấm (những năng-lực thiên-nhiên) là hình tượng của quẻ Truân. Người quân-tử (người lãnh-đạo) phải biết áp-dụng các nguyên-tắc và chính-sách tổ-chức nhà nước.","giai":"Giải thích : R.L, Wing bàn về quẻ này như sau : « Sự khai sinh ra bất cứ hành-động gì mới mẻ đều bắt đầu trong sự lúng túng, hỗn loạn, bởi vì chúng ta đang tiến vào cảnh-vực của những điều xa lạ. Vì lý-do này, một bước sai lầm lúc khởi đầu có thể khiến cho toàn-bộ tình-huống không sao cứu vãn được. Mặc dầu quẻ này gợi ý toàn sự hỗn loạn, cuối cùng cũng báo hiệu cho một trật-tự và hiệu-quả tốt. Cũng như cơn hỗn loạn điên cuồng của một trận bão sấm sét đem đến cơn mưa nuôi dưỡng tốt lành khiến cho sự sống phát-triển, trong hoạt-động nhân-sự cũng thế, một thời-kỳ hỗn mang lúc đầu sẽ đi trước một thời-kỳ có tổ-chức tiến-bộ. Thành-công chỉ đến với những người có thể chịu đựng kiên-trì qua được cơn bão này và vẫn giữ được các nguyên-tắc của bản-thân. »\n\nChu Hi giải-thích câu này như sau : « Quẻ Khảm không nói nước mà nói mây, là ý chưa được hanh thông. Kinh luân là công việc làm tơ, kinh là kéo, luân là gỡ. Cái đời truân nan là lúc quân tử có thể làm việc. » Tuân Sảng viết : « Trong thời-kỳ khó khăn (truân nan chi đại 屯 難 之 大), mọi sự đều hỏng bét, không có chuẩn mực chính đáng (vạn sự thất chính 萬 事 失 正), kinh có nghĩa là bền vững (kinh giả thường dã 經 者 常 也), luân có nghĩa là luân lý (luân giả lý dã 綸 者 理 也), người quân-tử phải biết dựa vào tài-đức bản-thân để duy-trì đạo-lý muôn đời (quân-tử dĩ kinh luân bất thất thường đạo 君 子 以 經 輪 不 失 常 道) » (dẫn theo Lý Đỉnh-Tộ).\n\nRichard Wilhelm dịch câu trên khác hẳn như sau : « Mây và sấm tượng-trưng cho hình-ảnh sự khó khăn lúc ban đầu. Bằng cách đó người quân-tử đem lại sự ổn-định trật-tự, thoát ra khỏi sự hỗn loạn » (Clouds and thunder : the image of difficulty at the beginning. Thus the superior man brings order out of confusion). Bản dịch này phù hợp với lời giảng của Tuân Sảng."},"hao":[{"vi_tri":1,"ten_hao":"Sơ Cửu","nguyen_van":"SƠ CỬU : BÀN HOÀN, LỢI CƯ TRINH, LỢI KIẾN HẦU.","han_van":"初 九 : 盤 桓, 利 居 貞, 利 見 侯.","dich":"Dịch nghĩa : Hào 1, dương : Dùng dằng chưa quyết-đoán vì gặp trở ngại, cứ kiên-trì giữ vững các nguyên-tắc đạo-lý thì có lợi thế, cũng như nên tạo ra nhiều người phò-tá.","giai":"Giải-thích : Bản dịch của Ngô Tất-Tố rất tối nghĩa : « Quanh co, lợi về ở chính bến, lợi về dựng tước hầu. » Nguyễn Duy-Hinh phê-bình cách dịch « quanh co » : « Bàn » 盤 là « hòn đá to ». « Hoàn » 桓 là tên một loại cây. Bàn hoàn là đá đè cây cỏ, ý nói trở ngại, không tiến lên được. Dịch « quanh co » là không đúng ngữ-nghĩa mà cũng không phù-hợp toàn-bộ nội dung quẻ Truân. » Mộng Bình-Sơn dịch giống như Ngô Tất-Tố. Giải-thích như Nguyễn Duy-Hinh là thỏa đáng. Richard Wilhelm dịch như sau : « Chần chừ và trở ngại. Kiên-trì thì có lợi. Bổ-nhiệm những người phò-tá cũng có lợi » (Hesitation and hindrance. It furthers one to remain persevering. It furthers one to appoint helpers). James Legge lại hiểu khác hẳn : « Hào này cho thấy sự khó khăn trong khi tiến lên. Nếu biết kiên trì giữ đạo trung-chính thì có lợi thế. Nếu được phong tước-hầu thì cũng có lợi » (The first Nine shows the difficulty in advancing. It will be advantageous to abide correctly and firm ; advantageous (also) to be made a feudal ruler).\n\nNgu Phiên 虞 翻 viết : « Sấm sét nổi lên thì phải đình-chỉ mọi hoạt-động (chấn khởi cấn chỉ 調 起 良 止 = cũng có thể dịch « quẻ Chấn khởi lên thì quẻ Cấn ngưng lại »), đó là hoạt-động trong chốn hiểm-nguy (động hỗ hiểm trung 動 乎 險 中), chính vì thế người quân-tử nên thận-trọng náu mình cho kín chớ lộ ra ngoài (cố quân-tử cư kỳ thất thận mật nhi bất xuất dã 故 君 子 居 其 室 慎 密 而 不 出 也) » (dẫn theo Lý Đình-Tộ). Giải-thích này của Ngu Phiên chẳng đả động gì đến việc « lợi kiến hầu »."},{"vi_tri":2,"ten_hao":"Lục Nhị","nguyen_van":"LỤC NHỊ : TRUÂN NHƯ, CHIÊN NHƯ, THỪA MÃ BAN NHƯ. PHỈ KHẤU, HÔN CẤU, NỮ TỬ TRINH BẤT TỰ, THẬP NIÊN NÃI TỰ.","han_van":"六 二 : 屯 如, 邅 如, 乘 馬 班 如, 匪 寇, 婚 媾, 女 子 貞 不 字, 十 年 乃 字.","dich":"Dịch nghĩa : Hào 2, âm : Khó khăn chồng chất, xe một nơi, người cưỡi ngựa một nẻo, anh ta không phải phường thảo-khấu, thực ra chỉ muốn thành hôn-sự, thiếu-nữ còn trong trắng, đâu dễ dàng trao thân, hãy chờ thêm mười năm nữa.","giai":"Giải thích : Có lẽ đây là đoạn văn hầu hết các dịch-giả Việt-Nam đều dịch sai, bắt đầu từ Ngô Tất-Tố : « Dường quanh co vậy, dường cưỡi ngựa rẽ ra vậy. Chẳng phải giặc : Dâu gia. Con gái trinh tiết không đặt tên chữ, mười năm mới đặt tên chữ. » Mộng Bình-Sơn bỏ luôn không dịch. Nguyễn Duy-Hinh dịch sáng sủa hơn nhưng vẫn sai phần sau : « Khốn đốn khó khăn như cưỡi ngựa lẩn quẩn, như bốn con ngựa không nhất trí, chạy con trước con sau. Không phải giặc cướp mà cầu-hôn, con gái bền chính không đặt tên tự, mười năm mới đặt tên tự » Chỗ khó hiểu chính là chỗ “đặt tên tự ». Trong phần lời bình, Nguyễn Duy-Hinh viết rằng : « Chữ tự có hai cách giải. Cách thứ nhất, « Tự là đặt tên cho con gái khi gả chồng. Mười năm mới đặt tên hiệu là hiện-tượng phản thường. Do cách giải-thích đó nên toàn ý hào 2 này giảng thành gặp khó khăn nhưng kiên-trì, không sợ uy-vũ, không dao-động vì những hiện-tượng phản thường. Đó là cách giải của Tôn Chấn-Thanh. Ông cũng giới-thiệu cách giải thứ hai : « Tự » là « có mang thai. », « chửa ». Do đó giải-thích quan-hệ giữa hào 2 với hào 1 bằng hôn-nhân và chửa đẻ. »\n\nĐể hiểu đúng đoạn văn này chúng ta hãy hình-dung cảnh một người thiếu-nữ đang di-chuyển trên xe ngựa về nhà (chiên như 邅 如) trên con đường gập ghềnh hết sức gian-nan (truân như 屯 如), đã vậy còn gặp thêm người cưỡi ngựa đuổi theo (thừa mã ban như 乘 馬 班 如), hình như là quân thảo-khấu. Nhưng thật ra anh ta chỉ muốn cầu-hôn (phỉ khấu, hôn cấu 匪 寇, 婚 媾) mà thôi. Người con gái này (thật ra chúng ta không biết cô bao nhiêu tuổi) là người đứng đắn, lễ-nghĩa, tuyết sạch giá trong (nữ tử 女 子), làm sao có thể nhận lời cầu-hôn giữa đường giữa xá như vậy được (trinh bất tự 貞 不 字) ? Cho nên nàng đã hẹn anh ta mười năm sau, giống như người yêu của Đỗ-Mục, hẹn nhà thơ mười năm trở lại thành hôn. Không thể có vấn-đề « chửa đẻ » hay « mang thai » ở đây.\n\nTôn Đức-Hậu giải-thích khá độc đáo : « Phiền muộn đi rồi lại quay về. Người con gái chưa lấy chồng sinh ra phiền muộn, vì người đàn ông (Sơ dương) ở gần thích người con gái này, hòng dụ dỗ. Nhưng người con gái vững vàng, quyết sẽ không tiếp nhận một cách tùy-tiện, chờ đợi thời-cơ đến, tất phải quay về đạo-lý thông thường, phối-hợp lương-duyên với người thích hợp (Ngũ dương). »\n\nRichard Wilhelm giải-thích khá thông suốt : « Khi dùng hình-tượng một người con gái đã đính-hôn (betrothed girl) vẫn chung-thủy với vị hôn-phu mặc dù trước mắt gặp bao nhiêu khó khăn chồng chất, quẻ này đã đưa ra một lời khuyên cho một hoàn-cảnh cụ-thể. Trong thời-kỳ gian-nan lại gặp phải trở ngại, nhưng gánh nặng được trút đi một cách bất ngờ khi hóa ra trở ngại đó là một sự đề-nghị giúp đỡ, sự đề-nghị này có nguồn gốc không liên hệ gì đến chúng ta, nên cần phải thận-trọng, không nên rước vào thân những hệ-lụy do sự giúp đỡ đó đem lại, nếu không chúng ta không còn tự-do quyết-định việc gì nữa. Nếu biết kiên-nhẫn chờ thời, mọi việc sẽ đâu vào đấy và chúng ta sẽ đạt được điều chúng ta mong muốn. »\n\nGiải-thích của Richard Wilhelm cho thấy một vấn-đề là khía cạnh trung-thành. Chúng tôi cho rằng người con gái ở đây tượng-trưng cho người quân-tử, người hôn-phu của cô ta là đấng quân-vương hay người lãnh-đạo. Giai-đoạn khó khăn là lúc xa rời người lãnh-đạo và gặp phải một người khác cũng đề-nghị người quân-tử phục-vụ cho ông ta. Mặc dù đây cũng là hảo ý, tác-giả Kinh Dịch khuyên người quân-tử không nên vội vã nhận lời vì sẽ gặp nhiều rắc rối về sau mà nên trung-thành với lý-tưởng ban đầu của mình. Nếu biết kiên-trì nhẫn-nại, khi người lãnh-đạo của mình thành-tựu đại-nghiệp, người quân-tử sẽ như rồng mây gặp hội, công-thành danh-toại."},{"vi_tri":3,"ten_hao":"Lục Tam","nguyen_van":"LỤC TAM : TỨC LỘC VÔ NGU, DUY NHẬP VU LÂM TRUNG, QUÂN TỬ CƠ BẤT NHƯ XẢ, VÃNG LẬN.","han_van":"六 三 : 即 鹿 無 虞, 惟 入 于 林 中, 君 子 機 不 如 舍, 往 吝.","dich":"Dịch nghĩa : Hào 3, âm : Đuổi theo con nai mà không nhờ sự giúp đỡ của thợ săn chỉ khiến mình đi lạc trong rừng sâu. Người quân-tử phải biết thức-thời, tốt hơn nên biết lùi lại, cứ đi tiếp sẽ rước nhục vào thân.","giai":"Giải thích : Tức lộc 即 鹿 = đuổi theo con nai. Ngu 虞 = thợ săn. Nguyễn Duy-Hinh dịch là « người gác rừng » là không chính xác. Ngu Phiên viết : « Ngu có nghĩa là ngu nhân, người săn bắt cầm thú » (Ngu vị ngu nhân, nã cầm thú giả 虞 謂 虞 人, 拿 禽 獸 者).\n\nÝ nghĩa của câu này khá rõ ràng. Hiếm khi trong Kinh Dịch đọc được mọi câu có ý nghĩa minh-bạch như vậy. Richard Wilhelm bình-giải : « Nếu một người cứ cố săn bắn trong một khu rừng lạ mà không người hướng-đạo, anh ta chắc chắn sẽ lạc đường. Khi thấy mình đang gặp khó khăn, không nên thoát thân một cách thiếu suy nghĩ và không có người hướng dẫn. Không thể qua mặt định-mệnh được. Những nỗ-lực ấu-trĩ vì không có sự hướng dẫn cần-thiết chỉ có thể kết-thúc trong thất-bại và nhục nhã. Như vậy, người quân-tử, khi nhận ra mầm mống phát-triển của các biến-cố sắp xảy ra, phải biết từ bỏ ý-định của mình hơn là đâm đầu vào chỗ thân bại danh liệt khi cứ khăng khăng đòi thực hiện ý muốn của mình. »\n\nCó lẽ toàn-bộ sự mâu-thuẫn nghịch-lý của tư-tưởng Trung-Hoa (kể cả Phật, Nho, Lão) đều nằm sẵn trong những lời khuyên răn khác nhau của Kinh Dịch. Chẳng hạn ngay câu trên tác-giả khuyên người quân-tử nên ung-chính, kiên-trì chịu đựng gian khổ, chờ đợi vận-hội đến sẽ tung cánh lưng trời, đỉnh thiên lập địa, nhưng trong câu này dường như lời khuyên lại ngược hẳn lại : kẻ thức-thời mới là trang tuấn-kiệt, nghĩa là khi nhận ra tình-huống đã thay đổi thì không gì tốt hơn là từ bỏ ý muốn ban đầu của mình (quân tử cơ bất như xả). Vậy làm sao chúng ta có thể phân-biệt được lúc nào nên trung-chính, kiên-trì, và lúc nào nên buông xả, từ bỏ ? Toàn bộ sự bí-mật nằm trong ba chữ « cơ » 幾, « thời » 時 và « vị » 位, đặc-biệt là khả-năng « tri cơ » 知 幾 (có khả-năng nhìn thấy thiên cơ, có khả-năng nhìn thấy trước chiều hướng phát-triển của sự vật). Cần phân-biệt giữa « thức-thời » và « xu-thời ». Trong hào âm số hai nói trên, nếu người thiếu nữ mau mắn nhận lời cầu-hôn thì chính là hành-động xu-thời, chạy theo các hiện-tượng ngoài mặt, chưa nhận-định rõ bản-chất. Thức-thời không thể đồng-hóa với hành-động này, vì thời ở đây là thời phát-triển các tiềm-năng nội-tại trong bản-thân người quân-tử, phát-triển đạo-đức cá-nhân đến chỗ chỉ ư chí thiện thông qua việc phục-vụ cho một lý-tưởng cao cả. Kẻ xu-thời chỉ nhắm vào việc thỏa-mãn các dục-vọng vị-kỷ nên sẵn sàng từ bỏ các nguyên-tắc ban đầu để chạy theo các trào-lưu mới có khả-năng đem lại sự vinh thân phì gia cho cá-nhân. Tính-chất mềm dẻo, uyển-chuyển trong tư-tưởng Trung-Hoa không nên bị hiểu sai thành một loại chiết trung chủ nghĩa (eclecticism) hay một học-thuyết ba phải. Đúng ra tư-tưởng Trung-Hoa không chủ toàn, cũng không chủ biệt, không duy-vật (materialistic), cũng không duy-tâm (idealistic), không chủ-động (dynamic), cũng không chủ-tĩnh (static). Các phạm-trù triết-học này đều không thích-hợp để mô tả cấu-hình tư-duy Trung-Hoa."},{"vi_tri":4,"ten_hao":"Lục Tứ","nguyen_van":"LỤC TỨ : THỪA MÃ BAN NHƯ, CẦU HÔN CẤU, VÃNG CÁT, VÔ BẤT LỢI.","han_van":"六四 : 乘 馬 班 如, 求 婚 媾, 往 吉, 無 不 利.","dich":"Dịch nghĩa : Hào 4, âm : Xe ngựa rời rạc, cố gắng làm sao để kết-hợp, nếu tiếp-tục đi sẽ gặp may mắn, mọi sự đều thuận-lợi.","giai":"Giải thích : Thượng Bình-Hòa viết : « Hào tứ và hào một vốn là chính ứng, tức là hôn-cấu. Nhưng phải cầu vì nhị, tam trở ngại. Biết có trở ngại nhưng vẫn cầu, nên tiến-hành công việc là tốt » (Chu Dịch Thượng thị học).\n\nChu Hi giải : « Hào âm nhu ở vào cảnh truân nan không thể tiến lên, cho nên tượng cưỡi ngựa rẽ ra. Nhưng có hào đầu, giữ đường chính đính, ở dưới để ứng với mình, cho nên lời chiêm là tìm xuống dâu gia thì tốt. » Trương Thiện-Văn viết : « Xét hào lục ở thượng quái, nhu chính đắc vị, tôn quý như công-khanh biết lấy trên cầu dưới, lấy cương giúp nhu, nên nhất-định có lợi cho việc khai thông cục-diện truân nan. » Trình Di giải : « Hào âm thứ tư là hào mềm thuận, ở ngôi gần vua, ấy là tương-đắc với người trên, mà tài không đủ làm qua cảnh truân nan, cho nên muốn tiến lại thôi, như người cưỡi ngựa rẽ ra. Mình đã không thể làm qua cảnh khó khăn, nếu tìm được người để giúp cho mình thì có thể qua. Hào sơ là người hiền đức, có đức dương cương, tức là kẻ dâu gia chính ứng với mình, nếu tìm hạng dâu gia dương cương ấy để đi cùng giúp ông vua dương cương trung-chính cho qua cảnh khó khăn thì không cái gì không lợi » (Kinh Dịch, tr. 135 : bản dịch có sửa chữa).\n\nRichard Wilhelm bình-luận : « Chúng ta đang ở trong hoàn-cảnh có bổn-phận phải hành-động, nhưng chúng ta không đủ quyền-lực. Tuy nhiên, có một cơ-hội để thực-hiện sự kết-giao. Cần phải nắm ngay lấy cơ-hội này. Không nên để sự kiêu căng sai lầm hay dè dặt quá đáng làm cản trở chúng ta. Đưa mình tiến lên được một bước, thậm chí cần phải nhún mình một chút, đó là dấu-hiệu của sự sáng suốt. Chấp-nhận sự giúp đỡ trong hoàn-cảnh khó khăn thì chẳng có gì là mất thể-diện. Nếu tìm được đúng người phụ-trợ, mọi sự sẽ thông suốt. »"},{"vi_tri":5,"ten_hao":"Cửu Ngũ","nguyen_van":"CỬU NGŨ : TRUÂN KỲ CAO, TIỂU TRINH CÁT, ĐẠI TRINH HUNG.","han_van":"九 五 : 屯 其 高, 小 貞 吉, 大貞凶.","dich":"Dịch nghĩa : Hào 5, dương : Khắc-phục gian nan lúc mới bắt đầu do được ban nhiều ăn huệ, kiên-trì tiến-hành những việc nhỏ thì gặp may mắn, nếu cố gắng làm những việc đại sự thì sẽ gặp nguy-hiểm.","giai":"Giải thích : Chữ « tiểu » và chữ « đại »  trong trường-hợp này đã gây nhiều lúng túng cho người phiên dịch. Ngô Tất-Tố dịch như sau : « Gian truân thừa ơn huệ, nhỏ mà trinh thì lành, lớn mà trinh thì dữ. » Câu dịch quá tối nghĩa. Nguyễn Duy-Hinh dịch : « Ân trạch gian nan. Việc nhỏ nếu chính bền thì cát. Việc lớn dù chính bền cũng hung. » Bản dịch này thiếu chính-xác và không rõ nghĩa. « Ân trạch gian nan » nghĩa là sao ? Tại sao việc nhỏ chính bền lại tốt mà việc lớn chính bền thì xấu ? Bản dịch Mộng Bình-Sơn cũng chẳng khá cao hơn bao nhiêu : « Gian nan mà được ơn huệ. Nhỏ mà trinh thì lành, lớn mà trinh thì dữ. » Tôn Đức-Hậu dịch : « Ơn nghĩa rộng khắp mọi nơi, làm việc thích đáng là lành, nếu miễn cưỡng tiến-hành tất dữ » Bản dịch này nghe xuôi tai hơn, nhưng chẳng biết tác-giả căn-cứ vào đâu để dịch « tiểu » thành ra « làm việc thích đáng » và « đại » thành ra « nếu miễn-cưỡng. »\n\n« Truân kỳ cao » 屯 其 高 có nghĩa là « khắc-phục khó khăn lúc ban đầu do được ban nhiều ân huệ ». « Cao » dùng như động từ, có nghĩa là « ban ân huệ » . Câu này có nghĩa là chúng ta có thể gặp khó khăn khi được người trên tin dùng, ban cho nhiều ân huệ, gây ra sự ganh ghét của bọn tiểu-nhân. Những bọn này sẽ can-thiệp, gây khó khăn, xuyên tạc các động-cơ hành-động của ta. Phải thận-trọng, kiên-trì tiến-hành dần dần những công việc nhỏ, khoan hấp tấp nóng nảy muốn thi-hành ngay những cải-cách quan-trọng. Chúng tôi giải-thích chữ « tiểu » và « đại » như động từ, có nghĩa là « làm việc nhỏ » và « làm việc lớn ». James Legge dịch đoạn này như sau : « Hào cửu ngũ cho thấy sự khó khăn trong việc rộng ban ân huệ, những ân huệ được mọi người chờ đợi. Kiên-định và cư-xử đúng sẽ gặp may mắn trong chuyện nhỏ, nhưng sẽ gặp nguy-hiểm trong chuyện lớn. »\n\nRichard Wilhelm bình-giải : « Một cá-nhân đang ở trong một vị-thế khó khăn không thể bày tỏ được hảo-ý của mình mà không bị hiểu lầm. Những kẻ khác can-thiệp và xuyên-tạc tất cả việc làm của anh ta. Do đó anh ta cần phải thận-trọng tiến-hành từng bước một. Không nên cố gắng miễn-cưỡng thực-hiện một công-trình lớn lao, vì chỉ có thể có thành-công khi tất cả mọi người đều tin-cậy mình. Chỉ có thể thoát ra bằng cách tiến-hành việc làm trung-kiên và đầy ý-thức trách-nhiệm một cách nhẹ nhàng sao cho tình-hình xấu khai thông và các trở ngại biến mất dần dần. »","flags":["Sách in 'TRUÂN KỲ CAO' / '屯 其 高' — bản thông dụng là '屯其膏' (cao 膏 = ơn huệ); tác giả sách chủ ý giảng 'cao' là động từ 'ban ân huệ'. Giữ nguyên văn sách"]},{"vi_tri":6,"ten_hao":"Thượng Lục","nguyen_van":"THƯỢNG LỤC : THỪA MÃ BAN NHƯ, KHẤP HUYẾT LIÊN NHƯ.","han_van":"上 六 : 乘 馬 班 如, 泣 血 連 如.","dich":"Dịch nghĩa : Hào trên cùng, âm : Ngựa xe rời rạc, khóc ra máu đầm đìa.","giai":"Giải thích : Trình Di giải : « Hào thượng lục là âm nhu, nằm cuối quẻ Truân, ở chỗ hiểm cực mà không có kẻ ứng-viện, ở thì không yên, động thì không có chỗ đi, cưỡi ngựa muốn đi, lại phải rẽ ngang không tiến, cùng truân quá đỗi, đến nỗi khóc ra máu mắt đầm đìa, đó là truân đến cùng cực. » Tôn Đức-Hậu cũng giải : « Cưỡi ngựa xuất phát, vì chưa quyết-định mục-tiêu nên trở về. Cuối cùng rơi vào đường cùng, máu và nước mắt không ngớt, thời-gian dư không nhiều. » Richard Wilhelm bình-giải : « Đối với một số người sự khó khăn lúc ban đầu quá lớn không thể vượt qua. Họ bị sa lầy kẹt cứng, không tìm được lối ra, chỉ còn biết khoanh tay, từ bỏ không muốn tranh đấu nữa. Sự từ bỏ này thật là bi-thảm. »"}],"chu_giai":"Trương Thiện-Văn và Hoàng Thọ-Kỳ tổng-luận về quẻ Truân như sau : « Quẻ Truân ẩn-dụ tình-trạng sơ-sinh của sự vật, với ý-nghĩa rằng mới sinh ra hay mới khai sáng thì khó khăn gian nan. Quái Từ đã nói thời này có thể đạt tới hanh-thông, lại còn nói lợi ở việc thủ chính, nên « kiến hầu » 建 侯 để được trợ giúp nhiều hơn. Nó biểu lộ quan-điểm đầy triết-lý của các tác-giả rằng : Đã biết khai sáng sự vật thì gian nan, nhưng nếu nắm vững quy-luật chính-xác thì hoàn-cảnh trước mắt ắt sẽ sáng sủa. Sáu hào, thông qua những vật-tượng khác nhau, nêu ra cách cư-xử vào thời-gian truân. Hào sơ cửu là « bàn hoàn » 盤 桓, lấy việc cư chính bát xuất làm lợi. Hào lục nhị « truân chiên » 屯 運, như con gái giữ trinh chờ lấy chồng thì tốt. Hào lục tam « tức lộc »  即 鹿, nên lui, không nên tiến. Hào lục tứ « cầu hôn » 求 婚, thân với kẻ dưới thì tốt. Hào cửu ngũ « sơ sáng » 初 創, cục-diện sắp thông, nhưng không thể lơ là bất cần, mà phải thủ chính để phòng hung hiểm. Hào thượng lục « khấp huyết » 泣 血, nhưng tình thế đã thông, ắt sẽ biến buồn thành vui. Nói chung, sáu hào đều xoay quanh cái sơ sinh của sự vật, cái mới khai mở của thời, và nói rõ cát hung lợi hại. Mục-đích là nhấn mạnh việc ở chính đáng và hành-động cẩn-thận. Phân-tích từ nội-hàm triết-học, việc mới khai-sinh và sự gian-nan được nêu ra là nhằm khuyến-khích người ta noi theo xu-thế phát-triển từ thời ban-sơ, rồi liên-tục khai-thác, tiến-thủ, lấy việc cầu được « nguyên hanh » làm cứu cánh. Câu « quân tử dĩ kinh luân » 君 子 以 經 綸 trong Đại Tượng Truyện thể hiện tinh-thần phấn đấu mưu-cầu yên ổn, ở cảnh gian-truân mong được hanh-thông. Có thể thấy ý-nghĩa tích-cực của quẻ Truân là dùng quan-điểm triết-học biện-chứng để chỉ ra viễn-cảnh phát-triển của sự vật sơ-sinh, mở ra con đường cho người quân-tử từ gian-truân đến hanh-thông. »","ghi_chu_trich":["chu_giai = mục 'TỔNG LUẬN' trong sách (Trương Thiện-Văn & Hoàng Thọ-Kỳ)"],"nguon":"Chtt TQ.docx"}]};
+
+/* ============== Tra cứu nhanh ============== */
+const QBYN={}; QUE.forEach(q=>{QBYN[q.n]=q;});
+const PMAP={}; PILOT.que.forEach(q=>{PMAP[q.n]=q;});
+
+/* ============== Tiện ích chung ============== */
+function esc(s){return String(s==null?'':s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function paras(s){ /* giai trong sách nối bằng dòng trống -> tách <p> */
+  return String(s||'').split(/\n{2,}/).map(p=>'<p>'+esc(p.trim())+'</p>').join('');}
+function glyphOf(n){return String.fromCodePoint(0x4DC0+n-1);} /* Unicode hexagram, thứ tự Văn Vương */
+function norm(s){ /* bỏ dấu tiếng Việt để tìm kiếm dễ */
+  return String(s||'').toLowerCase().normalize('NFD')
+  .replace(/[̀-ͯ]/g,'').replace(/đ/g,'d');}
+function todayStr(){const t=new Date();
+  return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');}
+function addDaysStr(d){const t=new Date();t.setDate(t.getDate()+d);
+  return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');}
+function lsGet(k,fb){try{const v=localStorage.getItem(k);return v==null?fb:JSON.parse(v);}catch(e){return fb;}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+/* ============== Bộ lọc cung (dùng chung Flashcard + Nghe) ============== */
+/* Ký hiệu bát quái cho 8 cung (icon tâm linh thay emoji) */
+const TRIG={'Càn':'☰','Đoài':'☱','Ly':'☲','Chấn':'☳','Tốn':'☴','Khảm':'☵','Cấn':'☶','Khôn':'☷'};
+let cungFilter=lsGet('hb_cung','all');
+function filteredSet(){
+  if(cungFilter==='all')return QUE.slice();
+  const o=ORDER.find(o=>o[0]===cungFilter);
+  return o?o[2].map(n=>QBYN[n]):QUE.slice();
+}
+function renderChips(elId,onPick){
+  const el=document.getElementById(elId);
+  let h='<button class="chip'+(cungFilter==='all'?' on':'')+'" onclick="setFilter(\'all\')">☯ Tất cả</button>';
+  ORDER.forEach(o=>{
+    h+='<button class="chip'+(cungFilter===o[0]?' on':'')+'" onclick="setFilter(\''+o[0]+'\')">'+(TRIG[o[0]]||'')+' '+o[0]+'</button>';
+  });
+  el.innerHTML=h;
+}
+function setFilter(v){
+  cungFilter=v; lsSet('hb_cung',v);
+  renderChips('chipsFc'); renderChips('chipsAu');
+  fcBuildQueue(); fcShow();
+  auOnFilterChange();
+}
+
+/* ======================================================================
+   CỬA 1 — TRA CỨU
+   ====================================================================== */
+function barsHTML(q){ /* lines[0]=hào Sơ (dưới cùng) -> column-reverse */
+  return '<div class="bars">'+q.lines.map(v=>
+    v?'<div class="bar"></div>':'<div class="bar yin"><i></i><i></i></div>').join('')+'</div>';
+}
+function buildList(){
+  let h='';
+  ORDER.forEach(o=>{
+    h+='<div class="cunghead" data-cung="'+o[0]+'">'+(TRIG[o[0]]||'')+' Cung '+o[0]+' — hành '+o[1]+'</div>';
+    o[2].forEach(n=>{
+      const q=QBYN[n];
+      h+='<div class="qrow" data-s="'+esc(norm(n+' '+q.name+' '+q.han+' que '+n))+'" onclick="openDetail('+n+')">'
+        +'<span class="g">'+glyphOf(n)+'</span>'
+        +'<span class="nm"><b>'+n+' · '+esc(q.name)+'</b><small>'+esc(q.mean.split('.')[0])+'.</small></span>'
+        +'<span class="hn">'+esc(q.han)+'</span>'
+        +(PMAP[n]?'<span class="bk">典</span>':'')
+        +'</div>';
+    });
+  });
+  document.getElementById('listWrap').innerHTML=h;
+}
+function doSearch(){
+  const v=norm(document.getElementById('searchBox').value.trim());
+  document.querySelectorAll('#listWrap .qrow').forEach(r=>{
+    r.hidden=!!v&&r.getAttribute('data-s').indexOf(v)<0;
+  });
+  /* ẩn header cung nào không còn dòng nào */
+  document.querySelectorAll('#listWrap .cunghead').forEach(hd=>{
+    let el=hd.nextElementSibling,any=false;
+    while(el&&!el.classList.contains('cunghead')){
+      if(!el.hidden)any=true; el=el.nextElementSibling;
+    }
+    hd.hidden=!any;
+  });
+}
+function unitHTML(title,u){ /* 1 đơn vị kinh văn: nguyên văn / Hán / dịch / giải */
+  if(!u)return'';
+  let h='<div class="sec"><h3>'+esc(title)+'</h3>';
+  if(u.nguyen_van)h+='<div class="u-nv">'+esc(u.nguyen_van)+'</div>';
+  if(u.han_van)h+='<div class="u-han">'+esc(u.han_van)+'</div>';
+  if(u.dich)h+='<div class="u-dich">'+esc(u.dich)+'</div>';
+  if(u.giai)h+='<details class="fold"><summary>Giải thích của sách</summary><div class="fbody">'+paras(u.giai)+'</div></details>';
+  (u.flags||[]).forEach(f=>{h+='<div class="flag">⚠️ '+esc(f)+'</div>';});
+  h+='</div>';
+  return h;
+}
+function haoHTML(h){
+  let s='<div class="haohd">'+esc(h.ten_hao)+'</div>';
+  if(h.nguyen_van)s+='<div class="u-nv">'+esc(h.nguyen_van)+'</div>';
+  if(h.han_van)s+='<div class="u-han">'+esc(h.han_van)+'</div>';
+  if(h.dich)s+='<div class="u-dich">'+esc(h.dich)+'</div>';
+  if(h.giai)s+='<details class="fold"><summary>Giải thích của sách</summary><div class="fbody">'+paras(h.giai)+'</div></details>';
+  (h.flags||[]).forEach(f=>{s+='<div class="flag">⚠️ '+esc(f)+'</div>';});
+  return s;
+}
+function openDetail(n){
+  switchTab('tra');
+  const q=QBYN[n],p=PMAP[n]||null;
+  let h='<button class="bigback" onclick="backToList()">← Danh sách 64 quẻ</button>';
+  h+='<div class="dhead">'+barsHTML(q)
+    +'<div><div class="dname">Quẻ '+n+' · '+esc(q.name)+'</div>'
+    +'<div class="dhan">'+esc(q.han)+'</div>'
+    +'<div class="dquai">Thượng: '+esc(q.up)+' '+esc(q.upSym)+' ('+esc(q.upNat)+') · Hạ: '+esc(q.lo)+' '+esc(q.loSym)+' ('+esc(q.loNat)+')</div></div>'
+    +'<div class="dglyph">'+glyphOf(n)+'</div></div>';
+  h+=p?'<span class="badge book">典 book — trích nguyên văn từ sách</span>'
+      :'<span class="badge draft">⚠️ Bản rút gọn — nội dung đầy đủ: đang bổ sung từ sách</span>';
+  h+='<div class="actrow"><button onclick="listenThis('+n+')">聽 Nghe quẻ này</button></div>';
+
+  /* Nghĩa rút gọn + key points (mọi quẻ đều có — từ data game v3) */
+  h+='<div class="sec"><h3>Nghĩa (bản rút gọn)</h3><div>'+esc(q.mean)+'</div>'
+    +'<ul class="keys">'+q.key.split('•').map(k=>'<li>'+esc(k.trim())+'</li>').join('')+'</ul></div>';
+
+  if(p){ /* ===== 3 quẻ pilot: nội dung đầy đủ từ sách ===== */
+    if(p.mo_ta_que)h+='<div class="sec"><details class="fold"><summary>Mô tả quẻ (sách)</summary><div class="fbody">'+paras(p.mo_ta_que)+'</div></details></div>';
+    h+=unitHTML('Quái từ',p.quai_tu);
+    h+=unitHTML('Đại Tượng',p.dai_tuong);
+    h+='<div class="sec"><h3>Hào từ — đủ 6 hào</h3>'+p.hao.map(haoHTML).join('')+'</div>';
+    if(n===1||n===2){
+      h+='<div class="flag">⚠️ Hệ Chu Dịch chuẩn có thêm hào '+(n===1?'Dụng Cửu':'Dụng Lục')
+        +' ở quẻ này — sách nguồn KHÔNG có mục đó. Đang chờ chốt cách bổ sung (nguyên tắc đi trọn hệ).</div>';
+    }
+    if(p.chu_giai)h+='<div class="sec"><details class="fold"><summary>TỔNG LUẬN (Trương Thiện-Văn &amp; Hoàng Thọ-Kỳ)</summary><div class="fbody">'+paras(p.chu_giai)+'</div></details></div>';
+    h+='<div class="minor">Nguồn: '+esc(p.nguon)+' — trích nguyên văn, kể cả lỗi in (đã cắm cờ ⚠️).'
+      +(p.ghi_chu_trich&&p.ghi_chu_trich.length?'<br>'+p.ghi_chu_trich.map(esc).join('<br>'):'')+'</div>';
+  }else{
+    h+='<div class="sec appnote">典 <b>Nội dung đầy đủ (Quái từ + Đại Tượng + 6 hào + tổng luận): đang bổ sung từ sách.</b><br>Quẻ 1, 2, 3 đã có bản đầy đủ — bấm xem thử để hình dung form.</div>';
+  }
+
+  /* Tầng ứng dụng đời sau — LUÔN tách riêng, có nhãn (nguyên tắc vàng mục F) */
+  h+='<div class="sec"><h3>⚠️ Tầng ứng dụng đời sau (Kinh Phòng / ngũ hành) — KHÔNG phải kinh văn gốc</h3>'
+    +'<div class="appnote">Cung <b>'+esc(q.palace)+'</b> (hành '+esc(q.palaceEl)+') · thượng '+esc(q.upEl)+' / hạ '+esc(q.loEl)
+    +' · '+esc(q.sess)+' · '+esc(q.rel)+'<br><small>'+esc(q.relDesc)+'</small></div></div>';
+
+  /* Quẻ liên quan */
+  h+='<div class="sec"><h3>Quẻ liên quan</h3><div class="linkrow">'
+    +'<button onclick="openDetail('+q.tong[0]+')">Tổng: '+q.tong[0]+' · '+esc(q.tong[1])+'</button>'
+    +'<button onclick="openDetail('+q.thac[0]+')">Thác: '+q.thac[0]+' · '+esc(q.thac[1])+'</button>'
+    +'</div></div>';
+
+  const d=document.getElementById('traDetail');
+  d.innerHTML=h; d.hidden=false;
+  document.getElementById('traList').hidden=true;
+  window.scrollTo(0,0);
+}
+function backToList(){
+  document.getElementById('traDetail').hidden=true;
+  document.getElementById('traList').hidden=false;
+}
+function listenThis(n){
+  switchTab('nghe');
+  auLoadByN(n);
+  if(!AU.playing)auToggle();
+}
+
+/* ======================================================================
+   CỬA 2 — FLASHCARD (SRS-lite: Leitner 3 hộp, lưu localStorage)
+   hộp 0 = chưa thuộc (gặp lại ngay trong phiên, chen sau 5 thẻ)
+   hộp 1 = thuộc 1 lần (gặp lại sau 1 ngày) · hộp 2 = thuộc 2+ (sau 4 ngày)
+   ====================================================================== */
+let srs=lsGet('hb_srs_v1',{});
+const FC={queue:[],idx:0,flipped:false,hasDue:true};
+function fcBuildQueue(){
+  const set=filteredSet(),t=todayStr();
+  const due=[],fresh=[],learned=[];
+  set.forEach(q=>{
+    const s=srs[q.n];
+    if(!s)fresh.push(q.n);
+    else if(s.box===0||s.due<=t)due.push(q.n);
+    else learned.push(q.n);
+  });
+  FC.queue=due.concat(fresh,learned);
+  FC.idx=0; FC.flipped=false;
+  FC.hasDue=(due.length+fresh.length)>0;
+  document.getElementById('fcDone').hidden=FC.hasDue;
+}
+function fcProgress(){
+  const set=filteredSet();
+  const known=set.filter(q=>srs[q.n]&&srs[q.n].box>=1).length;
+  document.getElementById('fcProg').textContent='Đã thông '+known+'/'+set.length;
+}
+function fcShow(){
+  if(FC.idx>=FC.queue.length){fcBuildQueue();}
+  const n=FC.queue[FC.idx],q=QBYN[n];
+  FC.flipped=false;
+  document.getElementById('fcard').classList.remove('flip');
+  if(!q)return;
+  document.getElementById('fcFront').innerHTML=
+    '<div class="fc-n">Quẻ '+n+'/64</div>'
+    +'<div class="fc-glyph">'+glyphOf(n)+'</div>'
+    +'<div class="fc-name">'+esc(q.name)+'</div>'
+    +'<div class="fc-han">'+esc(q.han)+'</div>';
+  document.getElementById('fcBack').innerHTML=
+    '<div class="fc-n">Quẻ '+n+' · '+esc(q.name)+'</div>'
+    +'<div class="fc-flip">『 Lật thẻ. 』 Thưa Bậc thầy, mặt sau đã mở — xin Ngài đối chiếu với điều đã tỏ trong tâm.</div>'
+    +'<div class="fc-mean">'+esc(q.mean)+'</div>'
+    +'<ul class="fc-keys">'+q.key.split('•').map(k=>'<li>'+esc(k.trim())+'</li>').join('')+'</ul>'
+    +'<button class="linkbtn" onclick="event.stopPropagation();openDetail('+n+')">Xem đủ →</button>';
+  fcProgress();
+}
+function fcFlip(){
+  FC.flipped=!FC.flipped;
+  document.getElementById('fcard').classList.toggle('flip',FC.flipped);
+}
+function fcToast(msg){
+  const el=document.getElementById('fcToast');
+  if(!el)return;
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(fcToast._t);
+  fcToast._t=setTimeout(function(){el.classList.remove('show');},2600);
+}
+function fcMark(known){
+  const n=FC.queue[FC.idx];
+  if(n==null)return;
+  const s=srs[n]||{box:0,due:todayStr()};
+  if(known){
+    /* — lời persona: ghi vào « phần đã thông » — */
+    fcToast('Ngài đã rõ quẻ này — lão phu mừng, ghi vào « phần đã thông ». Một quẻ nữa xin được dâng lên.');
+    s.box=Math.min(s.box+1,2);
+    s.due=addDaysStr(s.box===1?1:4);
+  }else{
+    /* — lời persona: giữ lại, lát nữa dâng lại — */
+    fcToast('Quẻ này Ngài còn ngẫm — chẳng hề gì, cõi Dịch vốn sâu; lão phu giữ lại, lát nữa dâng lại.');
+    s.box=0; s.due=todayStr();
+    /* chen lại sau ~5 thẻ trong phiên */
+    const at=Math.min(FC.idx+1+5,FC.queue.length);
+    if(FC.queue.indexOf(n,FC.idx+1)<0)FC.queue.splice(at,0,n);
+  }
+  srs[n]=s; lsSet('hb_srs_v1',srs);
+  FC.idx++; fcShow();
+}
+function fcShuffle(){
+  fcBuildQueue();
+  for(let i=FC.queue.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    const t=FC.queue[i];FC.queue[i]=FC.queue[j];FC.queue[j]=t;
+  }
+  document.getElementById('fcDone').hidden=true;
+  FC.idx=0; fcShow();
+}
+/* Vuốt = bonus, nút vẫn là cách chính */
+(function(){
+  let x0=null;
+  const card=document.getElementById('fcard');
+  card.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;},{passive:true});
+  card.addEventListener('touchend',e=>{
+    if(x0==null)return;
+    const dx=e.changedTouches[0].clientX-x0; x0=null;
+    if(dx>70)fcMark(true); else if(dx<-70)fcMark(false);
+  },{passive:true});
+})();
+
+/* ======================================================================
+   CỬA 3 — NGHE (Web Speech API + Wake Lock + hẹn giờ tắt)
+   ====================================================================== */
+const AU={list:[],idx:0,segs:[],seg:0,playing:false,rate:1.0,rep:false,
+  timerMin:0,timerId:null,token:0};
+const RATES=[0.8,1.0,1.2],TIMERS=[0,15,30,60];
+const hasTTS=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
+let voices=[],selVoice=null,wakeLock=null;
+
+function chunkText(s){ /* cắt câu dài — né bug Chrome ngừng utterance dài */
+  s=String(s||'').replace(/\s+/g,' ').trim();
+  if(!s)return[];
+  const out=[];let cur='';
+  s.split(' ').forEach(w=>{
+    cur+=(cur?' ':'')+w;
+    if(cur.length>160&&/[\.!\?;:,。；：]$/.test(w)){out.push(cur);cur='';}
+    else if(cur.length>280){out.push(cur);cur='';}
+  });
+  if(cur)out.push(cur);
+  return out;
+}
+function buildSegments(n){
+  const q=QBYN[n],p=PMAP[n];
+  /* ===== Persona "Thủ Dịch Lão Nhân" — chỉ BỌC giọng, KHÔNG đổi kinh văn =====
+     Thưa-mở → kinh văn NGUYÊN VĂN (copy đúng data) → cung-tiễn.
+     Quẻ pilot: đọc thêm Quái từ → Đại Tượng → 6 hào (nguyên văn rồi dịch).
+     Quẻ chưa pilot: chỉ tên + nghĩa + điểm chính, KHÔNG bịa kinh văn. */
+  const raw=[];
+  /* — Lời THƯA-MỞ — */
+  raw.push('『 Cung kính khải đọc — Quẻ thứ '+n+'. 』 Kính thưa Bậc thầy, lão phu xin dâng quẻ '+q.name+'.');
+  /* — Nghĩa + điểm chính (giọng dắt tay) — */
+  raw.push(q.mean);
+  raw.push('Điểm chính: '+q.key.split('•').join('. ')+'.');
+  if(p){ /* quẻ pilot: đọc thêm nguyên văn sách — COPY nguyên văn, không đổi chữ */
+    raw.push('Trước hết, Quái từ — sách chép rằng:');
+    raw.push(p.quai_tu.nguyen_van); raw.push(p.quai_tu.dich);
+    raw.push('Lời Đại Tượng:');
+    raw.push(p.dai_tuong.nguyen_van); raw.push(p.dai_tuong.dich);
+    raw.push('Nay lão phu lần lượt dâng sáu hào, từ dưới lên trên.');
+    p.hao.forEach(hh=>{
+      if(hh.ten_hao)raw.push(hh.ten_hao+':');
+      raw.push(hh.nguyen_van); raw.push(hh.dich);
+    });
+  }
+  /* — Lời CUNG-TIỄN — */
+  raw.push('Lão phu dâng trọn, cúi xin Ngài soi xét. 『 Khải đọc viên mãn — kính cẩn lui hầu. 』');
+  const segs=[];
+  raw.forEach(t=>{chunkText(t).forEach(c=>segs.push(c));});
+  return segs;
+}
+function auCur(){return AU.list[AU.idx];}
+function auSave(){lsSet('hb_audio_v1',{n:auCur(),rate:AU.rate,rep:AU.rep});}
+function auUI(){
+  const n=auCur(),q=QBYN[n];
+  document.getElementById('auStatus').textContent=
+    q?('Quẻ '+n+' · '+q.name+' '+glyphOf(n)+' · '+(AU.idx+1)+'/'+AU.list.length):'—';
+  /* Thái Cực: đang phát = xoay chậm (class .playing), dừng = ngừng xoay */
+  const bp=document.getElementById('btnPlay');
+  bp.classList.toggle('playing',AU.playing);
+  bp.setAttribute('aria-label',AU.playing?'Dừng đọc':'Phát');
+  bp.title=AU.playing?'Đang đọc — bấm để dừng':'Bấm để nghe';
+  document.getElementById('btnRep').textContent='復 Lặp: '+(AU.rep?'Bật':'Tắt');
+  document.getElementById('btnRep').classList.toggle('on',AU.rep);
+  document.getElementById('btnRate').textContent='速 '+AU.rate.toFixed(1)+'×';
+  document.getElementById('btnTimer').textContent='漏 '+(AU.timerMin?AU.timerMin+'′':'Tắt');
+  document.getElementById('btnTimer').classList.toggle('on',!!AU.timerMin);
+}
+function auNowText(t){document.getElementById('auNow').textContent=t||'';}
+function auBuildPlaylist(){AU.list=filteredSet().map(q=>q.n);}
+function auLoadIdx(i){
+  AU.idx=Math.max(0,Math.min(i,AU.list.length-1));
+  AU.seg=0; AU.segs=buildSegments(auCur());
+  auUI(); auSave();
+}
+function auLoadByN(n){
+  const i=AU.list.indexOf(n);
+  if(i<0){cungFilter='all';lsSet('hb_cung','all');
+    renderChips('chipsFc');renderChips('chipsAu');auBuildPlaylist();}
+  auLoadIdx(Math.max(0,AU.list.indexOf(n)));
+}
+function speakSeg(){
+  if(!AU.playing||!hasTTS)return;
+  if(AU.seg>=AU.segs.length){auTrackEnd();return;}
+  const my=AU.token,txt=AU.segs[AU.seg];
+  auNowText('Đoạn '+(AU.seg+1)+'/'+AU.segs.length+' — '+txt.slice(0,90)+(txt.length>90?'…':''));
+  const u=new SpeechSynthesisUtterance(txt);
+  u.lang='vi-VN'; u.rate=AU.rate;
+  if(selVoice)u.voice=selVoice;
+  u.onend=function(){
+    if(AU.token!==my||!AU.playing)return;
+    AU.seg++;
+    setTimeout(function(){if(AU.token===my&&AU.playing)speakSeg();},600);
+  };
+  u.onerror=function(e){
+    if(AU.token!==my||!AU.playing)return;
+    if(e&&(e.error==='interrupted'||e.error==='canceled'))return;
+    AU.seg++; /* lỗi 1 đoạn -> bỏ qua, đọc tiếp */
+    setTimeout(function(){if(AU.token===my&&AU.playing)speakSeg();},400);
+  };
+  speechSynthesis.speak(u);
+}
+function auTrackEnd(){
+  if(AU.rep){AU.seg=0;speakSeg();return;}
+  if(AU.idx<AU.list.length-1){auLoadIdx(AU.idx+1);speakSeg();}
+  else{auPause();auNowText('Hết danh sách. Bấm ▶ để nghe lại từ quẻ hiện tại.');}
+}
+function auPlay(){
+  if(!hasTTS){document.getElementById('ttsWarn').hidden=false;return;}
+  AU.playing=true; AU.token++;
+  try{speechSynthesis.cancel();}catch(e){}
+  reqWake(); auUI(); speakSeg();
+}
+function auPause(){
+  AU.playing=false; AU.token++;
+  try{speechSynthesis.cancel();}catch(e){}
+  relWake(); auUI(); auSave();
+}
+function auToggle(){AU.playing?auPause():auPlay();}
+function auStep(d){
+  const was=AU.playing;
+  if(was){AU.token++;try{speechSynthesis.cancel();}catch(e){}}
+  auLoadIdx(AU.idx+d);
+  if(was)speakSeg(); else auNowText('');
+}
+function auRepeat(){AU.rep=!AU.rep;auUI();auSave();}
+function auRate(){
+  AU.rate=RATES[(RATES.indexOf(AU.rate)+1)%RATES.length];
+  auUI();auSave();
+  if(AU.playing){AU.token++;try{speechSynthesis.cancel();}catch(e){}speakSeg();}
+}
+function auTimer(){
+  AU.timerMin=TIMERS[(TIMERS.indexOf(AU.timerMin)+1)%TIMERS.length];
+  if(AU.timerId){clearTimeout(AU.timerId);AU.timerId=null;}
+  if(AU.timerMin>0){
+    AU.timerId=setTimeout(function(){
+      AU.timerMin=0;AU.timerId=null;auPause();
+      auNowText('漏 Hết giờ hẹn — đã dừng và lưu vị trí. Kính chúc Ngài an giấc.');
+    },AU.timerMin*60000);
+  }
+  auUI();
+}
+function auOnFilterChange(){
+  const curN=auCur(),was=AU.playing;
+  if(was)auPause();
+  auBuildPlaylist();
+  const i=AU.list.indexOf(curN);
+  auLoadIdx(i<0?0:i);
+}
+/* ----- Giọng đọc -----
+   Ưu tiên TỰ ĐỘNG: giọng neural "Microsoft HoaiMy Online (Natural)" (vi-VN)
+   > HoaiMy thường > NamMinh > giọng vi đầu tiên ("Microsoft An" chỉ là fallback).
+   NGOẠI LỆ: người dùng đã TỰ chọn giọng (lưu hb_voice) → tôn trọng lựa chọn đó.
+   Edge nạp giọng online TRỄ → loadVoices chạy lại qua sự kiện voiceschanged. */
+function pickPreferredVoice(pool){
+  const isVi=function(v){return /^vi([-_]|$)/i.test(v.lang||'');};
+  return pool.find(function(v){return /HoaiMy/i.test(v.name)&&/Online|Natural/i.test(v.name)&&isVi(v);})
+    ||pool.find(function(v){return /HoaiMy/i.test(v.name)&&/Online|Natural/i.test(v.name);})
+    ||pool.find(function(v){return /HoaiMy/i.test(v.name);})
+    ||pool.find(function(v){return /NamMinh/i.test(v.name);})
+    ||pool[0];
+}
+function loadVoices(){
+  if(!hasTTS)return;
+  voices=speechSynthesis.getVoices()||[];
+  const vi=voices.filter(v=>/^vi([-_]|$)/i.test(v.lang||''));
+  const sel=document.getElementById('selVoice');
+  const saved=lsGet('hb_voice',null);
+  const pool=vi.length?vi:voices;
+  sel.innerHTML='';
+  if(!pool.length){
+    sel.innerHTML='<option>(giọng mặc định của máy)</option>';
+    document.getElementById('voiceWarn').hidden=true;
+    return;
+  }
+  pool.forEach(function(v,i){
+    const o=document.createElement('option');
+    o.value=v.name;o.textContent=v.name+' ('+v.lang+')';
+    sel.appendChild(o);
+  });
+  document.getElementById('voiceWarn').hidden=vi.length>0;
+  /* saved = người dùng đã tự chọn → giữ; chưa chọn → auto HoaiMy neural */
+  let pick=(saved?pool.find(v=>v.name===saved):null)||pickPreferredVoice(pool);
+  selVoice=pick;sel.value=pick.name;
+}
+function auPickVoice(){
+  const name=document.getElementById('selVoice').value;
+  selVoice=voices.find(v=>v.name===name)||selVoice;
+  lsSet('hb_voice',name);
+  if(AU.playing){AU.token++;try{speechSynthesis.cancel();}catch(e){}speakSeg();}
+}
+/* ----- Wake Lock: giữ màn hình sáng khi đang phát ----- */
+async function reqWake(){
+  try{if('wakeLock' in navigator){wakeLock=await navigator.wakeLock.request('screen');}}catch(e){}
+}
+function relWake(){try{if(wakeLock)wakeLock.release();}catch(e){}wakeLock=null;}
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'&&AU.playing)reqWake();
+});
+/* ----- Né bug Chrome: speech tự ngừng sau ~15s im lặng ----- */
+setInterval(function(){
+  if(hasTTS&&AU.playing&&speechSynthesis.speaking&&!speechSynthesis.paused){
+    try{speechSynthesis.resume();}catch(e){}
+  }
+},10000);
+
+/* ======================================================================
+   NAV + KHỞI ĐỘNG
+   ====================================================================== */
+function closeWelcome(){
+  var w=document.getElementById('welcome');
+  if(w)w.hidden=true;
+}
+function switchTab(t){
+  ['tra','flash','nghe'].forEach(function(x){
+    document.getElementById('tab-'+x).hidden=(x!==t);
+    document.getElementById('nav-'+x).classList.toggle('on',x===t);
+  });
+  lsSet('hb_tab',t);
+  if(t==='flash')fcShow();
+}
+(function init(){
+  buildList();
+  document.getElementById('searchBox').addEventListener('input',doSearch);
+  renderChips('chipsFc');renderChips('chipsAu');
+  fcBuildQueue();fcShow();
+  /* audio: khôi phục vị trí nghe dở */
+  auBuildPlaylist();
+  const sv=lsGet('hb_audio_v1',null);
+  if(sv){
+    if(RATES.indexOf(sv.rate)>=0)AU.rate=sv.rate;
+    AU.rep=!!sv.rep;
+    const i=AU.list.indexOf(sv.n);
+    auLoadIdx(i<0?0:i);
+  }else auLoadIdx(0);
+  if(hasTTS){
+    loadVoices();
+    /* Edge nạp giọng online (HoaiMy Natural) trễ → nghe voiceschanged để nạp lại */
+    if(typeof speechSynthesis.addEventListener==='function')
+      speechSynthesis.addEventListener('voiceschanged',loadVoices);
+    else if(typeof speechSynthesis.onvoiceschanged!=='undefined')
+      speechSynthesis.onvoiceschanged=loadVoices;
+  }else{
+    document.getElementById('ttsWarn').hidden=false;
+  }
+  window.addEventListener('beforeunload',function(){if(AU.list.length)auSave();});
+  switchTab(lsGet('hb_tab','tra'));
+})();
+</script>
+</body>
+</html>
