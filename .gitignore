@@ -1,0 +1,6 @@
+# Claude Code - cấu hình riêng từng máy (không đồng bộ)
+.claude/settings.local.json
+
+# Hệ điều hành
+.DS_Store
+Thumbs.db
